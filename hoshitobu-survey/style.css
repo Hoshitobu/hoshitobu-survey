@@ -1,0 +1,79 @@
+/* exam-scheduler の webapp/static/setup.html のデザインを踏襲 */
+:root {
+  --bg: #f4f6fa; --card: #ffffff; --ink: #1c2333; --sub: #67718a;
+  --accent: #3559c7; --accent-soft: #eaf0ff; --ok: #1e9e6a; --warn: #d94848; --line: #e3e8f2;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Yu Gothic UI", "Hiragino Sans", sans-serif;
+       background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.7; }
+header { background: var(--card); border-bottom: 1px solid var(--line);
+         padding: 14px 22px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+header h1 { font-size: 17px; margin: 0; }
+header .community { color: var(--sub); font-size: 12px; }
+header nav { margin-left: auto; display: flex; gap: 14px; }
+header a { color: var(--sub); font-size: 13px; }
+header a[aria-current="page"] { color: var(--accent); font-weight: 700; text-decoration: none; }
+main { max-width: 780px; margin: 0 auto; padding: 16px 22px 60px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+        padding: 18px 20px; margin: 16px 0; }
+h2 { font-size: 15px; margin: 0 0 10px; color: var(--accent); }
+h3 { font-size: 14px; margin: 18px 0 4px; }
+label { display: block; font-size: 11px; color: var(--sub); margin: 10px 0 3px; }
+input, select { width: 100%; padding: 7px 8px; border: 1px solid var(--line);
+                border-radius: 6px; font-size: 13px; font-family: inherit; background: #fff; color: var(--ink); }
+input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+.inline { display: flex; gap: 10px; } .inline > * { flex: 1; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+th, td { padding: 6px 6px; border-bottom: 1px solid var(--line); text-align: center; }
+th { color: var(--sub); font-size: 11px; font-weight: 600; }
+td:first-child, th:first-child { text-align: left; }
+td.num { font-variant-numeric: tabular-nums; }
+td.hidden { color: var(--sub); }
+.tablewrap { overflow-x: auto; }
+button.primary { margin-top: 14px; width: 100%; background: var(--accent); color: #fff;
+                 border: 0; border-radius: 8px; padding: 12px; font-size: 14px;
+                 font-weight: 700; cursor: pointer; font-family: inherit; }
+button.primary:hover { opacity: .9; }
+button.primary:disabled { opacity: .5; cursor: default; }
+button.secondary { background: var(--card); color: var(--accent); border: 1px dashed var(--accent);
+                   border-radius: 8px; padding: 9px; width: 100%; font-size: 13px; font-weight: 700;
+                   cursor: pointer; font-family: inherit; margin-top: 10px; }
+button.link { background: none; border: 0; color: var(--sub); font-size: 12px; cursor: pointer;
+              text-decoration: underline; padding: 0; font-family: inherit; }
+.note { font-size: 12px; color: var(--sub); line-height: 1.6; }
+.warnbox { color: #7a4200; background: #fff3d5; border: 1px solid #e6bd66;
+           border-radius: 7px; padding: 10px 12px; font-size: 12px; margin-top: 10px; }
+.okbox { color: #0d5c3c; background: #e3f6ee; border: 1px solid #8fd3b5;
+         border-radius: 7px; padding: 10px 12px; font-size: 13px; margin-top: 10px; }
+.consent { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--ink);
+           margin: 0; cursor: pointer; }
+.consent input { width: auto; margin-top: 4px; transform: scale(1.25); }
+.code-box { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin: 6px 0 4px; }
+.code { font-family: Consolas, "SFMono-Regular", monospace; font-size: 34px; font-weight: 700;
+        letter-spacing: .18em; color: var(--accent); background: var(--accent-soft);
+        border-radius: 8px; padding: 4px 14px; }
+.code-box button { width: auto; }
+.tabs { display: flex; gap: 8px; margin-bottom: 4px; }
+.tabs button { flex: 1; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--card);
+               color: var(--sub); font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; }
+.tabs button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.rec { border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px 12px; margin-top: 10px; }
+.rec-head { display: flex; justify-content: space-between; align-items: center;
+            font-size: 12px; font-weight: 700; color: var(--sub); margin-top: 4px; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 10px; }
+.grid .wide { grid-column: span 2; }
+.rec .err { color: var(--warn); font-size: 12px; margin-top: 6px; }
+.hp { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+#msg { margin-top: 10px; font-size: 13px; color: var(--warn); white-space: pre-wrap; }
+[hidden] { display: none !important; }
+@media (max-width: 720px) {
+  header { padding: 12px 12px; }
+  header nav { margin-left: 0; }
+  main { padding: 10px 12px 40px; }
+  .card { padding: 14px 14px; }
+  .inline { flex-direction: column; gap: 0; }
+  .grid { grid-template-columns: 1fr 1fr; }
+  .grid .wide { grid-column: span 2; }
+  .code { font-size: 28px; }
+  table { white-space: nowrap; }
+}

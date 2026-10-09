@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#3559c7">
+<meta name="referrer" content="no-referrer">
+<title>共テ予想問題集 点数集計 — 回答</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div>
+    <h1>⭐ 共テ予想問題集 点数集計</h1>
+    <div class="community">星飛ぶの勉強部屋</div>
+  </div>
+  <nav>
+    <a href="index.html" aria-current="page">回答する</a>
+    <a href="results.html">集計を見る</a>
+  </nav>
+</header>
+<main>
+
+<div id="loadError" class="card warnbox" hidden></div>
+
+<form id="form" novalidate hidden>
+
+<div class="card">
+  <h2>はじめに</h2>
+  <label class="consent">
+    <input type="checkbox" id="consent">
+    <span>回答は匿名で集計し、YouTube『星飛ぶ』の動画で使用します。<b>名前・学校名などの個人情報は入力しないでください。</b>ニックネームを入力してください。（同意する）</span>
+  </label>
+  <div class="note" style="margin-top:8px">名前・メールアドレス・IPアドレスは記録しません。ニックネームは「ランキングに載せる」にチェックしたときだけ、点数と一緒に集計ページのランキングと動画で公開されます。</div>
+</div>
+
+<div class="card">
+  <h2>あなたの回答者コード</h2>
+  <div class="code-box">
+    <div class="code" id="codeView">------</div>
+    <button type="button" class="link" id="copyCode">コピー</button>
+  </div>
+  <div class="warnbox" id="codeNew" hidden>はじめて発行したコードです。<b>スクショやメモで必ず保存してください。</b>本番（2027年1月）の自己採点を送るときに、今日の記録とつなげるために使います。</div>
+  <div class="note">この端末には自動で保存され、次回からは自動で入力されます。別の端末から送るときは、同じコードを入力してください。</div>
+  <button type="button" class="link" id="toggleCodeInput" style="margin-top:6px">別のコードを入力する</button>
+  <div id="codeInputWrap" hidden>
+    <div class="inline">
+      <div><label>前に発行されたコード（6文字）</label><input id="codeInput" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false"></div>
+      <div style="flex:0 0 auto;align-self:flex-end"><button type="button" class="secondary" id="useCode" style="margin:0;padding:7px 14px">このコードを使う</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="card" id="modeCard" hidden>
+  <h2>送る内容</h2>
+  <div class="tabs">
+    <button type="button" data-mode="practice" aria-pressed="true">予想問題集の点数</button>
+    <button type="button" data-mode="honban" aria-pressed="false">本番の自己採点</button>
+  </div>
+  <div class="note" id="honbanNote" hidden>本番の自己採点は「回答者コード・科目・点数」だけを送ります。</div>
+</div>
+
+<div class="card" id="profileCard">
+  <h2>あなたについて</h2>
+  <div class="inline">
+    <div data-practice-only>
+      <label>ニックネーム（<span id="nickMax">12</span>文字まで・<span id="nickReq">任意</span>）</label>
+      <input id="nickname" autocomplete="off" placeholder="例: ほしのこ">
+    </div>
+    <div data-practice-only>
+      <label>学力帯（直近の模試の偏差値）・必須</label>
+      <select id="band"><option value="">選んでください</option></select>
+    </div>
+  </div>
+  <div data-practice-only style="margin-top:12px">
+    <label class="consent">
+      <input type="checkbox" id="ranking">
+      <span>ランキングにニックネームを載せる（集計ページと動画で公開されます）</span>
+    </label>
+    <div class="note" style="margin-top:4px">載せない場合は「匿名」として順位に入ります。<b>本名・学校名・SNSのIDはニックネームに使わないでください。</b></div>
+  </div>
+  <div id="passWrap" hidden>
+    <label>合言葉（動画・Discordで案内しています）</label>
+    <input id="passphrase" autocomplete="off">
+  </div>
+  <div class="hp" aria-hidden="true">
+    <label>Webサイト<input id="website" tabindex="-1" autocomplete="off"></label>
+  </div>
+</div>
+
+<div class="card">
+  <h2>記録</h2>
+  <div class="note" id="recordsNote">1回の送信で複数の記録をまとめて送れます（最大<span id="maxRows">20</span>件）。</div>
+  <div id="records"></div>
+  <button type="button" class="secondary" id="addRow">＋ 記録を追加</button>
+</div>
+
+<div class="card">
+  <button type="submit" class="primary" id="submit">送信する</button>
+  <div id="msg" role="alert"></div>
+  <div id="done" class="okbox" hidden></div>
+</div>
+
+</form>
+</main>
+
+<template id="rowTpl">
+  <div class="rec">
+    <div class="rec-head"><span data-title></span><button type="button" class="link" data-remove>この記録を消す</button></div>
+    <div class="grid">
+      <div class="wide" data-practice-only><label>問題集</label><select data-f="book"></select></div>
+      <div data-round><label>回</label><select data-f="round"></select></div>
+      <div><label>科目</label><select data-f="subject"></select></div>
+      <div><label>点数（<span data-max>100</span>点満点）</label><input type="number" data-f="score" min="0" step="1" inputmode="numeric"></div>
+      <div data-practice-only><label>所要時間（分・任意）</label><input type="number" data-f="minutes" min="1" step="1" inputmode="numeric"></div>
+      <div data-practice-only><label>解いた月（任意）</label><select data-f="month"></select></div>
+    </div>
+    <div class="err" data-err></div>
+  </div>
+</template>
+
+<script src="app-config.js"></script>
+<script>
+const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";  // 0/O/1/I を除外（サーバーと同じ）
+const CODE_RE = /^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/;
+const OPENED_AT = performance.now();
+let CFG = null;
+let mode = "practice";
+
+const $ = id => document.getElementById(id);
+const store = {
+  get(k) { try { return localStorage.getItem("hoshitobu-survey:" + k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem("hoshitobu-survey:" + k, v); } catch (e) { /* 保存できない環境でも回答は可能 */ } },
+};
+
+function newCode() {
+  const a = new Uint32Array(6);
+  crypto.getRandomValues(a);
+  return Array.from(a, x => CODE_CHARS[x % CODE_CHARS.length]).join("");
+}
+
+function setCode(code, isNew) {
+  $("codeView").textContent = code;
+  $("codeNew").hidden = !isNew;
+  store.set("code", code);
+}
+
+function option(value, text) {
+  const o = document.createElement("option");
+  o.value = value; o.textContent = text;
+  return o;
+}
+
+function monthOptions() {
+  const now = new Date(Date.now() + 9 * 3600 * 1000);  // 日本時間の今月まで
+  let y = now.getUTCFullYear(), m = now.getUTCMonth() + 1;
+  const [minY, minM] = CFG.limits.minMonth.split("-").map(Number);
+  const out = [];
+  while (y > minY || (y === minY && m >= minM)) {
+    out.push([`${y}-${String(m).padStart(2, "0")}`, `${y}年${m}月`]);
+    if (--m === 0) { m = 12; y--; }
+  }
+  return out;
+}
+
+function updateRow(el) {
+  const book = CFG.books.find(b => b.id === el.querySelector('[data-f="book"]').value);
+  const subject = CFG.subjects.find(s => s.id === el.querySelector('[data-f="subject"]').value);
+  const roundWrap = el.querySelector("[data-round]");
+  roundWrap.hidden = mode !== "practice" || (book && book.rounds === "none");
+  roundWrap.querySelector("label").textContent = book && book.rounds === "optional" ? "回（任意）" : "回";
+  el.querySelector("[data-max]").textContent = subject ? subject.max : "—";
+  el.querySelector('[data-f="score"]').max = subject ? subject.max : "";
+}
+
+function renumber() {
+  const rows = [...$("records").children];
+  rows.forEach((el, i) => {
+    el.querySelector("[data-title]").textContent = `記録 ${i + 1}`;
+    el.querySelector("[data-remove]").hidden = rows.length === 1;
+  });
+  $("addRow").hidden = rows.length >= CFG.limits.maxRows;
+}
+
+function carryOver(el) {
+  if (!el) return null;
+  const v = {};
+  for (const f of ["book", "round", "month"]) v[f] = el.querySelector(`[data-f="${f}"]`).value;
+  return v;
+}
+
+function addRow(carry) {
+  const el = $("rowTpl").content.firstElementChild.cloneNode(true);
+  const book = el.querySelector('[data-f="book"]');
+  book.append(option("", "選んでください"), ...CFG.books.map(b => option(b.id, b.name)));
+  const round = el.querySelector('[data-f="round"]');
+  round.append(option("", "選んでください"));
+  for (let n = 1; n <= CFG.roundMax; n++) round.append(option(String(n), `第${n}回`));
+  const subject = el.querySelector('[data-f="subject"]');
+  subject.append(option("", "選んでください"), ...CFG.subjects.map(s => option(s.id, `${s.name}（${s.max}点）`)));
+  const month = el.querySelector('[data-f="month"]');
+  month.append(option("", "—"), ...monthOptions().map(([v, t]) => option(v, t)));
+  if (carry) {  // 同じ問題集・回で科目だけ変えて続けて入力しやすいように引き継ぐ
+    for (const f in carry) el.querySelector(`[data-f="${f}"]`).value = carry[f];
+  }
+  el.querySelectorAll("[data-practice-only]").forEach(x => { x.hidden = mode !== "practice"; });
+  el.addEventListener("change", () => updateRow(el));
+  el.querySelector("[data-remove]").addEventListener("click", () => { el.remove(); renumber(); });
+  $("records").append(el);
+  updateRow(el);
+  renumber();
+}
+
+function setMode(next) {
+  mode = next;
+  document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
+  document.querySelectorAll("[data-practice-only]").forEach(x => { x.hidden = mode !== "practice"; });
+  $("honbanNote").hidden = mode !== "honban";
+  $("profileCard").hidden = mode === "honban" && !CFG.passphraseRequired;
+  [...$("records").children].forEach(updateRow);
+}
+
+function intOrNull(v) { return v === "" ? null : Number(v); }
+
+function collect() {
+  let ok = true;
+  const rows = [...$("records").children].map(el => {
+    const get = f => el.querySelector(`[data-f="${f}"]`).value.trim();
+    const err = el.querySelector("[data-err]");
+    const subject = CFG.subjects.find(s => s.id === get("subject"));
+    const book = CFG.books.find(b => b.id === get("book"));
+    const score = get("score");
+    const problems = [];
+    if (mode === "practice" && !book) problems.push("問題集を選んでください");
+    if (mode === "practice" && book && book.rounds === "required" && !get("round")) problems.push("回を選んでください");
+    if (!subject) problems.push("科目を選んでください");
+    else if (!/^\d+$/.test(score) || +score > subject.max) problems.push(`点数を0〜${subject.max}の整数で入力してください`);
+    const minutes = get("minutes");
+    if (mode === "practice" && minutes && (!/^\d+$/.test(minutes) || +minutes < 1 || +minutes > CFG.limits.maxMinutes)) {
+      problems.push(`所要時間は1〜${CFG.limits.maxMinutes}分で入力してください`);
+    }
+    err.textContent = problems.join(" / ");
+    if (problems.length) ok = false;
+    if (mode === "honban") return {subject: get("subject"), score: intOrNull(score)};
+    const row = {subject: get("subject"), book: get("book"), score: intOrNull(score)};
+    if (book && book.rounds !== "none" && get("round")) row.round = Number(get("round"));
+    if (minutes) row.minutes = Number(minutes);
+    if (get("month")) row.month = get("month");
+    return row;
+  });
+  return ok ? rows : null;
+}
+
+// 送信した自分の点数をこの端末に保存する（集計ページで順位・分布上の位置を表示するため）
+function saveMine(rows) {
+  let mine = [];
+  try { mine = JSON.parse(store.get("mine") || "[]"); } catch (e) { mine = []; }
+  const at = new Date().toISOString();
+  for (const r of rows) {
+    const subject = CFG.subjects.find(s => s.id === r.subject);
+    const book = CFG.books.find(b => b.id === r.book);
+    mine.push({
+      kind: mode, subject: subject.name, book: book ? book.name : "",
+      round: r.round === undefined ? null : r.round, score: r.score, at,
+    });
+  }
+  store.set("mine", JSON.stringify(mine.slice(-300)));
+}
+
+async function submit(ev) {
+  ev.preventDefault();
+  const msg = $("msg");
+  msg.textContent = "";
+  $("done").hidden = true;
+  if (!$("consent").checked) { msg.textContent = "「はじめに」の内容を確認して、同意にチェックを入れてください"; return; }
+  const body = {
+    mode,
+    code: $("codeView").textContent,
+    website: $("website").value,
+    fillMs: Math.round(performance.now() - OPENED_AT),
+  };
+  if (mode === "practice") {
+    if (!$("band").value) { msg.textContent = "学力帯（直近の模試の偏差値）を選んでください"; return; }
+    body.band = $("band").value;
+    if ($("nickname").value.trim()) body.nickname = $("nickname").value.trim();
+    else if (CFG.nickname.required || $("ranking").checked) { msg.textContent = "ニックネームを入力してください"; return; }
+    body.ranking = $("ranking").checked;
+  }
+  if (CFG.passphraseRequired) body.passphrase = $("passphrase").value;
+  const rows = collect();
+  if (!rows) { msg.textContent = "赤字の項目を確認してください"; return; }
+  body.rows = rows;
+  const btn = $("submit");
+  btn.disabled = true; btn.textContent = "送信中…";
+  try {
+    const res = await window.surveyApi.post(body);
+    if (!res.ok) { msg.textContent = res.error || "送信できませんでした"; return; }
+    if (mode === "practice") {
+      store.set("nickname", $("nickname").value.trim());
+      store.set("band", $("band").value);
+      store.set("ranking", $("ranking").checked ? "1" : "");
+    }
+    if (CFG.passphraseRequired) store.set("passphrase", $("passphrase").value);
+    saveMine(rows);
+    $("done").innerHTML = "";
+    $("done").append(`✓ ${rows.length}件の記録を送信しました。ありがとうございます！ `);
+    const a = document.createElement("a"); a.href = "results.html#mine"; a.textContent = "自分の順位と分布を見る →";
+    $("done").append(a);
+    $("done").hidden = false;
+    const keep = carryOver($("records").lastElementChild);
+    $("records").innerHTML = "";
+    addRow(keep);
+  } catch (e) {
+    msg.textContent = "通信に失敗しました。電波の良いところでもう一度送ってください";
+  } finally {
+    btn.disabled = false; btn.textContent = "送信する";
+  }
+}
+
+async function init() {
+  try {
+    CFG = await window.surveyApi.get("config");
+    if (!CFG.ok) throw new Error(CFG.error);
+  } catch (e) {
+    $("loadError").textContent = "集計サーバーにつながりませんでした。時間をおいて再読み込みしてください。";
+    $("loadError").hidden = false;
+    return;
+  }
+  const saved = store.get("code");
+  if (saved && CODE_RE.test(saved)) setCode(saved, false); else setCode(newCode(), true);
+  $("band").append(...CFG.bands.map(b => option(b.id, b.label)));
+  $("band").value = store.get("band") || "";
+  $("nickname").maxLength = CFG.nickname.maxLength;
+  $("nickname").value = store.get("nickname") || "";
+  $("ranking").checked = store.get("ranking") === "1";
+  $("nickMax").textContent = CFG.nickname.maxLength;
+  $("nickReq").textContent = CFG.nickname.required ? "必須" : "任意";
+  $("maxRows").textContent = CFG.limits.maxRows;
+  $("passWrap").hidden = !CFG.passphraseRequired;
+  $("passphrase").value = CFG.passphraseRequired ? (store.get("passphrase") || "") : "";
+  $("modeCard").hidden = !CFG.honbanEnabled;
+  document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => setMode(b.dataset.mode)));
+  $("copyCode").addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText($("codeView").textContent); $("copyCode").textContent = "コピーしました"; }
+    catch (e) { $("copyCode").textContent = "長押しでコピーしてください"; }
+  });
+  $("toggleCodeInput").addEventListener("click", () => { $("codeInputWrap").hidden = !$("codeInputWrap").hidden; });
+  $("useCode").addEventListener("click", () => {
+    const v = $("codeInput").value.trim().toUpperCase();
+    if (!CODE_RE.test(v)) { $("msg").textContent = "回答者コードは6文字の英数字です（0・O・1・I は使われていません）"; return; }
+    $("msg").textContent = "";
+    setCode(v, false);
+    $("codeInputWrap").hidden = true;
+  });
+  $("addRow").addEventListener("click", () => addRow(carryOver($("records").lastElementChild)));
+  $("form").addEventListener("submit", submit);
+  addRow(null);
+  $("form").hidden = false;
+}
+
+init();
+</script>
+</body>
+</html>

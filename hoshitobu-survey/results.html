@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#3559c7">
+<meta name="referrer" content="no-referrer">
+<title>共テ予想問題集 点数集計 — 集計</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div>
+    <h1>⭐ 共テ予想問題集 点数集計</h1>
+    <div class="community">星飛ぶの勉強部屋</div>
+  </div>
+  <nav>
+    <a href="index.html">回答する</a>
+    <a href="results.html" aria-current="page">集計を見る</a>
+  </nav>
+</header>
+<main>
+
+<div class="card">
+  <h2>集計結果</h2>
+  <div class="note" id="summary">読み込み中…</div>
+  <div class="note" style="margin-top:6px">
+    人数が<span class="minN">3</span>人未満の欄は、個人が特定されないよう「—」で表示しています。
+    同じ人が同じ回を何度か送った場合は、最初の点数だけを集計しています。
+  </div>
+</div>
+
+<div class="card" id="mineCard" hidden>
+  <h2>あなたの記録</h2>
+  <div class="note">この端末から送った点数です（この端末にだけ保存されています）。</div>
+  <div id="mine"></div>
+</div>
+
+<div class="card" id="detailCard" hidden>
+  <h2>分布と順位</h2>
+  <div class="inline">
+    <div><label>科目</label><select id="detailSubject"></select></div>
+    <div><label>問題集・回</label><select id="detailCell"></select></div>
+  </div>
+  <div class="stat-row" id="detailStats"></div>
+  <div class="myrank" id="myRank" hidden></div>
+  <div class="chart-wrap">
+    <canvas id="hist" role="img"></canvas>
+    <div class="tip" id="tip" hidden></div>
+  </div>
+  <div class="note" id="histNote"></div>
+  <button type="button" class="secondary" id="savePng">📷 分布グラフを画像（PNG）で保存</button>
+  <h3>ランキング</h3>
+  <div class="note">ニックネームは、ランキングへの掲載を希望した人だけ表示しています。</div>
+  <div class="tablewrap"><table id="rankTable"></table></div>
+  <button type="button" class="link" id="showAll" style="margin-top:8px" hidden></button>
+</div>
+
+<div class="card">
+  <h2>科目別の一覧</h2>
+  <div class="inline">
+    <div><label>科目で絞り込む</label><select id="subjectFilter"><option value="">すべての科目</option></select></div>
+    <div><label>表示</label>
+      <select id="view">
+        <option value="main">人数・平均・中央値</option>
+        <option value="bands">学力帯（偏差値）別の平均点</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<div id="honban"></div>
+<div id="practice"></div>
+
+</main>
+<style>
+  .stat-row { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 12px; }
+  .stat-row div { font-size: 11px; color: var(--sub); }
+  .stat-row b { display: block; font-size: 20px; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .myrank { margin-top: 12px; background: var(--accent-soft); border-radius: 8px; padding: 10px 12px; font-size: 13px; }
+  .myrank b { color: var(--accent); font-size: 16px; }
+  .chart-wrap { position: relative; margin-top: 12px; }
+  #hist { display: block; width: 100%; height: 240px; }
+  .tip { position: absolute; pointer-events: none; background: var(--ink); color: #fff; font-size: 12px;
+         padding: 4px 8px; border-radius: 6px; white-space: nowrap; transform: translate(-50%, -110%); }
+  .mine-item { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
+               border-bottom: 1px solid var(--line); padding: 8px 0; font-size: 13px; }
+  .mine-item:last-child { border-bottom: 0; }
+  .mine-item .what { color: var(--sub); font-size: 12px; }
+  .mine-item .rank b { color: var(--accent); }
+  td.anon { color: var(--sub); }
+  td button.link { font-size: 12px; }
+</style>
+<script src="app-config.js"></script>
+<script>
+let STATS = null, CELLS = [], MINE = [], showAll = false;
+const $ = id => document.getElementById(id);
+const DASH = "—";
+const FONT = '"Yu Gothic UI", "Hiragino Sans", sans-serif';
+const COLOR = {bar: "#a9bbeb", mine: "#3559c7", grid: "#e3e8f2", sub: "#67718a", ink: "#1c2333", surface: "#ffffff"};
+
+const keyOf = (subject, book, round) => `${subject}|${book}|${round === null || round === undefined ? "" : round}`;
+const cellLabel = c => c.book === "" ? "2027 本番（自己採点）" : c.book + (c.round === null ? "" : ` 第${c.round}回`);
+function fmt(v) { return v === null || v === undefined ? null : (Number.isInteger(v) ? v.toFixed(0) : v.toFixed(1)); }
+
+function td(text, cls) {
+  const el = document.createElement("td");
+  const empty = text === null || text === undefined;
+  el.textContent = empty ? DASH : String(text);
+  if (cls) el.className = cls;
+  if (empty) el.classList.add("hidden");
+  return el;
+}
+function th(text) { const el = document.createElement("th"); el.textContent = text; return el; }
+
+// ---- 自分の順位（順位表から計算。同点は同順位） ----
+function myRank(cell, score) {
+  if (!cell || !cell.ranking) return null;
+  const rank = 1 + cell.ranking.filter(r => r.score > score).length;
+  return {rank, n: cell.ranking.length, top: Math.max(1, Math.round(rank / cell.ranking.length * 100))};
+}
+function myFirstScore(cell) {  // サーバーと同じく、同じ回は最初に送った点数を使う
+  const m = MINE.find(x => keyOf(x.subject, x.book, x.round) === cell.key);
+  return m ? m.score : null;
+}
+
+// ---- 分布グラフ（canvas で描き、画面表示と PNG 保存で同じ処理を使う） ----
+function binsOf(cell) {
+  const w = cell.max / 10;
+  const counts = new Array(10).fill(0);
+  cell.ranking.forEach(r => { counts[Math.min(9, Math.floor(r.score / w))]++; });
+  return counts.map((count, i) => ({from: i * w, to: i === 9 ? cell.max : (i + 1) * w - 1, count}));
+}
+
+function drawHistogram(ctx, W, H, cell, mine, frame) {
+  const bins = binsOf(cell);
+  const pad = {l: 34, r: 30, t: frame ? 64 : 22, b: frame ? 58 : 30};
+  const pw = W - pad.l - pad.r, ph = H - pad.t - pad.b;
+  ctx.fillStyle = COLOR.surface;
+  ctx.fillRect(0, 0, W, H);
+  if (frame) {
+    ctx.fillStyle = COLOR.ink; ctx.font = `700 17px ${FONT}`; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+    ctx.fillText(`${cell.subject}｜${cellLabel(cell)}`, pad.l, 30);
+    ctx.fillStyle = COLOR.sub; ctx.font = `12px ${FONT}`;
+    ctx.fillText(`点数分布（${cell.n}人・${cell.max}点満点）　平均 ${fmt(cell.mean)}点　中央値 ${fmt(cell.median)}点`, pad.l, 50);
+    ctx.textAlign = "right";
+    ctx.fillText("星飛ぶの勉強部屋　共テ予想問題集 点数集計", W - pad.r, H - 12);
+  }
+  const maxCount = Math.max(...bins.map(b => b.count));
+  const step = Math.max(1, Math.ceil(maxCount / 4));
+  const top = step * Math.ceil(maxCount / step);
+  ctx.font = `11px ${FONT}`; ctx.textBaseline = "middle"; ctx.textAlign = "right";
+  for (let v = 0; v <= top; v += step) {  // 控えめな目盛り線
+    const y = pad.t + ph - v / top * ph;
+    ctx.strokeStyle = COLOR.grid; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad.l, Math.round(y) + .5); ctx.lineTo(pad.l + pw, Math.round(y) + .5); ctx.stroke();
+    ctx.fillStyle = COLOR.sub; ctx.fillText(String(v), pad.l - 6, y);
+  }
+  ctx.textBaseline = "top"; ctx.textAlign = "left"; ctx.fillText("人", 4, pad.t - 16);
+  const slot = pw / bins.length;
+  const mineBin = mine === null ? -1 : Math.min(9, Math.floor(mine / (cell.max / 10)));
+  bins.forEach((b, i) => {
+    if (!b.count || slot <= 2) return;
+    const h = b.count / top * ph, x = pad.l + i * slot + 1, w = slot - 2, y = pad.t + ph - h;  // 棒の間に2pxの隙間
+    const r = Math.max(0, Math.min(4, h, w / 2));
+    ctx.fillStyle = i === mineBin ? COLOR.mine : COLOR.bar;
+    ctx.beginPath();
+    ctx.moveTo(x, pad.t + ph); ctx.lineTo(x, y + r); ctx.arcTo(x, y, x + r, y, r);
+    ctx.lineTo(x + w - r, y); ctx.arcTo(x + w, y, x + w, y + r, r); ctx.lineTo(x + w, pad.t + ph);
+    ctx.closePath(); ctx.fill();
+  });
+  ctx.fillStyle = COLOR.sub; ctx.textAlign = "center"; ctx.textBaseline = "top";
+  const every = slot < 30 ? 2 : 1;  // 狭い画面では目盛りラベルを間引く
+  for (let i = 0; i <= bins.length; i += every) {
+    ctx.fillText(String(i === bins.length ? cell.max : bins[i].from), pad.l + i * slot, pad.t + ph + 6);
+  }
+  ctx.textAlign = "right"; ctx.fillText("点", W - 2, pad.t + ph + 6);
+  // 平均点の線
+  const mx = pad.l + cell.mean / cell.max * pw;
+  ctx.strokeStyle = COLOR.ink; ctx.lineWidth = 1.5; ctx.setLineDash([4, 3]);
+  ctx.beginPath(); ctx.moveTo(mx, pad.t - 4); ctx.lineTo(mx, pad.t + ph); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = COLOR.ink; ctx.font = `700 11px ${FONT}`; ctx.textBaseline = "bottom";
+  const label = `平均 ${fmt(cell.mean)}`;
+  ctx.textAlign = mx > pad.l + pw - 60 ? "right" : "left";
+  ctx.fillText(label, mx + (ctx.textAlign === "left" ? 4 : -4), pad.t - 4);
+  return {pad, slot, bins, pw, ph, top};
+}
+
+let GEOM = null;
+function renderChart(cell) {
+  const canvas = $("hist");
+  // 非表示中は幅0になるため、最低幅を確保して描く（表示後の resize で描き直す）
+  const W = Math.max(280, canvas.clientWidth), H = Math.max(200, canvas.clientHeight), dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  GEOM = drawHistogram(ctx, W, H, cell, myFirstScore(cell), false);
+  canvas.setAttribute("aria-label", `${cell.subject} ${cellLabel(cell)} の点数分布。` +
+    GEOM.bins.map(b => `${b.from}〜${b.to}点 ${b.count}人`).join("、"));
+}
+
+function showTip(ev) {
+  const cell = currentCell();
+  if (!cell || !GEOM) return;
+  const rect = $("hist").getBoundingClientRect();
+  const x = ev.clientX - rect.left;
+  const i = Math.floor((x - GEOM.pad.l) / GEOM.slot);
+  const tip = $("tip");
+  if (i < 0 || i >= GEOM.bins.length) { tip.hidden = true; return; }
+  const b = GEOM.bins[i];
+  tip.textContent = `${b.from}〜${b.to}点：${b.count}人`;
+  tip.style.left = `${GEOM.pad.l + (i + .5) * GEOM.slot}px`;
+  tip.style.top = `${GEOM.pad.t + GEOM.ph - b.count / GEOM.top * GEOM.ph}px`;
+  tip.hidden = false;
+}
+
+function savePng() {
+  const cell = currentCell();
+  const W = 640, H = 360, k = 1200 / W;  // 1200×675（動画・SNS向けの16:9）
+  const canvas = document.createElement("canvas");
+  canvas.width = W * k; canvas.height = H * k;
+  const ctx = canvas.getContext("2d");
+  ctx.scale(k, k);
+  drawHistogram(ctx, W, H, cell, myFirstScore(cell), true);
+  canvas.toBlob(blob => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `点数分布_${cell.subject}_${cellLabel(cell).replace(/\s+/g, "_")}.png`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }, "image/png");
+}
+
+// ---- 分布と順位カード ----
+function currentCell() { return CELLS.find(c => c.key === $("detailCell").value) || null; }
+
+function fillCellSelect(subject, selectKey) {
+  const sel = $("detailCell");
+  sel.innerHTML = "";
+  CELLS.filter(c => c.subject === subject).forEach(c => {
+    const o = document.createElement("option"); o.value = c.key; o.textContent = cellLabel(c); sel.append(o);
+  });
+  if (selectKey) sel.value = selectKey;
+}
+
+function renderDetail() {
+  const cell = currentCell();
+  if (!cell) return;
+  $("detailStats").innerHTML = "";
+  [["人数", `${cell.n}人`], ["平均点", fmt(cell.mean)], ["中央値", fmt(cell.median)],
+   ["最高点", cell.ranking[0].score], ["満点", cell.max]].forEach(([k, v]) => {
+    const d = document.createElement("div"); d.textContent = k;
+    const b = document.createElement("b"); b.textContent = v; d.append(b); $("detailStats").append(d);
+  });
+  const mine = myFirstScore(cell);
+  const r = mine === null ? null : myRank(cell, mine);
+  $("myRank").hidden = !r;
+  if (r) {
+    $("myRank").innerHTML = "";
+    $("myRank").append(`あなた（${mine}点）: ${r.n}人中 `);
+    const b = document.createElement("b"); b.textContent = `${r.rank}位`; $("myRank").append(b, `・上位${r.top}%`);
+  }
+  $("histNote").textContent = mine === null
+    ? "棒にカーソルを合わせる（タップする）と人数が出ます。点線は平均点です。"
+    : "濃い棒があなたの点数が入る区間です。点線は平均点です。";
+  const t = $("rankTable");
+  t.innerHTML = "";
+  const head = document.createElement("tr");
+  head.append(th("順位"), th("ニックネーム"), th("点数"));
+  t.append(head);
+  const rows = showAll ? cell.ranking : cell.ranking.slice(0, 10);
+  rows.forEach(e => {
+    const tr = document.createElement("tr");
+    tr.append(td(`${e.rank}位`), td(e.nickname || "匿名", e.nickname ? "" : "anon"), td(e.score, "num"));
+    t.append(tr);
+  });
+  $("showAll").hidden = cell.ranking.length <= 10;
+  $("showAll").textContent = showAll ? "上位10人だけ表示" : `すべて表示（${cell.ranking.length}人）`;
+  renderChart(cell);
+}
+
+function openDetail(key) {
+  const cell = CELLS.find(c => c.key === key);
+  if (!cell) return;
+  $("detailSubject").value = cell.subject;
+  fillCellSelect(cell.subject, key);
+  showAll = false;
+  renderDetail();
+  $("detailCard").scrollIntoView({behavior: "smooth", block: "start"});
+}
+
+// ---- あなたの記録 ----
+function renderMine() {
+  const firsts = [], seen = new Set();
+  MINE.forEach(m => {
+    const k = keyOf(m.subject, m.book, m.round);
+    if (!seen.has(k)) { seen.add(k); firsts.push({...m, key: k}); }
+  });
+  if (!firsts.length) return;
+  $("mineCard").hidden = false;
+  firsts.reverse().forEach(m => {
+    const cell = CELLS.find(c => c.key === m.key);
+    const item = document.createElement("div");
+    item.className = "mine-item";
+    const left = document.createElement("div");
+    const what = document.createElement("div"); what.className = "what";
+    what.textContent = `${m.subject}｜${m.kind === "honban" ? "2027 本番（自己採点）" : m.book + (m.round === null ? "" : ` 第${m.round}回`)}`;
+    const rank = document.createElement("div"); rank.className = "rank";
+    const r = cell ? myRank(cell, m.score) : null;
+    if (r) {
+      rank.append(`${m.score}点 → ${r.n}人中 `);
+      const b = document.createElement("b"); b.textContent = `${r.rank}位`;
+      rank.append(b, `（上位${r.top}%・平均 ${fmt(cell.mean)}点）`);
+    } else {
+      rank.textContent = `${m.score}点 → 集計中（${STATS.minN}人以上集まると順位が出ます）`;
+    }
+    left.append(what, rank);
+    item.append(left);
+    if (cell) {
+      const btn = document.createElement("button");
+      btn.type = "button"; btn.className = "link"; btn.textContent = "分布を見る";
+      btn.addEventListener("click", () => openDetail(cell.key));
+      item.append(btn);
+    }
+    $("mine").append(item);
+  });
+}
+
+// ---- 科目別の一覧 ----
+function table(rows, firstCols, view) {
+  const wrap = document.createElement("div");
+  wrap.className = "tablewrap";
+  const t = document.createElement("table");
+  const head = document.createElement("tr");
+  firstCols.forEach(c => head.append(th(c.label)));
+  if (view === "bands") STATS.bandLabels.forEach(b => head.append(th(b)));
+  else head.append(th("人数"), th("平均点"), th("中央値"), th(""));
+  t.append(head);
+  for (const r of rows) {
+    const tr = document.createElement("tr");
+    firstCols.forEach(c => tr.append(td(c.get(r))));
+    if (view === "bands") r.bands.forEach(b => tr.append(td(fmt(b.mean), "num")));
+    else {
+      tr.append(td(r.n, "num"), td(fmt(r.mean), "num"), td(fmt(r.median), "num"));
+      const cell = document.createElement("td");
+      if (r.ranking) {
+        const btn = document.createElement("button");
+        btn.type = "button"; btn.className = "link"; btn.textContent = "分布・順位";
+        btn.addEventListener("click", () => openDetail(r.key));
+        cell.append(btn);
+      }
+      tr.append(cell);
+    }
+    t.append(tr);
+  }
+  wrap.append(t);
+  return wrap;
+}
+
+function card(title, sub, content) {
+  const c = document.createElement("div");
+  c.className = "card";
+  const h = document.createElement("h2");
+  h.textContent = title;
+  c.append(h);
+  if (sub) { const n = document.createElement("div"); n.className = "note"; n.textContent = sub; c.append(n); }
+  c.append(content);
+  return c;
+}
+
+function renderList() {
+  const filter = $("subjectFilter").value;
+  const view = $("view").value;
+  const honban = STATS.honban.filter(r => !filter || r.subject === filter);
+  $("honban").innerHTML = "";
+  if (honban.length) {
+    $("honban").append(card("2027 本番の自己採点", view === "bands" ? "学力帯は、同じ回答者コードで送られた予想問題集の記録から集計しています" : "",
+      table(honban, [{label: "科目", get: r => `${r.subject}（${r.max}点）`}], view)));
+  }
+  $("practice").innerHTML = "";
+  const subjects = [...new Set(STATS.practice.map(r => r.subject))].filter(s => !filter || s === filter);
+  for (const s of subjects) {
+    const rows = STATS.practice.filter(r => r.subject === s);
+    $("practice").append(card(`${s}（${rows[0].max}点満点）`, view === "bands" ? "学力帯別の平均点" : "",
+      table(rows, [
+        {label: "問題集", get: r => r.book},
+        {label: "回", get: r => r.round === null ? "" : `第${r.round}回`},
+      ], view)));
+  }
+  if (!honban.length && !subjects.length) {
+    const p = document.createElement("div");
+    p.className = "note";
+    p.textContent = "まだ集計できる記録がありません。";
+    $("practice").append(card("記録", "", p));
+  }
+}
+
+async function init() {
+  try {
+    STATS = await window.surveyApi.get("stats");
+    if (!STATS.ok) throw new Error(STATS.error);
+  } catch (e) {
+    $("summary").textContent = "集計サーバーにつながりませんでした。時間をおいて再読み込みしてください。";
+    return;
+  }
+  try { MINE = JSON.parse(localStorage.getItem("hoshitobu-survey:mine") || "[]"); } catch (e) { MINE = []; }
+  STATS.practice.forEach(c => { c.key = keyOf(c.subject, c.book, c.round); });
+  STATS.honban.forEach(c => { c.book = ""; c.round = null; c.key = keyOf(c.subject, "", null); });
+  CELLS = [...STATS.honban, ...STATS.practice].filter(c => c.ranking);
+  STATS.bandLabels = (STATS.practice[0] || STATS.honban[0] || {bands: []}).bands.map(b => b.band);
+  document.querySelectorAll(".minN").forEach(el => { el.textContent = STATS.minN; });
+  const updated = STATS.generatedAt ? new Date(STATS.generatedAt).toLocaleString("ja-JP") : "";
+  $("summary").textContent = (STATS.respondents === null
+    ? "回答者数: " + DASH : `回答者数: ${STATS.respondents}人`) + (updated ? `（${updated} 時点）` : "");
+
+  const subjects = [...new Set([...STATS.honban, ...STATS.practice].map(r => r.subject))];
+  $("subjectFilter").append(...subjects.map(s => { const o = document.createElement("option"); o.value = o.textContent = s; return o; }));
+  $("subjectFilter").addEventListener("change", renderList);
+  $("view").addEventListener("change", renderList);
+  renderList();
+  renderMine();
+
+  if (CELLS.length) {
+    const detailSubjects = [...new Set(CELLS.map(c => c.subject))];
+    $("detailSubject").append(...detailSubjects.map(s => { const o = document.createElement("option"); o.value = o.textContent = s; return o; }));
+    $("detailSubject").addEventListener("change", () => { fillCellSelect($("detailSubject").value); showAll = false; renderDetail(); });
+    $("detailCell").addEventListener("change", () => { showAll = false; renderDetail(); });
+    $("showAll").addEventListener("click", () => { showAll = !showAll; renderDetail(); });
+    $("savePng").addEventListener("click", savePng);
+    $("hist").addEventListener("pointermove", showTip);
+    $("hist").addEventListener("pointerdown", showTip);
+    $("hist").addEventListener("pointerleave", () => { $("tip").hidden = true; });
+    window.addEventListener("resize", () => { const c = currentCell(); if (c) renderChart(c); });
+    // 自分の記録があればその回、なければ人数の多い回を最初に表示する
+    const mineCell = MINE.map(m => CELLS.find(c => c.key === keyOf(m.subject, m.book, m.round))).filter(Boolean).pop();
+    const first = mineCell || [...CELLS].sort((a, b) => b.n - a.n)[0];
+    $("detailCard").hidden = false;
+    $("detailSubject").value = first.subject;
+    fillCellSelect(first.subject, first.key);
+    renderDetail();
+  }
+  if (location.hash === "#mine" && !$("mineCard").hidden) $("mineCard").scrollIntoView();
+}
+
+init();
+</script>
+</body>
+</html>
