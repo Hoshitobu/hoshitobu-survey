@@ -43,8 +43,9 @@
   L.profile = () => ({
     code: ls.get("hoshitobu-link:code") || ls.get("hoshitobu-survey:code") || "",
     band: ls.get("hoshitobu-link:band") || ls.get("hoshitobu-survey:band") || "",
-    nickname: ls.get("hoshitobu-link:nickname") || "",
-    ranking: ls.get("hoshitobu-link:ranking") === "1",
+    // 回答フォーム（index.html）で入れたニックネーム・ランキング掲載も引き継ぐ
+    nickname: ls.get("hoshitobu-link:nickname") ?? ls.get("hoshitobu-survey:nickname") ?? "",
+    ranking: (ls.get("hoshitobu-link:ranking") ?? ls.get("hoshitobu-survey:ranking")) === "1",
     consent: ls.get("hoshitobu-link:consent") === "1",
     auto: ls.get("hoshitobu-link:auto") === "1",
   });
@@ -115,7 +116,9 @@
                                         rank: null, top: null, siteMean: null, siteDev: null, natDev: null, natMean: null, natKind: "", review: []};
     const st = popStats(cell.ranking.map(r => r.score));
     const rank = 1 + cell.ranking.filter(r => r.score > score).length;
-    const out = {cell, ok: true, n: st.n, rank, top: Math.max(1, Math.round(rank / st.n * 100)), siteMean: st.m,
+    // of＝何人の中での順位か（自分の点数がまだ集計に入っていないときは、自分を足した人数）
+    const of = Math.max(st.n, rank);
+    const out = {cell, ok: true, n: st.n, of, rank, top: Math.max(1, Math.round(rank / of * 100)), siteMean: st.m,
                  siteDev: st.sd > 0 ? 50 + 10 * (score - st.m) / st.sd : null, natDev: null, natMean: null, natKind: ""};
     const n = nat && nat[book] && nat[book][subject];
     if (n) { out.natDev = 50 + 10 * (score - n.mean) / n.sd; out.natMean = n.mean; out.natKind = "全国（実際の本試）"; }
@@ -192,11 +195,22 @@
     }
     return {rows, skipped};
   };
-  /** 過去問演習（kakomon）の記録 → 点数集計の行 */
-  L.rowsFromKakomon = (exam, rec) => [{
-    subject: exam.part === "IA" ? "math1a" : "math2bc", book: "honshi" + exam.year, score: Math.round(rec.total),
-    sections: rec.per.map(p => ({q: p.q, score: Math.round(p.got), max: Math.round(p.max)})),
-  }];
+  /** 過去問演習（kakomon）の記録 → 点数集計の行。大問ごとは、合計と合うとき（全部採点した／入れた大問だけのとき）に付ける。
+   *  設問ごとの ○×（items）は、設問の並びと同じ順に o・x・-（つけていない・選ばなかった）を並べた文字列 */
+  L.rowsFromKakomon = (exam, rec) => {
+    const s = exam.survey;
+    if (!s || !s.subjectId || !s.bookId) return [];
+    const row = {subject: s.subjectId, book: s.bookId, score: Math.round(rec.total)};
+    if (s.round) row.round = s.round;
+    const sec = exam.mode === "sections";
+    const per = (rec.per || []).filter(p => p.max && (sec ? p.done : p.done === p.all))
+      .map(p => ({q: p.q, score: Math.round(p.got), max: Math.round(p.max)}));
+    if (per.length && per.reduce((a, x) => a + x.score, 0) === row.score) row.sections = per;
+    if (!sec && exam.items && exam.items.length && rec.marks && Object.keys(rec.marks).length) {
+      row.items = exam.items.map((_, i) => rec.marks[i] === "o" || rec.marks[i] === "x" ? rec.marks[i] : "-").join("");
+    }
+    return [row];
+  };
 
   /** 点数集計の設定（行の大問ごとを受け付けるか）に合わせて、受け付けない大問ごとを外す */
   L.fitRows = async rows => {
@@ -207,6 +221,9 @@
       const tpl = book.sections ? (book.sections[subject.id] || null) : (cfg.sectionGroups || []).includes(book.group) ? (cfg.sections || {})[subject.id] : null;
       const out = {...r};
       if (!tpl || !r.sections || r.sections.some(x => x.q > tpl.length)) delete out.sections;
+      // 設問ごとの ○× は、点数集計がその問題集・科目の設問の数を知っているときだけ（古い Apps Script では送らない）
+      const nItems = book.items ? book.items[subject.id] : null;
+      if (!nItems || !r.items || r.items.length !== nItems) delete out.items;
       if (book.rounds === "none") delete out.round;
       return out;
     }).filter(Boolean);

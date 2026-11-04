@@ -7,7 +7,7 @@
 <meta name="referrer" content="no-referrer">
 <title>過去問演習 — 星飛ぶの勉強部屋</title>
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="kakomon/kakomon.css?v=20261104b">
+<link rel="stylesheet" href="kakomon/kakomon.css?v=20261105a">
 <style>
   /* このページだけ：本文を広めにとる（採点と時計を左右に並べるため） */
   body { background: #f5f6fa; }
@@ -37,10 +37,10 @@
   <div id="kakomon"></div>
 </main>
 <script src="app-config.js"></script>
-<script src="national-stats.js?v=20261104b"></script>
-<script src="kakomon/kakomon-data.js?v=20261104b"></script>
-<script src="kakomon/hoshitobu-link.js?v=20261104b"></script>
-<script src="kakomon/kakomon-core.js?v=20261104b"></script>
+<script src="national-stats.js?v=20261105a"></script>
+<script src="kakomon/kakomon-data.js?v=20261105a"></script>
+<script src="kakomon/hoshitobu-link.js?v=20261105a"></script>
+<script src="kakomon/kakomon-core.js?v=20261105a"></script>
 <script>
 // 公開サイト用の host：記録はこの端末のブラウザに保存、仲間の偏差値と予想問題集の比べる相手は「点数集計」から
 (function () {
@@ -57,15 +57,11 @@
   const BANDS = [["lt50", "〜50"], ["50_55", "50〜55"], ["55_60", "55〜60"], ["60_65", "60〜65"], ["65_70", "65〜70"], ["70up", "70以上"], ["unknown", "わからない"]];
   const esc = s => String(s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
 
-  // 点数集計に送れるのは、点数集計にある問題集・科目（数学ⅠA・ⅡBC の本試と予想問題集）
-  const sendable = exam => exam.kind === "workbook" || (exam.year >= 2023);
-  function rowsOf(exam, rec) {
-    if (exam.kind === "workbook") {
-      return [{subject: exam.part === "IA" ? "math1a" : "math2bc", book: exam.book, round: exam.round, score: Math.round(rec.total),
-               sections: rec.per.filter(p => p.done).map(p => ({q: p.q, score: Math.round(p.got), max: Math.round(p.max)}))}];
-    }
-    return LINK.rowsFromKakomon(exam, rec);
-  }
+  // 点数集計に送れるのは、点数集計にある問題集・科目（kakomon-data.js の survey に書いてある）
+  const sendable = exam => !!(exam.survey && exam.survey.bookId && exam.survey.subjectId);
+  const rowsOf = (exam, rec) => LINK.rowsFromKakomon(exam, rec);
+  // 全国の数字がない試験（予想問題集・追試・正答率のない年度）は、送ってもらうと比べる相手が増えるので、はじめからチェックを入れる
+  const wantsSend = exam => exam.kind === "workbook" || !exam.dist || (exam.items || []).some(it => it[3] === null);
 
   const host = {
     kind: "public",
@@ -83,7 +79,9 @@
           if (!extras.consent) throw new Error("同意にチェックを入れてください");
           if (!extras.band) throw new Error("学力帯を選んでください");
           const p = LINK.profile();
-          LINK.saveProfile({band: extras.band, consent: true, code: LINK.CODE_RE.test(p.code) ? p.code : LINK.newCode()});
+          if (extras.ranking && !extras.nickname) throw new Error("ランキングに載せるにはニックネームを入れてください");
+          LINK.saveProfile({band: extras.band, consent: true, code: LINK.CODE_RE.test(p.code) ? p.code : LINK.newCode(),
+                            nickname: extras.nickname, ranking: extras.ranking && !!extras.nickname});
           const rows = await LINK.fitRows(rowsOf(exam, rec));
           await LINK.send(rows);
           message = `点数集計にも送りました（回答者コード ${LINK.profile().code}）。`;
@@ -107,23 +105,27 @@
     saveOptions(exam) {
       if (!sendable(exam)) return "";
       const p = LINK.profile();
-      return `<div class="kk-sendbox"><label class="kk-opt"><input type="checkbox" id="kk-tosurvey"${exam.kind === "workbook" ? " checked" : ""}>この点数を「点数集計」にも送る（匿名）</label>` +
+      return `<div class="kk-sendbox"><label class="kk-opt"><input type="checkbox" id="kk-tosurvey"${wantsSend(exam) ? " checked" : ""}>この点数を「点数集計」にも送る（匿名）</label>` +
         `<div class="kk-sendmore"><span>学力帯（直近の模試の偏差値）</span><select id="kk-band"><option value="">選んでください</option>` +
         BANDS.map(([id, label]) => `<option value="${id}"${p.band === id ? " selected" : ""}>${esc(label)}</option>`).join("") + `</select>` +
         `<label class="kk-opt" style="margin:0"><input type="checkbox" id="kk-consent"${p.consent ? " checked" : ""}>匿名で集計し、YouTube『星飛ぶ』の動画で使用することに同意する</label>` +
+        `<span>ニックネーム（任意・12文字まで）</span><input type="text" id="kk-nick" maxlength="12" autocomplete="off" placeholder="例: ほしのこ" value="${esc(p.nickname)}">` +
+        `<label class="kk-opt" style="margin:0"><input type="checkbox" id="kk-ranking"${p.ranking ? " checked" : ""}>ニックネームを集計ページのランキングに載せる</label>` +
         `<span class="kk-faint">回答者コード：${p.code ? esc(p.code) : "初めて送るときに作ります"}（回答フォームと同じコード）</span></div></div>`;
     },
     readSaveOptions(root) {
       const v = id => root.querySelector(id);
       return {toSurvey: !!(v("#kk-tosurvey") && v("#kk-tosurvey").checked), band: v("#kk-band") ? v("#kk-band").value : "",
-              consent: !!(v("#kk-consent") && v("#kk-consent").checked)};
+              consent: !!(v("#kk-consent") && v("#kk-consent").checked),
+              nickname: v("#kk-nick") ? v("#kk-nick").value.trim() : "", ranking: !!(v("#kk-ranking") && v("#kk-ranking").checked)};
     },
     hostNote(exam) {
-      return exam.kind === "workbook"
-        ? "予想問題集は、点数集計に集まった点数（このサイトの利用者）と比べます。本番換算は、このサイトの人が過去問の本試を解いたときの位置から推定しています。記録は、この端末のブラウザに保存されます。"
-        : exam.survey
-          ? `「このサイトの利用者の中での偏差値」は、点数集計の「${esc(exam.survey.subject)}・${esc(exam.survey.book)}」から出しています。記録は、この端末のブラウザにだけ保存されます。`
-          : "記録は、この端末のブラウザにだけ保存されます（ほかの端末からは見えません）。";
+      const where = exam.survey ? `点数集計の「${esc(exam.survey.subject)}・${esc(exam.survey.book)}${exam.survey.round ? `・第${exam.survey.round}回` : ""}」` : "点数集計";
+      if (exam.kind === "workbook") return `予想問題集は、${where}に集まった点数（このサイトの利用者）と比べます。本番換算は、このサイトの人が過去問の本試を解いたときの位置から推定しています。記録は、この端末のブラウザに保存されます。`;
+      if (exam.dist) return `「このサイトの利用者の中での偏差値」は、${where}から出しています。記録は、この端末のブラウザにだけ保存されます。`;
+      return `順位・このサイトの中での偏差値${(exam.items || []).some(it => it[3] === null) ? "・みんなの正答率" : ""}は、${where}に送られた記録から出しています。` +
+        (exam.mean !== null && exam.mean !== undefined ? "全国偏差値は、センターが公表した平均点・標準偏差から出しています。" : "全国の平均点が公表されていないので、偏差値は本番換算（推定）です。") +
+        "記録は、この端末のブラウザにだけ保存されます。";
     },
   };
   const want = new URLSearchParams(location.search).get("exam");
