@@ -108,7 +108,9 @@
   /** 点数集計のひと欄（科目×問題集×回）の中での、ある点数の位置 */
   L.report = (stats, nat, subject, book, round, score, sections) => {
     const cell = stats.practice.find(c => c.subject === subject && c.book === book && (c.round === null ? round === null || round === undefined : c.round === round));
-    if (!cell || !cell.ranking) return {cell: cell || null, ok: false, n: cell ? cell.n : 0, minN: stats.minN};
+    // 記録が少ない（3人未満）ときは、数字を出さない（値はすべて null にそろえる）
+    if (!cell || !cell.ranking) return {cell: cell || null, ok: false, n: cell ? cell.n : 0, minN: stats.minN,
+                                        rank: null, top: null, siteMean: null, siteDev: null, natDev: null, natMean: null, natKind: "", review: []};
     const st = popStats(cell.ranking.map(r => r.score));
     const rank = 1 + cell.ranking.filter(r => r.score > score).length;
     const out = {cell, ok: true, n: st.n, rank, top: Math.max(1, Math.round(rank / st.n * 100)), siteMean: st.m,
