@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#3559c7">
+<meta name="referrer" content="no-referrer">
+<title>過去問演習 — 星飛ぶの勉強部屋</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="kakomon/kakomon.css">
+<style>
+  /* このページだけ：本文を広めにとる（採点と時計を左右に並べるため） */
+  body { background: #f5f6fa; }
+  main.kk-page { max-width: 1180px; padding-top: 22px; }
+  .kk-title { margin: 4px 4px 18px; }
+  .kk-title h2 { font-size: 22px; color: #141a2b; margin: 0 0 4px; letter-spacing: .01em; }
+  .kk-title p { margin: 0; color: #5d6680; font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>⭐ 共テ予想問題集 点数集計</h1>
+    <div class="community">星飛ぶの勉強部屋</div>
+  </div>
+  <nav>
+    <a href="index.html">回答する</a>
+    <a href="results.html">集計を見る</a>
+    <a href="kakomon.html" aria-current="page">過去問演習</a>
+  </nav>
+</header>
+<main class="kk-page">
+  <div class="kk-title">
+    <h2>過去問演習</h2>
+    <p>時間をはかって解き、○× で自己採点すると、全国の偏差値・順位と、どこで落としたかが出ます。</p>
+  </div>
+  <div id="kakomon"></div>
+</main>
+<script src="app-config.js"></script>
+<script src="kakomon/kakomon-data.js"></script>
+<script src="kakomon/kakomon-core.js"></script>
+<script>
+// 公開サイト用の host：記録はこの端末のブラウザに保存、仲間の偏差値は「点数集計」から
+(function () {
+  const P = "kakomon.";
+  const ls = {
+    get(k) { try { return localStorage.getItem(P + k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(P + k, v); } catch (e) {} },
+  };
+  const read = id => { try { return JSON.parse(ls.get(id + ".history") || "[]"); } catch (e) { return []; } };
+  const write = (id, h) => ls.set(id + ".history", JSON.stringify(h.slice(-100)));
+  let STATS = null;
+  const stats = () => STATS || (STATS = window.surveyApi ? window.surveyApi.get("stats") : Promise.reject(new Error("no api")));
+
+  const host = {
+    kind: "public",
+    peerLabel: "このサイトの利用者の中での偏差値",
+    store: ls,
+    loadHistory() { return Object.fromEntries((window.KAKOMON_EXAMS || []).map(e => [e.id, read(e.id)])); },
+    async saveRecord(exam, rec) {
+      const h = read(exam.id).filter(r => r.at !== rec.replaces);   // 同じ回を記録し直したときは上書き
+      const {replaces, ...clean} = rec;
+      h.push(clean); write(exam.id, h);
+      return {history: read(exam.id), message: ""};
+    },
+    async deleteRecord(exam, at) { write(exam.id, read(exam.id).filter(r => r.at !== at)); return {history: read(exam.id)}; },
+    async peers(exam) {
+      const label = "このサイトの利用者の中での偏差値";
+      if (!exam.survey) return {label, scores: null, empty: "この年度は集計の対象外です"};
+      const r = await stats();
+      const cell = (r.practice || []).find(c => c.subject === exam.survey.subject && c.book === exam.survey.book);
+      // 3人未満の欄は集計側で隠される（ranking が null）
+      const scores = cell && cell.ranking ? cell.ranking.map(x => +x.score).filter(x => isFinite(x)) : [];
+      return {label, scores, minN: 10, fewText: n => n === 0 ? "集計はまだ3人未満" : `集計 ${n}人`};
+    },
+    hostNote(exam) {
+      return exam.survey
+        ? `この点数を「点数集計」にも入れる場合は、<a href="index.html">回答する</a>のページで、科目「${exam.survey.subject}」・問題集「${exam.survey.book}」を選んで送ってください。「このサイトの利用者の中での偏差値」は、その集計から出しています。記録は、この端末のブラウザにだけ保存されます。`
+        : "記録は、この端末のブラウザにだけ保存されます（ほかの端末からは見えません）。";
+    },
+  };
+  const want = new URLSearchParams(location.search).get("exam");
+  window.KAKOMON = window.Kakomon.mount(document.getElementById("kakomon"), {
+    exams: window.KAKOMON_EXAMS, stages: window.KAKOMON_STAGES, host, initialExam: want || null,
+  });
+})();
+</script>
+</body>
+</html>
