@@ -182,11 +182,17 @@
       if (m && WB_ON) { const w = workbookExam(m[1], m[2], +m[3]); if (w) return w; }
       return EXAMS.find(e => e.id === id) || EXAMS[0];
     }
-    function loadWB() {   // 予想問題集は、点数集計（Apps Script）の数字で比べる
-      if (WBS || !window.HoshitobuLink) { if (!window.HoshitobuLink) WBS = {error: true}; return; }
+    function loadWB(tries) {   // 予想問題集は、点数集計（Apps Script）の数字で比べる
+      if (!window.HoshitobuLink) { WBS = {error: true}; return; }
+      if (WBS && !WBS.error && tries === undefined) return;
       WBS = {loading: true};
-      window.HoshitobuLink.stats().then(st => { WBS = {stats: st}; if (WB) { drawMini(); drawReport(); } })
-        .catch(() => { WBS = {error: true}; if (WB) { drawMini(); drawReport(); } });
+      window.HoshitobuLink.stats(true).then(st => { WBS = {stats: st}; if (WB) { drawMini(); drawReport(); } })
+        .catch(() => {
+          // 一時的に読めないことがあるので、少し間をおいて2回まで読み直す
+          const n = (tries || 0) + 1;
+          if (n <= 2) { setTimeout(() => loadWB(n), 2500 * n); return; }
+          WBS = {error: true}; if (WB) { drawMini(); drawReport(); }
+        });
     }
     function loadExam(id) {
       E = examById(id);
