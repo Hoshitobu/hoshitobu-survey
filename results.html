@@ -32,7 +32,7 @@
 
 <div class="card" id="mineCard" hidden>
   <h2>あなたの記録</h2>
-  <div class="note">この端末から送った点数です（この端末にだけ保存されています）。</div>
+  <div class="note">この端末から送った点数です（この端末にだけ保存されています）。「成績表を見る」で、順位・偏差値・平均点と、本番に直した偏差値、復習すべき大問が出ます。</div>
   <div id="mine"></div>
 </div>
 
@@ -89,9 +89,29 @@
   .mine-item .what { color: var(--sub); font-size: 12px; }
   .mine-item .rank b { color: var(--accent); }
   td.anon { color: var(--sub); }
+  /* 成績表 */
+  details.report { margin: 2px 0 10px; border: 1px solid var(--line); border-radius: 10px; background: #fbfcfe; }
+  details.report > summary { cursor: pointer; padding: 9px 12px; font-size: 13px; font-weight: 700; color: var(--accent); }
+  .report .body { padding: 2px 12px 12px; }
+  .report .kpis { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+  .report .kpi { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+  .report .kpi.main { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .report .kpi .k { font-size: 11px; color: var(--sub); }
+  .report .kpi.main .k, .report .kpi.main .s { color: rgba(255,255,255,.85); }
+  .report .kpi .v { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.25; }
+  .report .kpi .v small { font-size: 12px; font-weight: 500; opacity: .75; }
+  .report .kpi .s { font-size: 11px; color: var(--sub); }
+  .report h4 { font-size: 13px; margin: 14px 0 4px; }
+  .report table td, .report table th { padding: 6px 6px; }
+  .report .gap { font-weight: 700; color: var(--warn); }
+  .report .good { font-weight: 700; color: var(--ok); }
+  .report ul.review { margin: 4px 0 0; padding-left: 18px; font-size: 13px; }
+  .report ul.review li { margin: 2px 0; }
+  .report .tag { font-size: 11px; font-weight: 700; color: var(--warn); background: #fdeeee; border-radius: 999px; padding: 1px 7px; margin-left: 4px; }
   td button.link { font-size: 12px; }
 </style>
 <script src="app-config.js"></script>
+<script src="national-stats.js"></script>
 <script>
 let STATS = null, CELLS = [], MINE = [], showAll = false;
 const $ = id => document.getElementById(id);
@@ -289,6 +309,100 @@ function openDetail(key) {
   $("detailCard").scrollIntoView({behavior: "smooth", block: "start"});
 }
 
+// ---- 成績表（予備校の成績表のように：順位・偏差値・平均点、本番換算、大問ごとの復習の提案） ----
+const NAT = window.NATIONAL_STATS || {};   // 共通テスト本試の全国の平均点・標準偏差・大問ごとの平均（センター公表）
+const ANCHOR_MIN = 10;                      // 本番換算に使う「過去問本試の記録」の最低人数
+const GAP = 15;                              // 復習の候補にする、得点率の差（ポイント）
+let ANCHORS = {};
+
+function popStats(xs) {
+  const n = xs.length, m = xs.reduce((a, x) => a + x, 0) / n;
+  return {n, m, sd: Math.sqrt(xs.reduce((a, x) => a + (x - m) ** 2, 0) / n)};
+}
+/* このサイトの人たちが、過去問の本試（全国の平均点・標準偏差が分かっている回）を解いたときの位置。
+   d＝全国平均から標準偏差いくつ分上か、k＝ばらつきが全国の何倍か。予想問題集の点数を本番の物差しに直すのに使う。 */
+function anchorOf(subject) {
+  const zs = [], books = [];
+  for (const book in NAT) {
+    const nat = NAT[book][subject];
+    const cell = STATS.practice.find(c => c.subject === subject && c.book === book && c.ranking);
+    if (!nat || !cell) continue;
+    cell.ranking.forEach(r => zs.push((r.score - nat.mean) / nat.sd));
+    books.push(book);
+  }
+  if (zs.length < ANCHOR_MIN) return {ok: false, n: zs.length};
+  const z = popStats(zs);
+  return z.sd > 0.05 ? {ok: true, n: z.n, d: z.m, k: z.sd, books} : {ok: false, n: z.n};
+}
+const dev1 = x => (Math.round(x * 10) / 10).toFixed(1);
+
+function reportHtml(m, cell) {
+  const esc = t => String(t).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+  const st = popStats(cell.ranking.map(r => r.score));
+  const rk = myRank(cell, m.score);
+  const siteDev = st.sd > 0 ? 50 + 10 * (m.score - st.m) / st.sd : null;
+  const nat = NAT[cell.book] && NAT[cell.book][cell.subject];
+  let natDev = null, natMean = null, natNote = "";
+  if (nat) {   // 過去問の本試：実際の全国の物差しで出せる
+    natDev = 50 + 10 * (m.score - nat.mean) / nat.sd; natMean = nat.mean;
+    natNote = `実際の${cell.book}の全国（${nat.n.toLocaleString("ja-JP")}人）の平均点・標準偏差から`;
+  } else {
+    const a = ANCHORS[cell.subject];
+    if (a && a.ok && st.sd > 0) {
+      natDev = 50 + 10 * (a.d + a.k * (m.score - st.m) / st.sd);
+      natMean = st.m - a.d * st.sd / a.k;
+      natNote = `このサイトの人が過去問の本試を解いたときの位置（${a.n}人分）から推定。このサイトの人は全国平均より` +
+        `標準偏差 ${Math.abs(a.d).toFixed(2)} 個ぶん${a.d >= 0 ? "上" : "下"}にいるので、その分を差し引いています`;
+    } else {
+      natNote = `本番換算は、この科目の過去問本試（2023〜2026）の記録が${ANCHOR_MIN}人分たまると出ます（いま${a ? a.n : 0}人分）`;
+    }
+  }
+  const secMax = m.sections ? m.sections.reduce((a, x) => a + x.max, 0) : 0;
+  const full = m.sections ? Math.min(cell.max, secMax) : cell.max;
+  const kpi = (k, v, sub, main) => `<div class="kpi${main ? " main" : ""}"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${sub || ""}</div></div>`;
+  let html = `<div class="kpis">` +
+    kpi("得点", `${m.score}<small> / ${full}</small>`, full < cell.max ? `入れた大問だけ（満点 ${cell.max}）` : "", true) +
+    kpi("順位", rk ? `${rk.rank}<small> / ${rk.n}人</small>` : "—", rk ? `上位 ${rk.top}%` : "") +
+    kpi("偏差値（このサイト）", siteDev === null ? "—" : dev1(siteDev), `${st.n}人の中で`) +
+    kpi("平均点（このサイト）", fmt(Math.round(st.m * 10) / 10), `中央値 ${fmt(cell.median)}`) +
+    kpi(nat ? "偏差値（全国）" : "偏差値（本番換算）", natDev === null ? "—" : dev1(natDev), nat ? "実際の本試" : "推定") +
+    kpi(nat ? "全国平均" : "全国平均（推定）", natMean === null ? "—" : fmt(Math.round(natMean * 10) / 10), "") +
+    `</div><div class="note" style="margin-top:6px">${esc(natNote)}</div>`;
+
+  // 大問ごと：自分の得点率と、みんな（過去問の本試なら全国）の得点率をくらべる
+  if (!m.sections) {
+    html += `<div class="note" style="margin-top:10px">大問ごとの点数を入れて送ると、ここに「復習すべき大問」が出ます（<a href="index.html">回答する</a>）。</div>`;
+    return html;
+  }
+  const rows = m.sections.map(x => {
+    const mine = 100 * x.score / x.max;
+    const site = cell.sections ? (cell.sections.find(c => c.q === x.q) || {}).rate : null;
+    const ns = nat && nat.sections ? nat.sections.find(c => c.q === x.q) : null;
+    const natRate = ns ? 100 * ns.mean / ns.max : null;
+    const ref = natRate !== null && natRate !== undefined ? natRate : (site === undefined ? null : site);
+    return {q: x.q, score: x.score, max: x.max, mine, site: site === undefined ? null : site, natRate, ref, gap: ref === null ? null : ref - mine};
+  });
+  const refLabel = nat && nat.sections ? "全国" : "みんな";
+  html += `<h4>大問ごと</h4><div class="tablewrap"><table><tr><th>大問</th><th>あなた</th><th>得点率</th><th>${refLabel}の得点率</th>` +
+    (nat && nat.sections ? `<th>このサイト</th>` : "") + `<th>差</th></tr>` +
+    rows.map(r => `<tr><td>第${r.q}問</td><td class="num">${r.score} / ${r.max}</td><td class="num">${dev1(r.mine)}%</td>` +
+      `<td class="num">${r.ref === null ? "—" : dev1(r.ref) + "%"}</td>` + (nat && nat.sections ? `<td class="num">${r.site === null ? "—" : dev1(r.site) + "%"}</td>` : "") +
+      `<td class="num ${r.gap === null ? "" : r.gap >= GAP ? "gap" : r.gap <= -GAP ? "good" : ""}">${r.gap === null ? "—" : (r.gap > 0 ? "−" : "+") + dev1(Math.abs(r.gap))}</td></tr>`).join("") +
+    `</table></div>`;
+  const review = rows.filter(r => r.gap !== null && r.gap >= GAP).sort((a, b) => b.gap - a.gap);
+  html += `<h4>復習すべき大問</h4>`;
+  if (review.length) {
+    html += `<ul class="review">` + review.map(r => `<li><b>第${r.q}問</b>：あなた ${dev1(r.mine)}%／${refLabel} ${dev1(r.ref)}%` +
+      (r.ref >= 60 ? `<span class="tag">${refLabel}が取れている所</span>` : "") + `</li>`).join("") + `</ul>` +
+      `<div class="note">${refLabel}の得点率より ${GAP}ポイント以上低い大問を、差の大きい順に出しています。${refLabel}が取れているのに落とした大問から見直すと、点が戻りやすいです。</div>`;
+  } else if (rows.some(r => r.gap !== null)) {
+    html += `<div class="note">${refLabel}と比べて大きく落とした大問はありません。得点率の低い大問から見直してください。</div>`;
+  } else {
+    html += `<div class="note">大問ごとの点数を送った人が${STATS.minN}人以上になると、比べられるようになります。</div>`;
+  }
+  return html;
+}
+
 // ---- あなたの記録 ----
 function renderMine() {
   const firsts = [], seen = new Set();
@@ -323,6 +437,13 @@ function renderMine() {
       item.append(btn);
     }
     $("mine").append(item);
+    if (cell && m.kind === "practice") {   // 成績表（いちばん新しい記録だけ開いておく）
+      const rep = document.createElement("details");
+      rep.className = "report";
+      rep.open = !$("mine").querySelector("details.report");
+      rep.innerHTML = `<summary>成績表を見る</summary><div class="body">${reportHtml(m, cell)}</div>`;
+      $("mine").append(rep);
+    }
   });
 }
 
@@ -381,9 +502,12 @@ function renderList() {
   const subjects = [...new Set(STATS.practice.map(r => r.subject))].filter(s => !filter || s === filter);
   for (const s of subjects) {
     const rows = STATS.practice.filter(r => r.subject === s);
-    $("practice").append(card(`${s}（${rows[0].max}点満点）`, view === "bands" ? "学力帯別の平均点" : "",
+    // センター英語（筆記200・リスニング50）のように満点の違う年度が混ざるときは行ごとに満点を出す
+    const maxes = new Set(rows.map(r => r.max));
+    const common = maxes.size === 1 ? rows[0].max : null;
+    $("practice").append(card(common ? `${s}（${common}点満点）` : s, view === "bands" ? "学力帯別の平均点" : "",
       table(rows, [
-        {label: "問題集", get: r => r.book},
+        {label: "問題集", get: r => common ? r.book : `${r.book}（${r.max}点満点）`},
         {label: "回", get: r => r.round === null ? "" : `第${r.round}回`},
       ], view)));
   }
@@ -407,6 +531,7 @@ async function init() {
   STATS.practice.forEach(c => { c.key = keyOf(c.subject, c.book, c.round); });
   STATS.honban.forEach(c => { c.book = ""; c.round = null; c.key = keyOf(c.subject, "", null); });
   CELLS = [...STATS.honban, ...STATS.practice].filter(c => c.ranking);
+  for (const subject of new Set(STATS.practice.map(c => c.subject))) ANCHORS[subject] = anchorOf(subject);
   STATS.bandLabels = (STATS.practice[0] || STATS.honban[0] || {bands: []}).bands.map(b => b.band);
   document.querySelectorAll(".minN").forEach(el => { el.textContent = STATS.minN; });
   const updated = STATS.generatedAt ? new Date(STATS.generatedAt).toLocaleString("ja-JP") : "";
