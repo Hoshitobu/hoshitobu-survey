@@ -10,7 +10,7 @@ header { background: var(--card); border-bottom: 1px solid var(--line);
          padding: 14px 22px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 header h1 { font-size: 17px; margin: 0; }
 header .community { color: var(--sub); font-size: 12px; }
-header nav { margin-left: auto; display: flex; gap: 14px; }
+header nav { margin-left: auto; display: flex; flex-wrap: wrap; gap: 6px 14px; }
 header a { color: var(--sub); font-size: 13px; }
 header a[aria-current="page"] { color: var(--accent); font-weight: 700; text-decoration: none; }
 main { max-width: 780px; margin: 0 auto; padding: 16px 22px 60px; }

@@ -14,7 +14,7 @@
   const L = {
     siteUrl: "https://hoshitobu.github.io/hoshitobu-survey/",
     // 受験スケジューラを公開したら、その URL を入れる（入れるまで公開サイトのメニューにはリンクを出さない）
-    schedulerUrl: "",
+    schedulerUrl: "https://exam-scheduler-production-1eba.up.railway.app/",
     ANCHOR_MIN: 10,   // 本番換算に使う「過去問本試の記録」の最低人数
     GAP: 15,          // 復習の候補にする得点率の差（ポイント）
   };
