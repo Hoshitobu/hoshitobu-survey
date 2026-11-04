@@ -25,7 +25,9 @@
   let CFG = null, STATS = null;
   L.get = action => fetch(apiUrl() + (apiUrl().includes("?") ? "&" : "?") + "action=" + action).then(r => r.json());
   L.config = () => CFG || (CFG = L.get("config").then(c => { if (!c.ok) throw new Error(c.error || "config"); return c; }));
-  L.stats = (fresh) => (!fresh && STATS) || (STATS = L.get("stats").then(s => { if (!s.ok) throw new Error(s.error || "stats"); return s; }));
+  // 失敗した読み込みは覚えない（次に呼んだとき読み直す）
+  L.stats = (fresh) => (!fresh && STATS) || (STATS = L.get("stats").then(s => { if (!s.ok) throw new Error(s.error || "stats"); return s; })
+    .catch(err => { STATS = null; throw err; }));
   L.post = body => fetch(apiUrl(), {
     method: "POST", headers: {"Content-Type": "text/plain;charset=utf-8"}, body: JSON.stringify(body),
   }).then(r => r.json());

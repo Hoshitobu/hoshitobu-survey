@@ -186,13 +186,12 @@
       if (!window.HoshitobuLink) { WBS = {error: true}; return; }
       if (WBS && !WBS.error && tries === undefined) return;
       WBS = {loading: true};
-      window.HoshitobuLink.stats(true).then(st => { WBS = {stats: st}; if (WB) { drawMini(); drawReport(); } })
-        .catch(() => {
-          // 一時的に読めないことがあるので、少し間をおいて2回まで読み直す
-          const n = (tries || 0) + 1;
-          if (n <= 2) { setTimeout(() => loadWB(n), 2500 * n); return; }
-          WBS = {error: true}; if (WB) { drawMini(); drawReport(); }
-        });
+      window.HoshitobuLink.stats(true).then(st => { WBS = {stats: st}; }, () => {
+        // 一時的に読めないことがあるので、少し間をおいて2回まで読み直す
+        const n = (tries || 0) + 1;
+        if (n <= 2) { setTimeout(() => loadWB(n), 2500 * n); return; }
+        WBS = {error: true};
+      }).then(() => { if (WB && WBS && !WBS.loading) { drawMini(); drawReport(); } });   // 描くときのエラーを、読み込みの失敗と取り違えない
     }
     function loadExam(id) {
       E = examById(id);
