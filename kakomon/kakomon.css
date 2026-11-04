@@ -251,3 +251,18 @@
   .kk .kk-brow { grid-template-columns: 96px minmax(0, 1fr) 72px; gap: 8px; }
   .kk .kk-ox button { width: 42px; }
 }
+
+/* ---------- 予想問題集：回の欄と、大問ごとの得点・配点 ---------- */
+.kk .kk-pick { display: flex; gap: 10px; }
+.kk .kk-pick > .kk-select-wrap:first-child { flex: 1; min-width: 0; }
+.kk .kk-round-wrap { flex: 0 0 132px; }
+.kk .kk-wbrow { display: flex; align-items: center; gap: 12px; padding: 12px 16px; flex-wrap: wrap; }
+.kk .kk-wbrow label { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--kk-sub); margin: 0; }
+.kk .kk-wbrow input { width: 76px; padding: 8px 10px; font-size: 18px; font-weight: 700; text-align: center; border: 1px solid var(--kk-line-strong);
+                      border-radius: 10px; background: var(--kk-surface); margin: 0; font-variant-numeric: tabular-nums; }
+.kk .kk-wbrow input[data-wbm] { width: 64px; font-size: 15px; font-weight: 500; color: var(--kk-sub); }
+.kk .kk-sendbox { margin-top: 16px; padding: 12px 14px; border: 1px dashed var(--kk-line-strong); border-radius: 12px; background: var(--kk-raised); }
+.kk .kk-sendbox .kk-opt { margin: 0; }
+.kk .kk-sendbox .kk-sendmore { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font-size: 12.5px; }
+.kk .kk-sendbox select { padding: 5px 8px; border: 1px solid var(--kk-line-strong); border-radius: 8px; font-size: 13px; width: auto; margin: 0; background: var(--kk-surface); }
+@media (max-width: 560px) { .kk .kk-pick { flex-direction: column; } .kk .kk-round-wrap { flex: none; } }
