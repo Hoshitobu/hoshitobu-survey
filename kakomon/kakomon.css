@@ -270,6 +270,12 @@
 .kk .kk-wbrow input { width: 76px; padding: 8px 10px; font-size: 18px; font-weight: 700; text-align: center; border: 1px solid var(--kk-line-strong);
                       border-radius: 10px; background: var(--kk-surface); margin: 0; font-variant-numeric: tabular-nums; }
 .kk .kk-wbrow input[data-wbm] { width: 64px; font-size: 15px; font-weight: 500; color: var(--kk-sub); }
+.kk .kk-ai { margin: 10px 0 4px; padding: 10px 14px; border: 1px solid var(--kk-line); border-radius: 12px; background: var(--kk-raised); }
+.kk .kk-ai > summary { cursor: pointer; font-weight: 700; font-size: 13.5px; color: var(--kk-accent); }
+.kk .kk-ai-steps { margin: 10px 0 8px; padding-left: 20px; font-size: 13px; color: var(--kk-sub); }
+.kk .kk-ai-steps li { margin: 6px 0; }
+.kk .kk-ai textarea { width: 100%; box-sizing: border-box; font-family: var(--kk-mono); font-size: 13px; padding: 8px 10px; border: 1px solid var(--kk-line-strong); border-radius: 10px; background: var(--kk-surface); }
+.kk .kk-ai-actions { display: flex; align-items: center; gap: 8px; margin: 8px 0 4px; flex-wrap: wrap; }
 .kk .kk-sendbox { margin-top: 16px; padding: 12px 14px; border: 1px dashed var(--kk-line-strong); border-radius: 12px; background: var(--kk-raised); }
 .kk .kk-sendbox .kk-opt { margin: 0; }
 .kk .kk-sendbox .kk-sendmore { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font-size: 12.5px; }

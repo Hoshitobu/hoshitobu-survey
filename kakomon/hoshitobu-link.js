@@ -155,7 +155,8 @@
     return null;   // 模試などは点数集計にない
   };
   const ONE = {physics: "phys", chemistry: "chem", biology: "bio", chigaku: "earth", joho: "info1", kokugo: "kokugo",
-               chiri: "geo", nihonshi: "jhist", sekaishi: "whist", koukyo_rinri: "ethics", koukyo_seikei: "polieco"};
+               chiri: "geo", nihonshi: "jhist", sekaishi: "whist", koukyo_rinri: "ethics", koukyo_seikei: "polieco",
+               kiso_butsuri: "phys_basic", kiso_kagaku: "chem_basic", kiso_seibutsu: "bio_basic", kiso_chigaku: "earth_basic"};
   const qOf = name => { const m = /第(\d+)問/.exec(name); return m ? +m[1] : null; };
   /** スケジューラの共テ記録（科目ID→点数、科目ID→大問名→{score,max}）を、点数集計の行に直す。送れない科目は skipped に理由 */
   L.rowsFromTracker = (setId, scores, sections) => {

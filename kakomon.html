@@ -7,7 +7,7 @@
 <meta name="referrer" content="no-referrer">
 <title>過去問演習 — 星飛ぶの勉強部屋</title>
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="kakomon/kakomon.css?v=20261105b">
+<link rel="stylesheet" href="kakomon/kakomon.css?v=20261105d">
 <style>
   /* このページだけ：本文を広めにとる（採点と時計を左右に並べるため） */
   body { background: #f5f6fa; }
@@ -38,10 +38,10 @@
   <div id="kakomon"></div>
 </main>
 <script src="app-config.js"></script>
-<script src="national-stats.js?v=20261105b"></script>
-<script src="kakomon/kakomon-data.js?v=20261105b"></script>
-<script src="kakomon/hoshitobu-link.js?v=20261105b"></script>
-<script src="kakomon/kakomon-core.js?v=20261105b"></script>
+<script src="national-stats.js?v=20261105d"></script>
+<script src="kakomon/kakomon-data.js?v=20261105d"></script>
+<script src="kakomon/hoshitobu-link.js?v=20261105d"></script>
+<script src="kakomon/kakomon-core.js?v=20261105d"></script>
 <script>
 // 公開サイト用の host：記録はこの端末のブラウザに保存、仲間の偏差値と予想問題集の比べる相手は「点数集計」から
 (function () {
@@ -64,6 +64,21 @@
   // 全国の数字がない試験（予想問題集・追試・正答率のない年度）は、送ってもらうと比べる相手が増えるので、はじめからチェックを入れる
   const wantsSend = exam => exam.kind === "workbook" || !exam.dist || (exam.items || []).some(it => it[3] === null);
 
+  // 受験スケジューラに送る：記録を URL の # の後ろに入れて、スケジューラを新しいタブで開く
+  // （# の後ろはサーバーに送られない。スケジューラ側で、ログインしたあとに確認してから記録する）
+  function toB64(obj) {
+    const bytes = new TextEncoder().encode(JSON.stringify(obj));
+    let bin = "";
+    bytes.forEach(b => { bin += String.fromCharCode(b); });
+    return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  }
+  function openScheduler(exam, rec) {
+    const {replaces, ...clean} = rec;
+    const url = LINK.schedulerUrl.replace(/\/?$/, "/") + "#kakomon-import=" + toB64({v: 1, exam: exam.id, title: exam.title, record: clean});
+    return window.open(url, "_blank", "noopener");
+  }
+  const SCHED_KEY = "sendScheduler";
+
   const host = {
     kind: "public",
     peerLabel: "このサイトの利用者の中での偏差値",
@@ -71,6 +86,9 @@
     loadHistory() { return Object.fromEntries((window.KAKOMON_EXAMS || []).map(e => [e.id, read(e.id)])); },
     historyFor: id => read(id),
     async saveRecord(exam, rec, extras) {
+      ls.set(SCHED_KEY, extras.toScheduler ? "1" : "");
+      // ポップアップを止められないよう、ほかの待ち時間より先に（押した直後に）開く
+      if (extras.toScheduler && LINK.schedulerUrl) openScheduler(exam, rec);
       const h = read(exam.id).filter(r => r.at !== rec.replaces);   // 同じ回を記録し直したときは上書き
       const {replaces, ...clean} = rec;
       h.push(clean); write(exam.id, h);
@@ -91,6 +109,9 @@
           message = "点数集計には送れませんでした：" + (err && err.message ? err.message : err) + "。記録はこの端末に保存しました。";
         }
       }
+      if (extras.toScheduler && LINK.schedulerUrl) {
+        message += " 受験スケジューラを新しいタブで開きました。そちらで確認すると記録されます（タブが開かないときは、このサイトのポップアップを許可してください）。";
+      }
       return {history: read(exam.id), message};
     },
     async deleteRecord(exam, at) { write(exam.id, read(exam.id).filter(r => r.at !== at)); return {history: read(exam.id)}; },
@@ -104,9 +125,12 @@
       return {label, scores, minN: 10, fewText: n => n === 0 ? "集計はまだ3人未満" : `集計 ${n}人`};
     },
     saveOptions(exam) {
-      if (!sendable(exam)) return "";
+      const sched = LINK.schedulerUrl
+        ? `<div class="kk-sendbox"><label class="kk-opt"><input type="checkbox" id="kk-tosched"${ls.get(SCHED_KEY) === "1" ? " checked" : ""}>受験スケジューラにも記録する（新しいタブで開きます。ログインしてから確認すると入ります）</label></div>`
+        : "";
+      if (!sendable(exam)) return sched;
       const p = LINK.profile();
-      return `<div class="kk-sendbox"><label class="kk-opt"><input type="checkbox" id="kk-tosurvey"${wantsSend(exam) ? " checked" : ""}>この点数を「点数集計」にも送る（匿名）</label>` +
+      return sched + `<div class="kk-sendbox"><label class="kk-opt"><input type="checkbox" id="kk-tosurvey"${wantsSend(exam) ? " checked" : ""}>この点数を「点数集計」にも送る（匿名）</label>` +
         `<div class="kk-sendmore"><span>学力帯（直近の模試の偏差値）</span><select id="kk-band"><option value="">選んでください</option>` +
         BANDS.map(([id, label]) => `<option value="${id}"${p.band === id ? " selected" : ""}>${esc(label)}</option>`).join("") + `</select>` +
         `<label class="kk-opt" style="margin:0"><input type="checkbox" id="kk-consent"${p.consent ? " checked" : ""}>匿名で集計し、YouTube『星飛ぶ』の動画で使用することに同意する</label>` +
@@ -116,7 +140,8 @@
     },
     readSaveOptions(root) {
       const v = id => root.querySelector(id);
-      return {toSurvey: !!(v("#kk-tosurvey") && v("#kk-tosurvey").checked), band: v("#kk-band") ? v("#kk-band").value : "",
+      return {toScheduler: !!(v("#kk-tosched") && v("#kk-tosched").checked),
+              toSurvey: !!(v("#kk-tosurvey") && v("#kk-tosurvey").checked), band: v("#kk-band") ? v("#kk-band").value : "",
               consent: !!(v("#kk-consent") && v("#kk-consent").checked),
               nickname: v("#kk-nick") ? v("#kk-nick").value.trim() : "", ranking: !!(v("#kk-ranking") && v("#kk-ranking").checked)};
     },

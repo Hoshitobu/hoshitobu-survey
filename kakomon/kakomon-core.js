@@ -92,6 +92,17 @@
     <section class="kk-card">
       <div class="kk-eyebrow"><span class="kk-step" data-n="ox"></span><h3>自己採点</h3><span class="kk-aside" id="kk-oxcount"></span></div>
       <p class="kk-muted" id="kk-oxnote"></p>
+      <details class="kk-ai" id="kk-ai">
+        <summary>📷 マークシートの写真から入れる（手持ちのAIを使う）</summary>
+        <ol class="kk-ai-steps">
+          <li><button type="button" class="kk-btn kk-btn-secondary" id="kk-aicopy">AIに渡す文章をコピー</button><span class="kk-faint" id="kk-aicopied"></span></li>
+          <li id="kk-aistep2"></li>
+          <li>AIが返したコードを、下に貼って「反映する」を押す</li>
+        </ol>
+        <textarea id="kk-aicode" rows="5" spellcheck="false" placeholder="例）&#10;KAKOMON 2026-IA&#10;1: ooxoooxoooooooxo&#10;2: oooxoxoooooo"></textarea>
+        <div class="kk-ai-actions"><button type="button" class="kk-btn kk-btn-primary" id="kk-aiapply">反映する</button><span class="kk-faint" id="kk-aimsg"></span></div>
+        <p class="kk-faint">このサイトは、写真もコードも外に送りません（コードは、この画面の ○× を入れるのに使うだけです）。AI は読み間違えることがあるので、反映したあとで見直してください。</p>
+      </details>
       <label class="kk-toggle" id="kk-onlyprev-wrap" hidden><input type="checkbox" id="kk-onlyprev">前回 × だった所だけ表示する（解き直し）</label>
       <div id="kk-ox"></div>
     </section>
@@ -258,6 +269,10 @@
       q("#kk-minitoplabel").textContent = NATR ? "全国の上位" : "サイト内の上位";
       q("#kk-avglegend").textContent = SEC ? "このサイトの人の得点率（点数集計で大問ごとを入れた人）" : "全国平均（選択問題は、その大問を選んだ人の平均）";
       q("#kk-whysec").hidden = SEC;
+      q("#kk-aistep2").innerHTML = SEC
+        ? "手持ちのAI（ChatGPT・Claude・Gemini など）に、コピーした文章と、<b>解答用紙の写真</b>・<b>問題集の解答と配点</b>（写真でよい）を送る"
+        : "手持ちのAI（ChatGPT・Claude・Gemini など）に、コピーした文章と、<b>マークシートの写真</b>・<b>正解表</b>（大学入試センターの「過去問題」のページの正解など）を送る";
+      q("#kk-aicode").value = ""; q("#kk-aimsg").textContent = ""; q("#kk-aicopied").textContent = "";
       WBS = null;
       if (usesSite()) loadWB();
       q("#kk-selcard").hidden = !opt;
@@ -511,6 +526,130 @@
       save(); drawQScores(); drawMini(); drawReport(); drawTimer();
     });
     q("#kk-onlyprev").addEventListener("change", () => { drawOX(); drawReport(); });
+
+    // ------------------------------------------------ マークシートの写真から（手持ちのAIで ○× のコードを作ってもらう）
+    // サイトには正解を置かないので、照らし合わせは AI に正解表と写真を渡してやってもらう。ここでは採点の単位の並びと、返ってきたコードの読み取りだけ
+    const qsOf = () => [...new Set(E.items.map(it => it[0]))].sort((a, b) => a - b);
+    function aiPrompt() {
+      if (SEC) {
+        return [
+          "共通テスト形式の問題集の自己採点を手伝ってください。",
+          `問題：${E.title}`,
+          "添付した「解答用紙（マークシート）の写真」と「問題集の解答・配点」を照らし合わせて、大問ごとの得点を出してください。",
+          "- 解いていない大問（選ばなかった選択問題など）は書かないでください。",
+          "- 読み取れないマークがあったら、その大問の行の最後に「（読めない所あり）」と書いてください。",
+          "答えは、次の形のコードだけを返してください（説明はいりません）。「得点/配点」の形です。",
+          "",
+          `KAKOMON ${E.id}`,
+          ...E.qs.map(x => `${x[0]}: 得点/配点`),
+        ].join("\n");
+      }
+      const lines = qsOf().map(qn => {
+        const labs = E.items.filter(it => it[0] === qn).map(it => it[1]);
+        return `第${qn}問（${labs.length}個）：${labs.join(" / ")}`;
+      });
+      return [
+        "共通テストの自己採点を手伝ってください。",
+        `試験：${E.title}`,
+        "添付した「マークシート（解答用紙）の写真」と「正解表」を照らし合わせて、下の「採点の単位」ごとに、正解なら o、不正解なら x を付けてください。",
+        "- 「ア–ウ」「12–13」のように、いくつかの解答をまとめた単位は、全部合っていれば o、1つでも違えば x にしてください。",
+        "- 「（AとB・順不同）」と書いた単位は、AとBの答えが入れかわっていても正解として、1つずつ o / x を付けてください。",
+        "- 解いていない大問（選ばなかった選択問題など）と、読み取れないマークは - にしてください。",
+        "- 大問ごとに、書いてある個数と同じ数の文字にしてください。",
+        "答えは、次の形のコードだけを返してください（説明はいりません）。",
+        "",
+        `KAKOMON ${E.id}`,
+        ...qsOf().map(qn => `${qn}: ${"?".repeat(E.items.filter(it => it[0] === qn).length)}`),
+        "",
+        "採点の単位（この順番で並べてください）：",
+        ...lines,
+      ].join("\n");
+    }
+    const OX = {"o": "o", "O": "o", "○": "o", "〇": "o", "◯": "o", "⭕": "o", "x": "x", "X": "x", "×": "x", "✕": "x", "✗": "x", "❌": "x",
+                "-": "-", "ー": "-", "－": "-", "—": "-", "_": "-", "?": "-"};
+    // 返ってきたコード → {q: 文字の並び}（大問の番号がないときは、全部を1つの並びとして "all"）
+    function readCode(text) {
+      const t = String(text || "").normalize("NFKC");
+      const m = /KAKOMON\s+(\S+)/.exec(t);
+      const out = {id: m ? m[1] : null, rows: {}};
+      t.split(/\r?\n/).forEach(line => {
+        const r = /^\s*(?:第)?(\d{1,2})\s*(?:問)?\s*[:：]\s*(.+)$/.exec(line);
+        if (r) out.rows[+r[1]] = r[2];
+      });
+      if (!Object.keys(out.rows).length) out.rows.all = t.replace(/KAKOMON\s+\S+/, "");
+      return out;
+    }
+    function applyCode(text) {
+      const c = readCode(text);
+      if (c.id && c.id !== E.id) return `このコードは別の試験（${c.id}）のものです。いま開いているのは ${E.id} です。`;
+      if (SEC) {
+        let n = 0;
+        for (const [k, v] of Object.entries(c.rows)) {
+          const qn = +k, r = /(\d+)\s*(?:\/\s*(\d+))?/.exec(v);
+          if (!qn || !r || !(qn in QMAX)) continue;
+          const mx = r[2] ? Math.min(+r[2], E.full) : QMAX[qn];
+          if (mx) { QMAX[qn] = mx; S.wbMax[qn] = mx; }
+          S.wbScore[qn] = Math.min(+r[1], mx || E.full);
+          if (E.optional.includes(qn) && !S.sel.includes(qn) && S.sel.length < E.pick) S.sel.push(qn);
+          n++;
+        }
+        if (!n) return "コードから大問ごとの得点を読み取れませんでした。「1: 15/15」のような行があるか確かめてください。";
+        save(); drawAll();
+        return `${n}問分の得点を入れました。`;
+      }
+      const sym = str => [...String(str).replace(/\s+/g, "")].map(ch => OX[ch]).filter(Boolean);
+      const qs = qsOf(), byQ = {};
+      if (c.rows.all !== undefined) {
+        const all = sym(c.rows.all);
+        if (all.length !== E.items.length) return `○×の数が合いません（コードは${all.length}個、この試験は${E.items.length}個）。大問ごとに「1: ooxo…」の形で貼ってください。`;
+        let k = 0;
+        qs.forEach(qn => { byQ[qn] = all.slice(k, k += E.items.filter(it => it[0] === qn).length); });
+      } else {
+        const bad = [];
+        qs.forEach(qn => {
+          if (c.rows[qn] === undefined) return;
+          const need = E.items.filter(it => it[0] === qn).length, got = sym(c.rows[qn]);
+          if (got.length !== need) bad.push(`第${qn}問（コード${got.length}個／正しくは${need}個）`);
+          else byQ[qn] = got;
+        });
+        if (bad.length) return `○×の数が合わない大問があります：${bad.join("、")}。AI にもう一度頼むか、その行を直してください。`;
+        if (!Object.keys(byQ).length) return "コードから ○× を読み取れませんでした。「1: ooxo…」のような行があるか確かめてください。";
+      }
+      let n = 0;
+      qs.forEach(qn => {
+        if (!byQ[qn]) return;
+        const idx = E.items.map((it, i) => [it, i]).filter(([it]) => it[0] === qn).map(([, i]) => i);
+        idx.forEach((i, j) => {
+          const v = byQ[qn][j];
+          if (v === "o" || v === "x") { S.marks[i] = v; n++; } else delete S.marks[i];
+          if (S.marks[i] !== "x") delete S.why[i];
+        });
+        // 選択問題：○× がついた大問を、選んだ大問にする
+        if (E.optional.includes(qn) && byQ[qn].some(v => v !== "-") && !S.sel.includes(qn)) {
+          S.sel.push(qn);
+          if (S.sel.length > E.pick) S.sel = S.sel.slice(-E.pick);
+        }
+      });
+      save(); drawAll();
+      return `${n}か所に ○× を入れました。× の所は、落とした理由を選んでおくと、あとで役に立ちます。`;
+    }
+    async function copyText(t) {
+      try { await navigator.clipboard.writeText(t); return true; }
+      catch (e) {
+        const ta = document.createElement("textarea"); ta.value = t; ta.style.position = "fixed"; ta.style.opacity = "0";
+        document.body.appendChild(ta); ta.select();
+        let ok = false; try { ok = document.execCommand("copy"); } catch (e2) {}
+        ta.remove(); return ok;
+      }
+    }
+    q("#kk-aicopy").addEventListener("click", async () => {
+      const ok = await copyText(aiPrompt());
+      q("#kk-aicopied").textContent = ok ? "　コピーしました" : "　コピーできませんでした（下の欄の例を参考に、AIに頼んでください）";
+    });
+    q("#kk-aiapply").addEventListener("click", () => {
+      const msg = applyCode(q("#kk-aicode").value);
+      q("#kk-aimsg").textContent = "　" + msg;
+    });
 
     // ------------------------------------------------ 成績
     function result() {
@@ -848,7 +987,8 @@
     const want = (opt.initialExam) || store.get("lastExam") || (EXAMS[0] && EXAMS[0].id);
     const startId = examById(want) ? want : EXAMS[0].id;
     Promise.resolve(host.loadHistory ? host.loadHistory() : {}).catch(() => ({})).then(h => { H = h || {}; loadExam(startId); });
-    return {reload: () => Promise.resolve(host.loadHistory()).then(h => { H = h || {}; drawAll(); }), current: () => E && E.id, refreshWB};
+    // 開いた直後（まだ最初の試験を読み込んでいないとき）に呼ばれても、描き直しは読み込みのあとにまかせる
+    return {reload: () => Promise.resolve(host.loadHistory()).then(h => { H = h || {}; if (E) drawAll(); }), current: () => E && E.id, refreshWB};
   }
 
   window.Kakomon = {mount, workbookExam};
