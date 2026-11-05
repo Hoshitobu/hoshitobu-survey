@@ -18,8 +18,13 @@
   "use strict";
   const WHYS = ["計算ミス", "読み落とし", "方針が立たない", "時間切れ"];
   const REVIEW_MIN = 6;   // 目安の初期値：見直しに残す分
+  // 1分に満たない大問は、その時間で解けたのではなく「たどり着けなかった」とみなす（目安や平均の計算に使わない）
+  const REACH_MS = 60000;
+  const GOOD_RATE = 0.8;   // 想定時間は、その大問で8割以上取れた回の時間から作る
   const esc = s => String(s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
   const fmt = ms => { const t = Math.floor(ms / 1000); return String(Math.floor(t / 60)).padStart(2, "0") + ":" + String(t % 60).padStart(2, "0"); };
+  // 大問の時間の表示：1分に満たなければ「たどり着けなかった？」（はかっていないときは —）
+  const qTime = (ms, anyTime) => ms >= 60000 ? fmt(ms) : anyTime ? '<span class="kk-faint" title="1分に満たない大問は、たどり着けなかったものとして、目安や平均に使いません">たどり着けなかった？</span>' : "—";
   const comma = n => Number(n).toLocaleString("ja-JP");
   const dev = (x, mean, sd) => 50 + 10 * (x - mean) / sd;
   const topTxt = t => t < 0.1 ? "0.1%未満" : t.toFixed(1) + "%";
@@ -77,6 +82,16 @@
       <a class="kk-btn kk-btn-secondary" id="kk-dnc" href="https://www.dnc.ac.jp/kyotsu/kakomondai/" target="_blank" rel="noopener">問題と正解（大学入試センター）↗</a>
     </div>
     <div class="kk-meta" id="kk-meta"></div>
+    <details class="kk-marktip" id="kk-marktip">
+      <summary>📝 過去問は、マークシートに塗って解こう（塗るのにも時間がかかります）</summary>
+      <ul>
+        <li><b>塗るだけで時間がかかります。</b>星飛ぶが試しに測ってみると、マークするだけで 3〜6分 かかりました。数学はマークが 90個ほどあるので、1マーク1秒というかなり速いペースでも、1分半はかかります。</li>
+        <li><b>問題冊子とマークシートを見比べる時間もかかります。</b>どの解答欄に塗ったか、ずれていないかを確かめる時間です。</li>
+        <li>なので、過去問は<b>本番と同じようにマークシートに塗って、その時間もふくめて</b>はかるのがおすすめです。問題用紙だけで解いていると、本番で時間が足りなくなります。</li>
+        <li>マークシートは、教学社の<a href="https://akahon.net/book/detail/9001000" target="_blank" rel="noopener">赤本ノートプラス（共通テスト用）↗</a>（B5・30枚。各ページにマークシート小問60問分と分析シート。共通テスト過去問研究の全科目に対応）などが使えます。星飛ぶが数学で使ってみて、問題なく使えました。赤本（共通テスト過去問研究）にも、マークシート解答用紙がついています。</li>
+        <li>塗ったマークシートは、下の「自己採点」の「📷 マークシートの写真から入れる」で、そのまま採点に使えます。</li>
+      </ul>
+    </details>
     <p class="kk-faint kk-src" id="kk-srcnote">問題文と正解は、ここには載せていません。大学入試センターの「過去問題」のページから開いてください（古い年度は、センターのサイトから消えていることがあります）。</p>
   </div>
 </section>
@@ -124,7 +139,15 @@
         <button type="button" class="kk-btn kk-btn-secondary" id="kk-reset">リセット</button>
       </div>
       <div class="kk-qlist" id="kk-qlist"></div>
-      <p class="kk-faint" id="kk-goalnote" style="margin:10px 2px 0"></p>
+      <div class="kk-goalmake">
+        <span class="kk-faint">目安を作る：</span>
+        <button type="button" class="kk-chip" data-goalfrom="haiten">配点から</button>
+        <button type="button" class="kk-chip" data-goalfrom="last">前回の自分</button>
+        <button type="button" class="kk-chip" data-goalfrom="avg">自分の平均</button>
+        <button type="button" class="kk-chip" data-goalfrom="fit">制限に合わせて縮める</button>
+        <button type="button" class="kk-chip is-save" id="kk-goalsave">この目安を保存</button>
+      </div>
+      <p class="kk-faint" id="kk-goalnote" style="margin:8px 2px 0"></p>
     </section>
     <section class="kk-card">
       <div class="kk-eyebrow"><h3>いまの点数</h3><span class="kk-aside" id="kk-minirest"></span></div>
@@ -153,6 +176,14 @@
     <div class="kk-legend"><span><i></i>取れた点</span><span><i class="is-avg"></i><span id="kk-avglegend">全国平均（選択問題は、その大問を選んだ人の平均）</span></span></div>
   </div>
 
+  <div class="kk-sec" id="kk-targetsec">
+    <h4>目標点と目標時間</h4>
+    <p class="kk-muted" id="kk-targetnote"></p>
+    <div class="kk-targetpick" id="kk-targetpick" hidden><span class="kk-faint">目標にする学力帯：</span><select id="kk-targetband"></select>
+      <button type="button" class="kk-chip" id="kk-targetuse">目標時間を自分の目安にする</button></div>
+    <div class="kk-scroll"><table class="kk-table" id="kk-targettable"></table></div>
+  </div>
+
   <div class="kk-split">
     <div class="kk-sec" id="kk-stagesec">
       <h4>どんな力で落としたか</h4>
@@ -175,10 +206,22 @@
   <div id="kk-saveopts"></div>
   <div class="kk-actions">
     <button type="button" class="kk-btn kk-btn-primary" id="kk-save">この結果を記録する</button>
+    <button type="button" class="kk-btn kk-btn-secondary" id="kk-print">成績表を印刷・PDFで保存</button>
     <button type="button" class="kk-btn kk-btn-secondary" id="kk-png">成績表を画像で保存</button>
   </div>
   <div class="kk-flash" id="kk-flash" hidden></div>
   <div class="kk-muted kk-hostnote" id="kk-hostnote"></div>
+</section>
+
+<section class="kk-card" id="kk-trendcard">
+  <div class="kk-eyebrow"><h3>得点の推移</h3><span class="kk-aside" id="kk-trendnote"></span></div>
+  <div class="kk-trendtabs" role="group" aria-label="グラフの物差し">
+    <button type="button" class="kk-chip is-on" data-trend="dev">偏差値</button>
+    <button type="button" class="kk-chip" data-trend="pct">得点率</button>
+  </div>
+  <div id="kk-trendchart"></div>
+  <div class="kk-scroll"><table class="kk-table" id="kk-trendtable"></table></div>
+  <p class="kk-muted" id="kk-trendhelp">年度によって難しさが違うので、伸びたかどうかは偏差値（全国の中での位置）で見るのがおすすめです。白丸は、全国の数字がない試験の「本番換算（推定）」です。</p>
 </section>
 
 <section class="kk-card">
@@ -196,8 +239,19 @@
     const lastRec = () => { const h = hist().filter(r => r.at !== S.savedAt); return h.length ? h[h.length - 1] : null; };
     const evenGoal = () => Math.max(1, Math.round((E.minutes - REVIEW_MIN) / Math.max(1, E.required.length + E.pick)));
     const defaultGoal = n => QMAX[n] ? Math.max(1, Math.round(QMAX[n] * (E.minutes - REVIEW_MIN) / E.full)) : evenGoal();
+    // 自分で決めて保存した目安（試験ごと）。なければ同じ科目で保存した目安（大問の数が同じとき）、なければ配点から
+    const GOALS_KEY = () => E.id + ".mygoals", SUBJ_GOALS_KEY = () => "subj." + (E.sid || E.id) + ".mygoals";
+    function savedGoals() {
+      for (const k of [GOALS_KEY(), SUBJ_GOALS_KEY()]) {
+        try {
+          const g = JSON.parse(store.get(k) || "null");
+          if (g && E.qs.every(x => g[x[0]] > 0)) return {goals: g, from: k === GOALS_KEY() ? "exam" : "subject"};
+        } catch (e) {}
+      }
+      return null;
+    }
     const fresh = () => ({sel: E.optional.slice(0, E.pick), marks: {}, why: {}, wbScore: {}, wbMax: {}, acc: {}, cur: null, since: null, started: false, savedAt: null,
-                          goals: Object.fromEntries(E.qs.map(x => [x[0], defaultGoal(x[0])]))});
+                          goals: Object.assign(Object.fromEntries(E.qs.map(x => [x[0], defaultGoal(x[0])])), (savedGoals() || {}).goals || {})});
     const save = () => store.set(E.id + ".session", JSON.stringify(S));
     const chosen = () => [...E.required, ...S.sel.slice().sort((a, b) => a - b)];
 
@@ -206,12 +260,14 @@
       if (m && WB_ON) { const w = workbookExam(WBD, m[1], m[2], +m[3]); if (w) return w; }
       return EXAMS.find(e => e.id === id) || null;
     }
-    function loadWB(tries) {   // 予想問題集・追試などは、点数集計（Apps Script）の数字で比べる。過去問の「みんなの正答率」も
+    let WB_FRESH = true;   // 次に読むとき、読みおきを使わずに読み直すか（はじめと、記録・送信のあと）
+    function loadWB(tries) {   // 予想問題集・追試などは、点数集計（Apps Script）の数字で比べる。過去問の「みんなの正答率」、目標点・目標時間も
       if (!window.HoshitobuLink || !E.survey) { WBS = {error: true}; return; }
       if (WBS && !WBS.error && tries === undefined) return;
       WBS = {loading: true};
-      const asked = E.id;
-      window.HoshitobuLink.stats(true).then(st => { WBS = {stats: st}; }, () => {
+      const asked = E.id, fresh = WB_FRESH || tries !== undefined;
+      WB_FRESH = false;
+      window.HoshitobuLink.stats(fresh).then(st => { WBS = {stats: st}; }, () => {
         // 一時的に読めないことがあるので、少し間をおいて2回まで読み直す
         const n = (tries || 0) + 1;
         if (n <= 2) { setTimeout(() => { if (asked === E.id) loadWB(n); }, 2500 * n); return; }
@@ -269,12 +325,14 @@
       q("#kk-minitoplabel").textContent = NATR ? "全国の上位" : "サイト内の上位";
       q("#kk-avglegend").textContent = SEC ? "このサイトの人の得点率（点数集計で大問ごとを入れた人）" : "全国平均（選択問題は、その大問を選んだ人の平均）";
       q("#kk-whysec").hidden = SEC;
-      q("#kk-aistep2").innerHTML = SEC
-        ? "手持ちのAI（ChatGPT・Claude・Gemini など）に、コピーした文章と、<b>解答用紙の写真</b>・<b>問題集の解答と配点</b>（写真でよい）を送る"
-        : "手持ちのAI（ChatGPT・Claude・Gemini など）に、コピーした文章と、<b>マークシートの写真</b>・<b>正解表</b>（大学入試センターの「過去問題」のページの正解など）を送る";
+      q("#kk-aistep2").innerHTML = (SEC
+        ? "手持ちのAIに、コピーした文章と、<b>解答用紙</b>・<b>問題集の解答と配点</b>を送る"
+        : "手持ちのAIに、コピーした文章と、<b>マークシート</b>・<b>正解表</b>（大学入試センターの「過去問題」のページの正解の PDF など）を送る") +
+        "<br><span class=\"kk-faint\">・マークシートは、撮った写真をそのまま渡すより、<b>写真を PDF にして</b>渡すほうが読み取りやすいです（スマホのスキャンの機能や、写真を PDF に変える機能で作れます）。正解表も PDF のまま渡してください。<br>" +
+        "・試した範囲では、マークシートを読み取れたのは Claude だけでした（ChatGPT・Gemini では読み取れませんでした）。</span>";
       q("#kk-aicode").value = ""; q("#kk-aimsg").textContent = ""; q("#kk-aicopied").textContent = "";
       WBS = null;
-      if (usesSite()) loadWB();
+      if (E.survey) loadWB();
       q("#kk-selcard").hidden = !opt;
       q("#kk-selnote").textContent = opt ? `第${E.optional.join("・")}問から${E.pick}問` : "";
       const base = opt ? 1 : 0;
@@ -282,7 +340,7 @@
       q('[data-n="timer"]').textContent = base + 1;
       q('[data-n="report"]').textContent = base + 2;
       q("#kk-limit").textContent = `制限 ${E.minutes}分`;
-      q("#kk-goalnote").textContent = `目安は配点に合わせた仮の数字です（合計 ${E.minutes - REVIEW_MIN}分前後＋見直し ${REVIEW_MIN}分）。数字を押して書きかえられます。`;
+      drawGoalNote();
       q("#kk-stagesec").hidden = !E.items.some(it => it[4]);
       q("#kk-hostnote").innerHTML = host.hostNote ? host.hostNote(E) : "";
       q("#kk-peerlabel").textContent = NATR ? (host.peerLabel || "仲間の中での偏差値") : "このサイトの中での偏差値";
@@ -410,7 +468,72 @@
     q("#kk-qlist").addEventListener("change", e => {
       const n = e.target.dataset.goal; if (!n) return;
       const v = Math.max(1, Math.min(E.minutes, Math.round(+e.target.value) || defaultGoal(+n)));
-      S.goals[n] = v; e.target.value = v; save(); drawTimer(); drawReport();
+      S.goals[n] = v; e.target.value = v; save(); drawTimer(); drawReport(); drawGoalNote();
+    });
+    // ---- 自分の想定時間：配点から／前回の自分の時間から／自分の平均から作って、保存できる
+    function drawGoalNote(msg) {
+      const sv = savedGoals();
+      const sum = chosen().reduce((a, n) => a + (S.goals[n] || 0), 0);
+      const base = sv ? (sv.from === "exam" ? "この試験で保存した自分の目安" : "同じ科目で保存した自分の目安") : "配点に合わせた仮の目安";
+      q("#kk-goalnote").textContent = (msg ? msg + " " : "") +
+        `いまの目安：${base}。合計 ${sum}分（制限 ${E.minutes}分、` +
+        (sum > E.minutes ? `制限を${sum - E.minutes}分こえています。「制限に合わせて縮める」で、比率を保ったまま見直し${REVIEW_MIN}分を残す形に縮められます）。`
+                         : `見直しに残るのは ${E.minutes - sum}分）。`) +
+        "数字を押して書きかえ、「この目安を保存」で次からも使えます。";
+    }
+    // 自分の記録から、大問ごとにかかった時間（分）。同じ試験の記録がなければ、同じ科目のほかの年度の記録
+    function myTimes() {
+      const own = (H[E.id] || []).filter(r => r.per && r.per.some(p => p.ms >= REACH_MS));
+      if (own.length) return {recs: own, scope: "この試験"};
+      const same = Object.entries(H).filter(([id]) => id !== E.id && (examById(id) || {}).sid === E.sid)
+        .flatMap(([, h]) => h).filter(r => r.per && r.per.some(p => p.ms >= REACH_MS));
+      return {recs: same, scope: "同じ科目のほかの回"};
+    }
+    root.querySelector(".kk-goalmake").addEventListener("click", e => {
+      const b = e.target.closest("button"); if (!b) return;
+      if (b.id === "kk-goalsave") {
+        const g = Object.fromEntries(E.qs.map(x => [x[0], S.goals[x[0]] || defaultGoal(x[0])]));
+        store.set(GOALS_KEY(), JSON.stringify(g));
+        store.set(SUBJ_GOALS_KEY(), JSON.stringify(g));
+        drawGoalNote("保存しました。");
+        return;
+      }
+      const from = b.dataset.goalfrom;
+      if (from === "fit") {   // 今の比率のまま、合計を（制限 − 見直し）分にそろえる
+        const ks = chosen(), sum = ks.reduce((a, n) => a + (S.goals[n] || 0), 0), room = E.minutes - REVIEW_MIN;
+        if (sum > 0) ks.forEach(n => { S.goals[n] = Math.max(1, Math.round(S.goals[n] * room / sum)); });
+        save(); drawTimer(); drawReport(); drawGoalNote(`合計 ${room}分前後に縮めました。`);
+        return;
+      }
+      if (from === "haiten") {
+        E.qs.forEach(x => { S.goals[x[0]] = defaultGoal(x[0]); });
+        save(); drawTimer(); drawReport(); drawGoalNote("配点から作り直しました。");
+        return;
+      }
+      const {recs, scope} = myTimes();
+      const use = from === "last" ? recs.slice(-1) : recs;
+      if (!use.length) { drawGoalNote("まだ時間をはかった記録がありません。一度はかって記録すると、自分の時間から作れます。"); return; }
+      // 1分に満たない大問（たどり着けなかった）は使わない。「自分の平均」は、その大問で8割以上取れた回の時間の平均
+      // （8割以上の回がない大問は、たどり着いた回の平均にして、そのことを書く）
+      let n = 0;
+      const rough = [], none = [];
+      E.qs.forEach(x => {
+        const ps = use.map(r => r.per.find(p => p.q === x[0])).filter(p => p && p.ms >= REACH_MS);
+        if (!ps.length) { if (chosen().includes(x[0])) none.push(x[0]); return; }
+        let pick = ps;
+        if (from === "avg") {
+          const good = ps.filter(p => p.max && p.got >= GOOD_RATE * p.max);
+          if (good.length) pick = good; else rough.push(x[0]);
+        }
+        S.goals[x[0]] = Math.max(1, Math.min(E.minutes, Math.round(pick.reduce((a, p) => a + p.ms, 0) / pick.length / 60000)));
+        n++;
+      });
+      save(); drawTimer(); drawReport();
+      const how = from === "last" ? "前回" : "8割以上取れた回の平均";
+      drawGoalNote(!n ? "記録に、たどり着いた（1分以上かけた）大問の時間がありませんでした。" :
+        `${scope}の${how}の時間から作りました（${n}問分）。` +
+        (rough.length ? `第${rough.join("・")}問は8割以上取れた回がないので、たどり着いた回の平均です。` : "") +
+        (none.length ? `第${none.join("・")}問は、たどり着いた記録がないので、そのままです。` : ""));
     });
     q("#kk-start").addEventListener("click", toggleRun);
     q("#kk-dockbtn").addEventListener("click", toggleRun);
@@ -538,7 +661,7 @@
           "添付した「解答用紙（マークシート）の写真」と「問題集の解答・配点」を照らし合わせて、大問ごとの得点を出してください。",
           "- 解いていない大問（選ばなかった選択問題など）は書かないでください。",
           "- 読み取れないマークがあったら、その大問の行の最後に「（読めない所あり）」と書いてください。",
-          "答えは、次の形のコードだけを返してください（説明はいりません）。「得点/配点」の形です。",
+          "進め方：まず、読み取ったマークを解答番号ごとに書き出し（私が見て確かめます）、次に解答と照らし合わせ、最後に次の形のコードを書いてください（「KAKOMON」の行から下には、コード以外を書かないでください）。「得点/配点」の形です。",
           "",
           `KAKOMON ${E.id}`,
           ...E.qs.map(x => `${x[0]}: 得点/配点`),
@@ -556,7 +679,10 @@
         "- 「（AとB・順不同）」と書いた単位は、AとBの答えが入れかわっていても正解として、1つずつ o / x を付けてください。",
         "- 解いていない大問（選ばなかった選択問題など）と、読み取れないマークは - にしてください。",
         "- 大問ごとに、書いてある個数と同じ数の文字にしてください。",
-        "答えは、次の形のコードだけを返してください（説明はいりません）。",
+        "進め方：",
+        "1. まず、マークシートから読み取ったマークの番号（または記号）を、解答番号ごとに書き出してください（私が見て確かめます）。読み取りに自信がない所には「？」を付けてください。",
+        "2. 次に、正解表と照らし合わせてください。",
+        "3. 最後に、次の形のコードを書いてください（「KAKOMON」の行から下には、コード以外を書かないでください）。",
         "",
         `KAKOMON ${E.id}`,
         ...qsOf().map(qn => `${qn}: ${"?".repeat(E.items.filter(it => it[0] === qn).length)}`),
@@ -569,7 +695,9 @@
                 "-": "-", "ー": "-", "－": "-", "—": "-", "_": "-", "?": "-"};
     // 返ってきたコード → {q: 文字の並び}（大問の番号がないときは、全部を1つの並びとして "all"）
     function readCode(text) {
-      const t = String(text || "").normalize("NFKC");
+      let t = String(text || "").normalize("NFKC");
+      const last = t.lastIndexOf("KAKOMON");
+      if (last >= 0) t = t.slice(last);   // AI が先に書き出した「読み取ったマーク」は読まない
       const m = /KAKOMON\s+(\S+)/.exec(t);
       const out = {id: m ? m[1] : null, rows: {}};
       t.split(/\r?\n/).forEach(line => {
@@ -722,6 +850,66 @@
     const hasNatQ = () => E.qs.some(x => x[3] !== null && x[3] !== undefined);
     const siteRate = (rp, n) => rp && rp.cell && rp.cell.sections ? ((rp.cell.sections.find(c => c.q === n) || {}).rate ?? null) : null;
     const refPct = (rp, r) => r.avg !== null && r.avg !== undefined ? (r.max ? r.avg / r.max * 100 : null) : siteRate(rp, r.q);
+    // ---- 目標点・目標時間：点数集計に集まった、目標の学力帯の人の大問ごとの平均点と平均時間（点数を送った人にだけ見せる）
+    let TARGET_BAND = null;   // 選んだ学力帯（ラベル）。null なら自動（自分の1つ上）
+    function targetInfo() {
+      const L = window.HoshitobuLink;
+      if (!L || !E.survey) return {msg: "点数集計の対象外の試験です。"};
+      if (!WBS || WBS.loading) return {msg: "点数集計を読み込み中…"};
+      if (WBS.error) return {msg: "点数集計を読み込めませんでした。"};
+      if (!L.hasSent(E.survey.subject, E.survey.book, E.survey.round || null)) {
+        return {msg: "この試験の点数を「点数集計」に送ると、目標の学力帯の人が大問ごとに何点・何分だったかが見られます（送った人だけに見せています）。"};
+      }
+      const cell = siteCell(), bs = cell && cell.bandSections;
+      if (!bs) return {msg: "まだ大問ごとの点数を送った人が少ないため、目標を出せません（3人以上になると出ます）。"};
+      const ready = bs.filter(b => b.band && b.sections);
+      const labels = bs.map(b => b.band).filter(Boolean);
+      // 自分の学力帯の1つ上（「わからない」や未設定なら、全員の平均）
+      const prof = L.profile(), BAND_IDS = ["lt50", "50_55", "55_60", "60_65", "65_70", "70up"];
+      const mineIdx = BAND_IDS.indexOf(prof.band);
+      const auto = mineIdx >= 0 ? labels[Math.min(mineIdx + 1, 5)] : null;
+      const want = TARGET_BAND !== null ? TARGET_BAND : auto;
+      const pick = bs.find(b => b.band === want && b.sections) || bs[0];
+      return {bs, ready, pick, want, auto, labels};
+    }
+    // 目標時間：8割以上取れた人の平均（min80）、なければ全員の平均（min、all: true）
+    const targetMin = c => c && c.min80 !== null && c.min80 !== undefined ? {v: c.min80, all: false}
+      : c && c.min !== null && c.min !== undefined ? {v: c.min, all: true} : null;
+    function drawTarget() {
+      const t = targetInfo(), sec = q("#kk-targetsec");
+      q("#kk-targetpick").hidden = !t.pick;
+      if (!t.pick) { q("#kk-targetnote").textContent = t.msg; q("#kk-targettable").innerHTML = ""; return; }
+      const sel = q("#kk-targetband");
+      const opts = [["", "全員の平均"], ...t.bs.filter(b => b.band).map(b => [b.band, b.band + (b.sections ? "" : "（人数が少なく出せません）")])];
+      sel.innerHTML = opts.map(([v, lab]) => `<option value="${esc(v)}"${(t.pick.band || "") === v ? " selected" : ""}${v && !t.bs.find(b => b.band === v).sections ? " disabled" : ""}>${esc(lab)}</option>`).join("");
+      const who = t.pick.band ? `学力帯「${t.pick.band}」の人（${t.pick.n}人）` : `大問ごとを送った全員（${t.pick.n}人）`;
+      q("#kk-targetnote").textContent = (t.want && t.pick.band !== t.want ? `「${t.want}」の人はまだ少ないため、` : "") +
+        `${who}の、大問ごとの平均を目標として出しています。` + (t.auto && TARGET_BAND === null ? "ふつうは、あなたの学力帯の1つ上を目標にしています。" : "");
+      const R = result();
+      let sumT = 0, sumMine = 0, any = false;
+      const rows = R.per.map(r => {
+        const c = t.pick.sections.find(x => x.q === r.q) || {};
+        const tPts = c.rate !== null && c.rate !== undefined && r.max ? r.max * c.rate / 100 : null;
+        if (tPts !== null) { sumT += tPts; any = true; }
+        sumMine += r.got;
+        const gap = tPts === null || !r.done ? "" : r.got >= tPts ? '<span class="kk-up">目標に届いた</span>' : `<span class="kk-down">あと ${(tPts - r.got).toFixed(1)}点</span>`;
+        const tm = targetMin(c);
+        return `<tr><td><b>第${r.q}問</b></td><td class="r">${r.done ? r.got : "—"} / ${r.max || "?"}</td><td class="r">${tPts === null ? "—" : tPts.toFixed(1)}</td><td>${gap}</td>` +
+          `<td class="r">${qTime(r.ms, totalMs() > 0)}</td><td class="r">${tm === null ? "—" : Math.round(tm.v) + "分" + (tm.all ? '<span class="kk-faint">＊</span>' : "")}</td></tr>`;
+      }).join("");
+      q("#kk-targetnote").textContent += "目標時間は、その大問で8割以上取れた人の平均時間です（＊は、8割以上の人が少ないため全員の平均）。1分に満たない時間（たどり着けなかった人）は入っていません。";
+      q("#kk-targettable").innerHTML = `<thead><tr><th>大問</th><th class="r">あなた</th><th class="r">目標点</th><th></th><th class="r">あなたの時間</th><th class="r">目標時間</th></tr></thead><tbody>${rows}` +
+        `<tr class="kk-total"><td>合計</td><td class="r">${sumMine}</td><td class="r">${any ? sumT.toFixed(1) : "—"}</td><td></td><td class="r">${fmt(totalMs())}</td><td></td></tr></tbody>`;
+    }
+    q("#kk-targetband").addEventListener("change", e => { TARGET_BAND = e.target.value || ""; drawTarget(); });
+    q("#kk-targetuse").addEventListener("click", () => {
+      const t = targetInfo(); if (!t.pick) return;
+      let n = 0;
+      t.pick.sections.forEach(c => { const tm = targetMin(c); if (tm && c.q in S.goals) { S.goals[c.q] = Math.max(1, Math.round(tm.v)); n++; } });
+      save(); drawTimer(); drawReport();
+      drawGoalNote(n ? `目標の学力帯の人の時間から、${n}問分の目安を作りました。` : "目標時間の出ている大問がありませんでした。");
+    });
+
     function drawReport() {
       const R = result(), on = R.done > 0;
       const rp = NATR ? null : siteReport(R);
@@ -782,7 +970,7 @@
             `<td><div class="kk-sbar"><i style="width:${r.done && r.max ? r.got / r.max * 100 : 0}%"></i>${ref === null ? "" : `<b style="left:calc(${ref}% - 1px)"></b>`}</div></td>` +
             `<td class="r"><b>${r.done ? r.got : "—"}</b> / ${r.max || "?"}</td><td class="r">${refTxt(r)}</td>` +
             (prev ? `<td class="r">${p ? p.got : "—"}</td>` : "") +
-            `<td class="r ${r.ms > r.goal * 60000 ? "kk-over" : ""}">${r.ms ? fmt(r.ms) : "—"} / ${r.goal}分</td>` +
+            `<td class="r ${r.ms > r.goal * 60000 ? "kk-over" : ""}">${qTime(r.ms, totalMs() > 0)} / ${r.goal}分</td>` +
             (vid ? `<td>${url ? `<a class="kk-vid" href="${esc(url)}" target="_blank" rel="noopener">▶ 解説動画</a>` : `<span class="kk-vid-none">動画は準備中</span>`}</td>` : "") + `</tr>`;
         }).join("") +
         `<tr class="kk-total"><td>合計</td><td></td><td class="r">${on ? R.total : "—"} / ${E.full}</td><td class="r">${natQ || NAT() ? (E.mean ?? "—") : (rp && rp.ok ? rp.siteMean.toFixed(1) : "—")}</td>` +
@@ -845,6 +1033,7 @@
           : `<li class="kk-muted" style="background:none;border:0;padding:0">× をつけた欄は、まだありません。</li>`;
       }
 
+      drawTarget();
       // 記録ボタンの上の選択肢（スケジューラの学習時間など）
       const so = q("#kk-saveopts");
       const html = host.saveOptions ? host.saveOptions(E, Math.round(totalMs() / 60000)) : "";
@@ -879,13 +1068,54 @@
         const extras = host.readSaveOptions ? host.readSaveOptions(root) : {};
         const res = await host.saveRecord(E, rec, extras);
         H[E.id] = res.history;
-        S.savedAt = at; save(); if (usesSite()) { WBS = null; loadWB(); } if (NATR) loadPeers();
+        S.savedAt = at; save(); if (E.survey) { WBS = null; WB_FRESH = true; loadWB(); } if (NATR) loadPeers();
         flash(`記録しました（${R.total}点）。` + (prev ? `前回より ${R.total - prev.total >= 0 ? "+" : ""}${R.total - prev.total}点。` : "") +
           (res.message ? res.message + " " : "") + "もう一度解くときは「リセット」を押してから始めてください。");
         drawAll();
       } catch (err) {
         flash("記録できませんでした：" + (err && err.message ? err.message : err), true);
       } finally { btn.disabled = false; btn.textContent = "この結果を記録する"; }
+    });
+    // ---- 得点の推移（この科目の、全部の年度・試験・予想問題集の記録を、解いた日の順に）
+    let TREND = "dev";
+    const trendRows = () => Object.entries(H).flatMap(([id, h]) => {
+      const ex = examById(id);
+      if (!ex || ex.sid !== E.sid) return [];
+      const nat = ex.mean !== null && ex.mean !== undefined && ex.sd > 0 && ex.kind !== "workbook";
+      return (h || []).map(r => {
+        const max = (r.per || []).reduce((a, p) => a + (p.max || 0), 0) || ex.full;
+        return {at: r.at, ex, total: r.total, pct: Math.min(100, 100 * r.total / Math.min(ex.full, max)), dev: r.dev === null || r.dev === undefined ? null : +r.dev,
+                est: !nat, ms: r.ms || 0, complete: r.complete};
+      });
+    }).sort((a, b) => a.at < b.at ? -1 : 1);
+    function trendSvg(rows) {
+      const pts = rows.map(r => ({...r, v: TREND === "dev" ? r.dev : r.pct})).filter(r => r.v !== null && isFinite(r.v));
+      if (pts.length < 1) return `<p class="kk-muted">${TREND === "dev" ? "偏差値の出た記録がまだありません。" : "記録がまだありません。"}</p>`;
+      const W = 640, Hh = 220, L = 40, R = 16, T = 14, B = 34;
+      const vs = pts.map(p => p.v);
+      let lo = TREND === "dev" ? Math.min(35, Math.floor(Math.min(...vs) / 5) * 5) : 0, hi = TREND === "dev" ? Math.max(70, Math.ceil(Math.max(...vs) / 5) * 5) : 100;
+      const x = i => L + (pts.length === 1 ? (W - L - R) / 2 : i * (W - L - R) / (pts.length - 1));
+      const y = v => T + (hi - v) * (Hh - T - B) / (hi - lo);
+      const ticks = [];
+      for (let v = lo; v <= hi; v += TREND === "dev" ? 5 : 20) ticks.push(v);
+      return `<svg class="kk-trendsvg" viewBox="0 0 ${W} ${Hh}" role="img" aria-label="得点の推移">` +
+        ticks.map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" class="${TREND === "dev" && v === 50 ? "kk-tmid" : "kk-tgrid"}"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" class="kk-tlab">${v}</text>`).join("") +
+        `<polyline class="kk-tline" points="${pts.map((p, i) => `${x(i)},${y(p.v)}`).join(" ")}"/>` +
+        pts.map((p, i) => `<g><circle cx="${x(i)}" cy="${y(p.v)}" r="5" class="${p.est && TREND === "dev" ? "kk-tdot is-est" : "kk-tdot"}"><title>${esc(md(p.at))} ${esc(p.ex.title)}：${p.total}点・${TREND === "dev" ? "偏差値 " + p.v.toFixed(1) : p.v.toFixed(0) + "%"}</title></circle>` +
+          `<text x="${x(i)}" y="${Hh - 12}" text-anchor="middle" class="kk-tlab">${md(p.at)}</text></g>`).join("") + `</svg>`;
+    }
+    function drawTrend() {
+      const rows = trendRows();
+      q("#kk-trendnote").textContent = rows.length ? `${subjName(E)}・${rows.length}回` : "";
+      q("#kk-trendchart").innerHTML = rows.length ? trendSvg(rows) : `<p class="kk-muted">${esc(subjName(E))}の記録がたまると、ここに推移が出ます（日付は記録したときに自動で入ります）。</p>`;
+      root.querySelectorAll("[data-trend]").forEach(b => b.classList.toggle("is-on", b.dataset.trend === TREND));
+      q("#kk-trendtable").innerHTML = rows.length ? `<thead><tr><th>解いた日</th><th>試験</th><th class="r">得点</th><th class="r">得点率</th><th class="r">偏差値</th><th class="r">時間</th></tr></thead><tbody>` +
+        rows.slice().reverse().map(r => `<tr${r.ex.id === E.id ? ' class="is-now"' : ""}><td>${md(r.at)}</td><td>${esc(r.ex.title)}</td><td class="r"><b>${r.total}</b>${r.complete ? "" : '<span class="kk-faint">（途中）</span>'}</td>` +
+          `<td class="r">${r.pct.toFixed(0)}%</td><td class="r">${r.dev === null ? "—" : r.dev.toFixed(1) + (r.est ? '<span class="kk-faint">（推定）</span>' : "")}</td><td class="r">${r.ms ? fmt(r.ms) : "—"}</td></tr>`).join("") + "</tbody>" : "";
+    }
+    root.querySelector(".kk-trendtabs").addEventListener("click", e => {
+      const b = e.target.closest("[data-trend]"); if (!b) return;
+      TREND = b.dataset.trend; drawTrend();
     });
     function drawHist() {
       const h = hist();
@@ -909,6 +1139,73 @@
     });
 
     // ------------------------------------------------ 成績表を画像で保存（1200×675、動画・SNS向けの16:9）
+    // ------------------------------------------------ 成績表（A4・印刷／PDF保存）：今回の結果、大問ごとの「自分・全国（みんな）・目標」、時間、落とした所、推移
+    function reportCardHtml() {
+      const R = result(), rp = NATR ? null : siteReport(R), d = new Date(), dv = devNow(R, rp);
+      const t = targetInfo(), natQ = hasNatQ();
+      const k = NATR ? rankOf(R.total) : null;
+      const tile = (lab, v, sub, main) => `<div class="t${main ? " main" : ""}"><div class="l">${lab}</div><div class="v">${v}</div><div class="s">${sub || ""}</div></div>`;
+      const tiles = [
+        tile("得点", `${R.total}<small> / ${E.full}</small>`, NAT() ? `全国平均 ${E.mean}点` : (rp && rp.ok ? `このサイトの平均 ${rp.siteMean.toFixed(1)}点` : ""), true),
+        tile(NAT() ? "全国偏差値" : "本番換算の偏差値", dv === null ? "—" : dv.toFixed(1), NAT() ? `平均 ${E.mean}・標準偏差 ${E.sd}` : "このサイトの人の本試の位置から推定"),
+        NATR ? tile("全国の順位", "上位 " + topTxt(k.top), `${comma(E.n)}人中 ${comma(k.rank)}位`)
+             : tile("このサイトの中", rp && rp.ok ? `${rp.rank}位` : "—", rp && rp.ok ? `${rp.of || rp.n}人中・上位 ${rp.top}%` : "記録が少ないため出せません"),
+        tile("時間", fmt(totalMs()), `制限 ${E.minutes}分`),
+      ].join("");
+      const tgt = t.pick ? Object.fromEntries(t.pick.sections.map(c => [c.q, c])) : {};
+      const rows = R.per.map(r => {
+        const ref = natQ ? (r.avg === null || r.avg === undefined ? "—" : r.avg.toFixed(1)) : (siteRate(rp, r.q) === null ? "—" : siteRate(rp, r.q).toFixed(1) + "%");
+        const c = tgt[r.q] || {};
+        const tp = c.rate !== null && c.rate !== undefined && r.max ? (r.max * c.rate / 100).toFixed(1) : "—";
+        const bar = r.max ? Math.round(100 * r.got / r.max) : 0;
+        return `<tr><td><b>第${r.q}問</b><div class="f">${esc(r.name)}</div></td><td class="r"><b>${r.done ? r.got : "—"}</b> / ${r.max || "?"}</td>` +
+          `<td><div class="bar"><i style="width:${bar}%"></i></div></td><td class="r">${ref}</td><td class="r">${tp}</td>` +
+          `<td class="r">${qTime(r.ms, totalMs() > 0)}</td><td class="r">${r.goal}分</td><td class="r">${targetMin(c) ? Math.round(targetMin(c).v) + "分" + (targetMin(c).all ? "＊" : "") : "—"}</td></tr>`;
+      }).join("");
+      const miss = [];
+      E.items.forEach((it, i) => { if (S.marks[i] === "x" && chosen().includes(it[0])) miss.push([it, S.why[i], rateOf(i)]); });
+      miss.sort((a, b) => (b[2] ? b[2].v : -1) - (a[2] ? a[2].v : -1));
+      const missHtml = SEC
+        ? ((rp && rp.review || []).map(r => `<li>第${r.q}問　あなた ${r.mine.toFixed(0)}%／${r.refKind || "みんな"} ${r.ref.toFixed(0)}%</li>`).join("") || "<li>とくになし</li>")
+        : (miss.slice(0, 8).map(([it, w, rr]) => `<li>第${it[0]}問 ${esc(it[1])}（${it[2]}点）${w ? "・" + esc(w) : ""}${rr ? `<span class="f">　${rr.src} ${rr.v.toFixed(0)}%${rr.v >= 70 ? "・取り返しやすい" : ""}</span>` : ""}</li>`).join("") || "<li>× なし</li>");
+      const why = {};
+      E.items.forEach((it, i) => { if (S.marks[i] === "x" && chosen().includes(it[0])) { const w = S.why[i] || "理由なし"; why[w] = (why[w] || 0) + it[2]; } });
+      const whyHtml = Object.entries(why).sort((a, b) => b[1] - a[1]).map(([w, p]) => `<li>${esc(w)}　−${p}点</li>`).join("");
+      const tr = trendRows();
+      const keep = TREND; TREND = "dev";
+      const chart = tr.length ? trendSvg(tr) : "";
+      TREND = keep;
+      const trendTable = tr.slice(-8).reverse().map(r => `<tr><td>${md(r.at)}</td><td>${esc(r.ex.title)}</td><td class="r">${r.total}</td><td class="r">${r.pct.toFixed(0)}%</td><td class="r">${r.dev === null ? "—" : r.dev.toFixed(1) + (r.est ? "（推定）" : "")}</td></tr>`).join("");
+      const css = `@page{size:A4;margin:12mm}*{box-sizing:border-box}body{font-family:"Hiragino Sans","Yu Gothic UI","Noto Sans JP",sans-serif;color:#141a2b;margin:0;font-size:11.5px;line-height:1.5;background:#fff}
+        .wrap{max-width:186mm;margin:0 auto;padding:6mm 0}h1{font-size:13px;color:#3559c7;margin:0}h2{font-size:19px;margin:2px 0 2px}h3{font-size:12.5px;margin:12px 0 6px;border-left:4px solid #3559c7;padding-left:6px}
+        .meta{color:#5d6680}.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0}.t{border:1px solid #d6dbe6;border-radius:8px;padding:6px 8px}.t.main{background:#3559c7;color:#fff;border-color:#3559c7}
+        .t .l{font-size:10.5px;opacity:.85}.t .v{font-size:20px;font-weight:800}.t .v small{font-size:11px;font-weight:600}.t .s{font-size:10px;opacity:.85}
+        table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid #e7eaf1;padding:3px 4px;text-align:left;vertical-align:top}th{font-size:10.5px;color:#5d6680;font-weight:600}.r{text-align:right}.f{color:#8d94a8;font-size:10px}
+        .bar{height:7px;background:#e7eaf1;border-radius:4px;overflow:hidden;margin-top:4px}.bar i{display:block;height:100%;background:#3559c7}
+        .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}ul{margin:0;padding-left:16px}li{margin:1px 0}
+        svg{width:100%;height:auto}.kk-tgrid{stroke:#e7eaf1}.kk-tmid{stroke:#c3c9d6;stroke-dasharray:4 4}.kk-tlab{fill:#8d94a8;font-size:11px}.kk-tline{fill:none;stroke:#3559c7;stroke-width:2.5}.kk-tdot{fill:#3559c7;stroke:#fff;stroke-width:2}.kk-tdot.is-est{fill:#fff;stroke:#3559c7}
+        .foot{margin-top:10px;color:#8d94a8;font-size:9.5px}.noprint{margin:8px 0 0}@media print{.noprint{display:none}}`;
+      return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>成績表 ${esc(E.title)}</title><style>${css}</style></head><body><div class="wrap">
+        <div class="noprint"><button onclick="print()">印刷・PDFで保存</button>（印刷の画面で「PDFに保存」を選ぶと、PDFになります）</div>
+        <h1>成績表　星飛ぶの勉強部屋　過去問演習</h1><h2>${esc(E.title)}</h2>
+        <div class="meta">${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}　${E.optional.length ? "選んだ大問：第" + chosen().join("・") + "問" : "全問必答"}${R.done < R.all ? "　（採点の途中）" : ""}</div>
+        <div class="tiles">${tiles}</div>
+        <h3>大問ごと</h3>
+        <table><thead><tr><th>大問</th><th class="r">得点</th><th style="width:20%"></th><th class="r">${natQ ? "全国平均" : "みんなの得点率"}</th><th class="r">目標点</th><th class="r">時間</th><th class="r">自分の目安</th><th class="r">目標時間</th></tr></thead><tbody>${rows}</tbody></table>
+        <div class="f">${t.pick ? `目標点・目標時間：点数集計の${t.pick.band ? "学力帯「" + esc(t.pick.band) + "」" : "全員"}（${t.pick.n}人）の大問ごとの平均。目標時間は8割以上取れた人の平均（＊は全員の平均）。「たどり着けなかった？」は1分に満たなかった大問です。` : "目標点・目標時間：" + esc(t.msg || "")}</div>
+        <div class="two"><div><h3>${SEC ? "復習すべき大問" : "落とした所（正答率の高い順）"}</h3><ul>${missHtml}</ul></div>
+          <div><h3>落とした理由</h3><ul>${whyHtml || "<li>—</li>"}</ul></div></div>
+        ${tr.length ? `<h3>得点の推移（${esc(subjName(E))}）</h3>${chart}<table><thead><tr><th>解いた日</th><th>試験</th><th class="r">得点</th><th class="r">得点率</th><th class="r">偏差値</th></tr></thead><tbody>${trendTable}</tbody></table>` : ""}
+        <div class="foot">出典：大学入試センター（平均点・標準偏差・成績分布・設問別正答率）。偏差値は (得点−平均点)÷標準偏差×10＋50 の目安。「みんな」「目標」は点数集計（このサイトの利用者）の数字です。</div>
+      </div></body></html>`;
+    }
+    q("#kk-print").addEventListener("click", () => {
+      const R = result();
+      if (!R.done) { flash(needFirst(), true); return; }
+      const w = window.open("", "_blank");
+      if (!w) { flash("新しいタブを開けませんでした。このサイトのポップアップを許可してください。", true); return; }
+      w.document.open(); w.document.write(reportCardHtml()); w.document.close();
+    });
     q("#kk-png").addEventListener("click", () => {
       const R = result();
       if (!R.done) { flash(needFirst(), true); return; }
@@ -981,9 +1278,9 @@
     });
 
     // ------------------------------------------------ はじめに
-    function drawAll() { drawSel(); drawTimer(); drawOX(); drawMini(); drawReport(); drawHist(); }
+    function drawAll() { drawSel(); drawTimer(); drawOX(); drawMini(); drawReport(); drawHist(); drawTrend(); drawGoalNote(); }
     // 点数集計の数字を、ほかの場所（集計に送ったあとなど）から読み直す
-    const refreshWB = () => { if (E && usesSite()) { WBS = null; loadWB(); } };
+    const refreshWB = () => { if (E && E.survey) { WBS = null; WB_FRESH = true; loadWB(); } };
     const want = (opt.initialExam) || store.get("lastExam") || (EXAMS[0] && EXAMS[0].id);
     const startId = examById(want) ? want : EXAMS[0].id;
     Promise.resolve(host.loadHistory ? host.loadHistory() : {}).catch(() => ({})).then(h => { H = h || {}; loadExam(startId); });

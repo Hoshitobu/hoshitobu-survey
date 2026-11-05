@@ -53,6 +53,9 @@
     for (const k of ["code", "band", "nickname"]) if (p[k] !== undefined) ls.set("hoshitobu-link:" + k, String(p[k] || ""));
     for (const k of ["ranking", "consent", "auto"]) if (p[k] !== undefined) ls.set("hoshitobu-link:" + k, p[k] ? "1" : "");
   };
+  /** この端末から、その問題集・科目・回を点数集計に送ったことがあるか（目標点・目標時間は送った人にだけ見せる） */
+  L.hasSent = (subjectName, bookName, round) => L.mine().some(m => m.subject === subjectName && m.book === bookName &&
+    (m.round === null || m.round === undefined ? !round : m.round === round));
   // この端末から送った記録（集計ページの「あなたの記録」と同じ形）
   L.mine = () => { try { return JSON.parse(ls.get("hoshitobu-link:mine") || "[]"); } catch (e) { return []; } };
 
@@ -204,8 +207,10 @@
     const row = {subject: s.subjectId, book: s.bookId, score: Math.round(rec.total)};
     if (s.round) row.round = s.round;
     const sec = exam.mode === "sections";
+    // 大問ごと：時間をはかっていれば、その大問にかけた分（min）も送る（目標時間に使う）。1分に満たない大問は
+    // たどり着けなかったものとして、時間は送らない
     const per = (rec.per || []).filter(p => p.max && (sec ? p.done : p.done === p.all))
-      .map(p => ({q: p.q, score: Math.round(p.got), max: Math.round(p.max)}));
+      .map(p => Object.assign({q: p.q, score: Math.round(p.got), max: Math.round(p.max)}, p.ms >= 60000 ? {min: Math.round(p.ms / 60000)} : {}));
     if (per.length && per.reduce((a, x) => a + x.score, 0) === row.score) row.sections = per;
     if (!sec && exam.items && exam.items.length && rec.marks && Object.keys(rec.marks).length) {
       row.items = exam.items.map((_, i) => rec.marks[i] === "o" || rec.marks[i] === "x" ? rec.marks[i] : "-").join("");
@@ -222,6 +227,8 @@
       const tpl = book.sections ? (book.sections[subject.id] || null) : (cfg.sectionGroups || []).includes(book.group) ? (cfg.sections || {})[subject.id] : null;
       const out = {...r};
       if (!tpl || !r.sections || r.sections.some(x => x.q > tpl.length)) delete out.sections;
+      // 古い Apps Script は大問ごとの時間を受け付けないので、そのときは時間だけ外す
+      else if (!cfg.sectionMinutes) out.sections = r.sections.map(({min, ...x}) => x);
       // 設問ごとの ○× は、点数集計がその問題集・科目の設問の数を知っているときだけ（古い Apps Script では送らない）
       const nItems = book.items ? book.items[subject.id] : null;
       if (!nItems || !r.items || r.items.length !== nItems) delete out.items;

@@ -270,6 +270,26 @@
 .kk .kk-wbrow input { width: 76px; padding: 8px 10px; font-size: 18px; font-weight: 700; text-align: center; border: 1px solid var(--kk-line-strong);
                       border-radius: 10px; background: var(--kk-surface); margin: 0; font-variant-numeric: tabular-nums; }
 .kk .kk-wbrow input[data-wbm] { width: 64px; font-size: 15px; font-weight: 500; color: var(--kk-sub); }
+.kk .kk-targetpick { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 8px; }
+.kk .kk-targetpick select { padding: 4px 8px; border: 1px solid var(--kk-line-strong); border-radius: 8px; font: inherit; font-size: 13px; background: var(--kk-surface); }
+.kk .kk-goalmake { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 10px 2px 0; }
+.kk .kk-chip { border: 1px solid var(--kk-line-strong); background: var(--kk-surface); border-radius: 999px; padding: 4px 10px; font: inherit; font-size: 12px; color: var(--kk-sub); cursor: pointer; }
+.kk .kk-chip:hover { border-color: var(--kk-accent); color: var(--kk-accent); }
+.kk .kk-chip.is-on { background: var(--kk-accent-soft); border-color: var(--kk-accent-mid); color: var(--kk-accent); font-weight: 700; }
+.kk .kk-chip.is-save { color: var(--kk-accent); font-weight: 700; }
+.kk .kk-trendtabs { display: flex; gap: 6px; margin: 2px 0 8px; }
+.kk .kk-trendsvg { width: 100%; height: auto; display: block; margin: 0 0 8px; }
+.kk .kk-tgrid { stroke: var(--kk-line); stroke-width: 1; }
+.kk .kk-tmid { stroke: var(--kk-line-strong); stroke-width: 1.5; stroke-dasharray: 4 4; }
+.kk .kk-tlab { fill: var(--kk-faint); font-size: 11px; }
+.kk .kk-tline { fill: none; stroke: var(--kk-accent); stroke-width: 2.5; stroke-linejoin: round; }
+.kk .kk-tdot { fill: var(--kk-accent); stroke: #fff; stroke-width: 2; }
+.kk .kk-tdot.is-est { fill: #fff; stroke: var(--kk-accent); }
+.kk .kk-table tr.is-now td { background: var(--kk-accent-soft); }
+.kk .kk-marktip { grid-column: 1 / -1; margin: 2px 0 0; padding: 10px 14px; border: 1px solid #f0d9a8; border-radius: 12px; background: #fff8ea; }
+.kk .kk-marktip > summary { cursor: pointer; font-weight: 700; font-size: 13.5px; color: #8a5a00; }
+.kk .kk-marktip ul { margin: 8px 0 2px; padding-left: 20px; font-size: 13px; color: var(--kk-ink); }
+.kk .kk-marktip li { margin: 4px 0; }
 .kk .kk-ai { margin: 10px 0 4px; padding: 10px 14px; border: 1px solid var(--kk-line); border-radius: 12px; background: var(--kk-raised); }
 .kk .kk-ai > summary { cursor: pointer; font-weight: 700; font-size: 13.5px; color: var(--kk-accent); }
 .kk .kk-ai-steps { margin: 10px 0 8px; padding-left: 20px; font-size: 13px; color: var(--kk-sub); }
