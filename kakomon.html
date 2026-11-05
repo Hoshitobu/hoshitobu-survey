@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#3559c7">
 <meta name="referrer" content="no-referrer">
-<title>過去問演習 — 星飛ぶの勉強部屋</title>
+<title>過去問演習・点数集計 — 星飛ぶの勉強部屋</title>
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="kakomon/kakomon.css?v=20261105k">
+<link rel="stylesheet" href="kakomon/kakomon.css?v=20261105l">
 <style>
   /* このページだけ：本文を広めにとる（採点と時計を左右に並べるため） */
   body { background: #f5f6fa; }
@@ -15,6 +15,23 @@
   .kk-title { margin: 4px 4px 18px; }
   .kk-title h2 { font-size: 22px; color: #141a2b; margin: 0 0 4px; letter-spacing: .01em; }
   .kk-title p { margin: 0; color: #5d6680; font-size: 13px; }
+  /* 2つの使い方：時間をはかって解く／点数だけ入れる */
+  .kk-viewtabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 4px 16px; }
+  .kk-viewtabs button { border: 1px solid #d6dbe6; background: #fff; border-radius: 999px; padding: 8px 16px; font: inherit; font-size: 14px; font-weight: 700; color: #5d6680; cursor: pointer; }
+  .kk-viewtabs button[aria-selected="true"] { background: #3559c7; border-color: #3559c7; color: #fff; }
+  #quickPanel { max-width: 760px; }
+  /* ここから下は、もとの回答ページ（点数だけ入れる）の CSS */
+  /* 大問ごとの点数（任意） */
+  details.sec { margin-top: 10px; border-top: 1px dashed var(--line); padding-top: 8px; }
+  details.sec summary { cursor: pointer; font-size: 13px; color: var(--accent); font-weight: 700; }
+  .secgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; margin-top: 8px; }
+  .secgrid .cell { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+  .secgrid .cell b { display: block; font-size: 12px; margin-bottom: 4px; }
+  .secgrid .pair { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--sub); }
+  .secgrid .pair input { padding: 5px 4px; text-align: center; }
+  .secgrid .pair input[data-sm] { width: 46px; flex: none; color: var(--sub); }
+  .secsum { margin-top: 6px; font-size: 12px; color: var(--sub); }
+  .secsum.bad { color: var(--warn); }
 </style>
 </head>
 <body>
@@ -24,9 +41,8 @@
     <div class="community">星飛ぶの勉強部屋</div>
   </div>
   <nav>
-    <a href="index.html">回答する</a>
-    <a href="results.html">集計を見る</a>
     <a href="kakomon.html" aria-current="page">過去問演習</a>
+    <a href="results.html">集計を見る</a>
   </nav>
 </header>
 <main class="kk-page">
@@ -34,13 +50,123 @@
     <h2>過去問演習</h2>
     <p>時間をはかって解き、自己採点すると、偏差値・順位と、どこで落としたかが出ます。過去問は全国と、予想問題集はこのサイトの利用者と比べます。</p>
   </div>
+  <div class="kk-viewtabs" role="tablist" id="viewTabs">
+    <button type="button" role="tab" data-view="solve" aria-selected="true">時間をはかって解く（○×で採点）</button>
+    <button type="button" role="tab" data-view="quick" aria-selected="false">点数だけ入れる（まとめて送る・センター試験・本番の自己採点）</button>
+  </div>
   <div id="kakomon"></div>
+  <section id="quickPanel" hidden>
+    <p class="note" style="margin:0 4px 12px">解き終わった点数だけを、点数集計に送ります。何科目もまとめて送れます。センター試験（2010〜2020年）や「その他」の問題集、本番の自己採点（2027年1月18日から）もここから送ります。</p>
+
+<div id="loadError" class="card warnbox" hidden></div>
+
+<form id="form" novalidate hidden>
+
+<div class="card">
+  <h2>はじめに</h2>
+  <label class="consent">
+    <input type="checkbox" id="consent">
+    <span>回答は匿名で集計し、YouTube『星飛ぶ』の動画で使用します。<b>名前・学校名などの個人情報は入力しないでください。</b>ニックネームを入力してください。（同意する）</span>
+  </label>
+  <div class="note" style="margin-top:8px">名前・メールアドレス・IPアドレスは記録しません。ニックネームは「ランキングに載せる」にチェックしたときだけ、点数と一緒に集計ページのランキングと動画で公開されます。</div>
+</div>
+
+<div class="card">
+  <h2>あなたの回答者コード</h2>
+  <div class="code-box">
+    <div class="code" id="codeView">------</div>
+    <button type="button" class="link" id="copyCode">コピー</button>
+  </div>
+  <div class="warnbox" id="codeNew" hidden>はじめて発行したコードです。<b>スクショやメモで必ず保存してください。</b>本番（2027年1月）の自己採点を送るときに、今日の記録とつなげるために使います。</div>
+  <div class="note">この端末には自動で保存され、次回からは自動で入力されます。別の端末から送るときは、同じコードを入力してください。</div>
+  <button type="button" class="link" id="toggleCodeInput" style="margin-top:6px">別のコードを入力する</button>
+  <div id="codeInputWrap" hidden>
+    <div class="inline">
+      <div><label>前に発行されたコード（6文字）</label><input id="codeInput" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false"></div>
+      <div style="flex:0 0 auto;align-self:flex-end"><button type="button" class="secondary" id="useCode" style="margin:0;padding:7px 14px">このコードを使う</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="card" id="modeCard" hidden>
+  <h2>送る内容</h2>
+  <div class="tabs">
+    <button type="button" data-mode="practice" aria-pressed="true">予想問題集の点数</button>
+    <button type="button" data-mode="honban" aria-pressed="false">本番の自己採点</button>
+  </div>
+  <div class="note" id="honbanNote" hidden>本番の自己採点は「回答者コード・科目・点数」だけを送ります。</div>
+</div>
+
+<div class="card" id="profileCard">
+  <h2>あなたについて</h2>
+  <div class="inline">
+    <div data-practice-only>
+      <label>ニックネーム（<span id="nickMax">12</span>文字まで・<span id="nickReq">任意</span>）</label>
+      <input id="nickname" autocomplete="off" placeholder="例: ほしのこ">
+    </div>
+    <div data-practice-only>
+      <label>学力帯（直近の模試の偏差値）・必須</label>
+      <select id="band"><option value="">選んでください</option></select>
+    </div>
+  </div>
+  <div data-practice-only style="margin-top:12px">
+    <label class="consent">
+      <input type="checkbox" id="ranking">
+      <span>ランキングにニックネームを載せる（集計ページと動画で公開されます）</span>
+    </label>
+    <div class="note" style="margin-top:4px">載せない場合は「匿名」として順位に入ります。<b>本名・学校名・SNSのIDはニックネームに使わないでください。</b></div>
+  </div>
+  <div id="passWrap" hidden>
+    <label>合言葉（動画・Discordで案内しています）</label>
+    <input id="passphrase" autocomplete="off">
+  </div>
+  <div class="hp" aria-hidden="true">
+    <label>Webサイト<input id="website" tabindex="-1" autocomplete="off"></label>
+  </div>
+</div>
+
+<div class="card">
+  <h2>記録</h2>
+  <div class="note" id="recordsNote">1回の送信で複数の記録をまとめて送れます（最大<span id="maxRows">20</span>件）。</div>
+  <div id="records"></div>
+  <button type="button" class="secondary" id="addRow">＋ 記録を追加</button>
+</div>
+
+<div class="card">
+  <button type="submit" class="primary" id="submit">送信する</button>
+  <div id="msg" role="alert"></div>
+  <div id="done" class="okbox" hidden></div>
+</div>
+
+</form>
+  </section>
 </main>
+<template id="rowTpl">
+  <div class="rec">
+    <div class="rec-head"><span data-title></span><button type="button" class="link" data-remove>この記録を消す</button></div>
+    <div class="grid">
+      <div class="wide" data-practice-only><label>問題集</label><select data-f="book"></select></div>
+      <div data-round><label>回</label><select data-f="round"></select></div>
+      <div><label>科目</label><select data-f="subject"></select></div>
+      <div><label>点数（<span data-max>100</span>点満点）</label><input type="number" data-f="score" min="0" step="1" inputmode="numeric"></div>
+      <div data-practice-only><label>所要時間（分・任意）</label><input type="number" data-f="minutes" min="1" step="1" inputmode="numeric"></div>
+      <div data-practice-only><label>解いた月（任意）</label><select data-f="month"></select></div>
+    </div>
+    <details class="sec" data-sections hidden>
+      <summary>大問ごとの点数も入れる（任意・復習の提案に使います）</summary>
+      <div class="note" data-secnote style="margin-top:6px"></div>
+      <div class="secgrid" data-secgrid></div>
+      <div class="secsum" data-secsum></div>
+    </details>
+    <div class="err" data-err></div>
+  </div>
+</template>
 <script src="app-config.js"></script>
-<script src="national-stats.js?v=20261105k"></script>
-<script src="kakomon/kakomon-data.js?v=20261105k"></script>
-<script src="kakomon/hoshitobu-link.js?v=20261105k"></script>
-<script src="kakomon/kakomon-core.js?v=20261105k"></script>
+<script src="national-stats.js?v=20261105l"></script>
+<script src="kakomon/kakomon-data.js?v=20261105l"></script>
+<script src="kakomon/hoshitobu-link.js?v=20261105l"></script>
+<script src="quick-entry.js?v=20261105l"></script>
+<script src="kakomon/kakomon-core.js?v=20261105l"></script>
 <script>
 // 公開サイト用の host：記録はこの端末のブラウザに保存、仲間の偏差値と予想問題集の比べる相手は「点数集計」から
 (function () {
@@ -164,6 +290,18 @@
         "記録は、この端末のブラウザにだけ保存されます。";
     },
   };
+  // ---- 2つの使い方の切りかえ
+  function showView(v) {
+    const quick = v === "quick";
+    document.getElementById("kakomon").hidden = quick;
+    document.getElementById("quickPanel").hidden = !quick;
+    document.querySelectorAll("#viewTabs [data-view]").forEach(b => b.setAttribute("aria-selected", String((b.dataset.view === "quick") === quick)));
+    const u = new URL(location.href);
+    if (quick) u.searchParams.set("view", "quick"); else u.searchParams.delete("view");
+    history.replaceState(null, "", u.pathname + u.search + u.hash);
+  }
+  document.getElementById("viewTabs").addEventListener("click", e => { const b = e.target.closest("[data-view]"); if (b) showView(b.dataset.view); });
+  showView(new URLSearchParams(location.search).get("view") === "quick" ? "quick" : "solve");
   const want = new URLSearchParams(location.search).get("exam");
   window.KAKOMON = window.Kakomon.mount(document.getElementById("kakomon"), {
     exams: window.KAKOMON_EXAMS, stages: window.KAKOMON_STAGES, host, initialExam: want || null,

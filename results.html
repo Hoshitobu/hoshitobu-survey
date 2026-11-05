@@ -15,9 +15,8 @@
     <div class="community">星飛ぶの勉強部屋</div>
   </div>
   <nav>
-    <a href="index.html">回答する</a>
-    <a href="results.html" aria-current="page">集計を見る</a>
     <a href="kakomon.html">過去問演習</a>
+    <a href="results.html" aria-current="page">集計を見る</a>
   </nav>
 </header>
 <main>
@@ -372,7 +371,7 @@ function reportHtml(m, cell) {
 
   // 大問ごと：自分の得点率と、みんな（過去問の本試なら全国）の得点率をくらべる
   if (!m.sections) {
-    html += `<div class="note" style="margin-top:10px">大問ごとの点数を入れて送ると、ここに「復習すべき大問」が出ます（<a href="index.html">回答する</a>）。</div>`;
+    html += `<div class="note" style="margin-top:10px">大問ごとの点数を入れて送ると、ここに「復習すべき大問」が出ます（<a href="kakomon.html">過去問演習</a>）。</div>`;
     return html;
   }
   const rows = m.sections.map(x => {
