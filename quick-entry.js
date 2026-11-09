@@ -279,7 +279,7 @@ async function submit(ev) {
     if (CFG.passphraseRequired) store.set("passphrase", $("passphrase").value);
     saveMine(rows);
     $("done").innerHTML = "";
-    $("done").append(`✓ ${rows.length}件の記録を送信しました。ありがとうございます！ `);
+    $("done").append(`${rows.length}件の記録を送信しました。 `);
     const a = document.createElement("a"); a.href = "results.html#mine"; a.textContent = "自分の順位と分布を見る →";
     $("done").append(a);
     $("done").hidden = false;

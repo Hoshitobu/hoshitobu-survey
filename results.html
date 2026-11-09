@@ -3,16 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#3559c7">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)">
 <meta name="referrer" content="no-referrer">
 <title>共テ予想問題集 点数集計 — 集計</title>
-<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
+<link rel="stylesheet" href="style.css?v=20261109c">
 </head>
 <body>
 <header>
-  <div>
-    <h1>⭐ 共テ予想問題集 点数集計</h1>
-    <div class="community">星飛ぶの勉強部屋</div>
+  <div class="brand">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.1 7.4 7.4 2.1-7.4 2.1L12 21.5l-2.1-7.4L2.5 12l7.4-2.1z" fill="currentColor"/></svg>
+    <div>
+      <h1>共テ予想問題集 点数集計</h1>
+      <div class="community">星飛ぶの勉強部屋</div>
+    </div>
   </div>
   <nav>
     <a href="kakomon.html">過去問演習</a>
@@ -21,18 +28,14 @@
 </header>
 <main>
 
-<div class="card">
+<div class="page-title">
   <h2>集計結果</h2>
   <div class="note" id="summary">読み込み中…</div>
-  <div class="note" style="margin-top:6px">
-    人数が<span class="minN">3</span>人未満の欄は、個人が特定されないよう「—」で表示しています。
-    同じ人が同じ回を何度か送った場合は、最初の点数だけを集計しています。
-  </div>
 </div>
 
 <div class="card" id="mineCard" hidden>
   <h2>あなたの記録</h2>
-  <div class="note">この端末から送った点数です（この端末にだけ保存されています）。「成績表を見る」で、順位・偏差値・平均点と、本番に直した偏差値、復習すべき大問が出ます。</div>
+  <div class="note">この端末から送った点数です。</div>
   <div id="mine"></div>
 </div>
 
@@ -49,9 +52,9 @@
     <div class="tip" id="tip" hidden></div>
   </div>
   <div class="note" id="histNote"></div>
-  <button type="button" class="secondary" id="savePng">📷 分布グラフを画像（PNG）で保存</button>
+  <button type="button" class="secondary" id="savePng">分布グラフを画像（PNG）で保存</button>
   <h3>ランキング</h3>
-  <div class="note">ニックネームは、ランキングへの掲載を希望した人だけ表示しています。</div>
+  <div class="note">ニックネームは、掲載を希望した人だけ表示しています。</div>
   <div class="tablewrap"><table id="rankTable"></table></div>
   <button type="button" class="link" id="showAll" style="margin-top:8px" hidden></button>
 </div>
@@ -72,52 +75,72 @@
 <div id="honban"></div>
 <div id="practice"></div>
 
+<p class="foot">人数が<span class="minN">3</span>人未満の欄は「—」で表示しています。同じ人が同じ回を何度か送った場合は、最初の点数だけを集計しています。</p>
 </main>
 <style>
-  .stat-row { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 12px; }
-  .stat-row div { font-size: 11px; color: var(--sub); }
-  .stat-row b { display: block; font-size: 20px; color: var(--ink); font-variant-numeric: tabular-nums; }
-  .myrank { margin-top: 12px; background: var(--accent-soft); border-radius: 8px; padding: 10px 12px; font-size: 13px; }
-  .myrank b { color: var(--accent); font-size: 16px; }
-  .chart-wrap { position: relative; margin-top: 12px; }
+  .page-title { display: grid; grid-template-columns: var(--label) minmax(0, 1fr); column-gap: var(--gap); align-items: baseline; padding: 56px 0 32px; }
+  .page-title h2 { font-size: 20px; margin: 0; }
+  .foot { margin: 0; padding: 32px 0 0 calc(var(--label) + var(--gap)); border-top: 1px solid var(--line); color: var(--faint); font-size: 12px; }
+  /* 分布の数字：仕様表の1行 */
+  .stat-row { display: flex; gap: 0; flex-wrap: wrap; margin-top: 24px; border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line); padding: 16px 0; }
+  .stat-row div { font-size: 12px; color: var(--faint); padding: 0 24px; border-left: 1px solid var(--line); }
+  .stat-row div:first-child { padding-left: 0; border-left: 0; }
+  .stat-row b { display: block; font-weight: 300; font-size: 28px; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.3; }
+  .myrank { margin-top: 16px; padding: 2px 0 2px 14px; border-left: 2px solid var(--accent); font-size: 14px; }
+  .myrank b { font-size: 16px; }
+  .chart-wrap { position: relative; margin-top: 24px; }
   #hist { display: block; width: 100%; height: 240px; }
-  .tip { position: absolute; pointer-events: none; background: var(--ink); color: #fff; font-size: 12px;
-         padding: 4px 8px; border-radius: 6px; white-space: nowrap; transform: translate(-50%, -110%); }
-  .mine-item { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
-               border-bottom: 1px solid var(--line); padding: 8px 0; font-size: 13px; }
-  .mine-item:last-child { border-bottom: 0; }
-  .mine-item .what { color: var(--sub); font-size: 12px; }
-  .mine-item .rank b { color: var(--accent); }
-  td.anon { color: var(--sub); }
-  /* 成績表 */
-  details.report { margin: 2px 0 10px; border: 1px solid var(--line); border-radius: 10px; background: #fbfcfe; }
-  details.report > summary { cursor: pointer; padding: 9px 12px; font-size: 13px; font-weight: 700; color: var(--accent); }
-  .report .body { padding: 2px 12px 12px; }
-  .report .kpis { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
-  .report .kpi { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
-  .report .kpi.main { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .report .kpi .k { font-size: 11px; color: var(--sub); }
-  .report .kpi.main .k, .report .kpi.main .s { color: rgba(255,255,255,.85); }
-  .report .kpi .v { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.25; }
-  .report .kpi .v small { font-size: 12px; font-weight: 500; opacity: .75; }
-  .report .kpi .s { font-size: 11px; color: var(--sub); }
-  .report h4 { font-size: 13px; margin: 14px 0 4px; }
-  .report table td, .report table th { padding: 6px 6px; }
+  .tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 12px;
+         padding: 2px 8px; border-radius: 3px; white-space: nowrap; transform: translate(-50%, -120%); }
+  #savePng { width: auto; border: 0; padding: 0; color: var(--accent); font-weight: 400; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  .mine-item { display: flex; justify-content: space-between; align-items: baseline; gap: 4px 16px; flex-wrap: wrap;
+               border-top: 1px solid var(--line); padding: 16px 0; font-size: 14px; }
+  #mine > .mine-item:first-child { border-top-color: var(--line-strong); }
+  .mine-item .what { color: var(--faint); font-size: 12px; }
+  .mine-item .rank b { font-weight: 700; }
+  td.anon { color: var(--faint); font-weight: 400; }
+  /* 成績表：仕様表の組み方（左に太字の行見出し、右に内容） */
+  details.report { margin: 0 0 16px; }
+  details.report > summary { cursor: pointer; padding: 0 0 8px; font-size: 14px; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  details.report > summary:hover { color: var(--accent-ink); }
+  .report .body { padding: 0 0 12px; }
+  .report .kpis { border-top: 1px solid var(--line-strong); }
+  .report .kpi { display: grid; grid-template-columns: 180px minmax(0, 1fr); column-gap: 24px; align-items: baseline; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .report .kpi .k { grid-column: 1; grid-row: 1 / span 2; font-size: 14px; font-weight: 700; color: var(--ink); }
+  .report .kpi .v { grid-column: 2; grid-row: 1; font-weight: 300; font-size: 28px; font-variant-numeric: tabular-nums; line-height: 1.2; letter-spacing: -.01em; }
+  .report .kpi .v small { font-size: 14px; font-weight: 400; color: var(--faint); }
+  .report .kpi .s { grid-column: 2; font-size: 12px; color: var(--sub); }
+  .report .kpi .s:empty { display: none; }
+  .report h4 { font-size: 14px; margin: 32px 0 4px; }
   .report .gap { font-weight: 700; color: var(--warn); }
   .report .good { font-weight: 700; color: var(--ok); }
-  .report ul.review { margin: 4px 0 0; padding-left: 18px; font-size: 13px; }
-  .report ul.review li { margin: 2px 0; }
-  .report .tag { font-size: 11px; font-weight: 700; color: var(--warn); background: #fdeeee; border-radius: 999px; padding: 1px 7px; margin-left: 4px; }
-  td button.link { font-size: 12px; }
+  .report ul.review { margin: 8px 0 4px; padding-left: 1.2em; font-size: 14px; }
+  .report ul.review li { margin: 4px 0; }
+  .report .tag { font-size: 12px; color: var(--warn); margin-left: 8px; }
+  td button.link { font-size: 12px; font-weight: 400; }
+  @media (max-width: 760px) {
+    .page-title { grid-template-columns: minmax(0, 1fr); padding: 40px 0 24px; row-gap: 4px; }
+    .foot { padding-left: 0; }
+    .report .kpi { grid-template-columns: 112px minmax(0, 1fr); column-gap: 16px; }
+    .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); row-gap: 12px; }
+    .stat-row div:nth-child(4) { border-left: 0; padding-left: 0; }
+  }
 </style>
-<script src="app-config.js"></script>
-<script src="national-stats.js"></script>
+<script src="app-config.js?v=20261109c"></script>
+<script src="national-stats.js?v=20261109c"></script>
 <script>
 let STATS = null, CELLS = [], MINE = [], showAll = false;
 const $ = id => document.getElementById(id);
 const DASH = "—";
-const FONT = '"Yu Gothic UI", "Hiragino Sans", sans-serif';
-const COLOR = {bar: "#a9bbeb", mine: "#3559c7", grid: "#e3e8f2", sub: "#67718a", ink: "#1c2333", surface: "#ffffff"};
+const FONT = '"Inter", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", sans-serif';
+// グラフの色：画面ではページの色（ダークモードにも合わせる）、画像の保存では紙の色
+const LIGHT = {bar: "#c3c9d4", mine: "#3a4256", grid: "#e4e7ed", sub: "#4e5567", ink: "#111521", surface: "#ffffff"};
+function pageColors() {
+  const v = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  return {bar: v("--bar-soft") || LIGHT.bar, mine: v("--bar") || LIGHT.mine, grid: v("--line") || LIGHT.grid,
+          sub: v("--sub") || LIGHT.sub, ink: v("--ink") || LIGHT.ink, surface: v("--surface") || LIGHT.surface};
+}
+let COLOR = LIGHT;
 
 const keyOf = (subject, book, round) => `${subject}|${book}|${round === null || round === undefined ? "" : round}`;
 const cellLabel = c => c.book === "" ? "2027 本番（自己採点）" : c.book + (c.round === null ? "" : ` 第${c.round}回`);
@@ -131,7 +154,7 @@ function td(text, cls) {
   if (empty) el.classList.add("hidden");
   return el;
 }
-function th(text) { const el = document.createElement("th"); el.textContent = text; return el; }
+function th(text, cls) { const el = document.createElement("th"); el.textContent = text; if (cls) el.className = cls; return el; }
 
 // ---- 自分の順位（順位表から計算。同点は同順位） ----
 function myRank(cell, score) {
@@ -181,8 +204,8 @@ function drawHistogram(ctx, W, H, cell, mine, frame) {
   const mineBin = mine === null ? -1 : Math.min(9, Math.floor(mine / (cell.max / 10)));
   bins.forEach((b, i) => {
     if (!b.count || slot <= 2) return;
-    const h = b.count / top * ph, x = pad.l + i * slot + 1, w = slot - 2, y = pad.t + ph - h;  // 棒の間に2pxの隙間
-    const r = Math.max(0, Math.min(4, h, w / 2));
+    const h = b.count / top * ph, w = Math.max(2, slot * 0.56), x = pad.l + i * slot + (slot - w) / 2, y = pad.t + ph - h;  // 細い棒（区間の幅の56%）
+    const r = 0;
     ctx.fillStyle = i === mineBin ? COLOR.mine : COLOR.bar;
     ctx.beginPath();
     ctx.moveTo(x, pad.t + ph); ctx.lineTo(x, y + r); ctx.arcTo(x, y, x + r, y, r);
@@ -214,6 +237,7 @@ function renderChart(cell) {
   canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
   const ctx = canvas.getContext("2d");
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  COLOR = pageColors();
   GEOM = drawHistogram(ctx, W, H, cell, myFirstScore(cell), false);
   canvas.setAttribute("aria-label", `${cell.subject} ${cellLabel(cell)} の点数分布。` +
     GEOM.bins.map(b => `${b.from}〜${b.to}点 ${b.count}人`).join("、"));
@@ -241,6 +265,7 @@ function savePng() {
   canvas.width = W * k; canvas.height = H * k;
   const ctx = canvas.getContext("2d");
   ctx.scale(k, k);
+  COLOR = LIGHT;
   drawHistogram(ctx, W, H, cell, myFirstScore(cell), true);
   canvas.toBlob(blob => {
     const a = document.createElement("a");
@@ -281,12 +306,12 @@ function renderDetail() {
     const b = document.createElement("b"); b.textContent = `${r.rank}位`; $("myRank").append(b, `・上位${r.top}%`);
   }
   $("histNote").textContent = mine === null
-    ? "棒にカーソルを合わせる（タップする）と人数が出ます。点線は平均点です。"
-    : "濃い棒があなたの点数が入る区間です。点線は平均点です。";
+    ? "点線は平均点です。棒を押すと人数が出ます。"
+    : "強い色の棒が、あなたの点数が入る区間です。点線は平均点です。";
   const t = $("rankTable");
   t.innerHTML = "";
   const head = document.createElement("tr");
-  head.append(th("順位"), th("ニックネーム"), th("点数"));
+  head.append(th("順位"), th("ニックネーム"), th("点数", "num"));
   t.append(head);
   const rows = showAll ? cell.ranking : cell.ranking.slice(0, 10);
   rows.forEach(e => {
@@ -351,8 +376,7 @@ function reportHtml(m, cell) {
     if (a && a.ok && st.sd > 0) {
       natDev = 50 + 10 * (a.d + a.k * (m.score - st.m) / st.sd);
       natMean = st.m - a.d * st.sd / a.k;
-      natNote = `このサイトの人が過去問の本試を解いたときの位置（${a.n}人分）から推定。このサイトの人は全国平均より` +
-        `標準偏差 ${Math.abs(a.d).toFixed(2)} 個ぶん${a.d >= 0 ? "上" : "下"}にいるので、その分を差し引いています`;
+      natNote = `本番換算：このサイトの人が過去問の本試を解いたときの位置（${a.n}人分）から出しています`;
     } else {
       natNote = `本番換算は、この科目の過去問本試（2023〜2026）の記録が${ANCHOR_MIN}人分たまると出ます（いま${a ? a.n : 0}人分）`;
     }
@@ -394,9 +418,9 @@ function reportHtml(m, cell) {
   if (review.length) {
     html += `<ul class="review">` + review.map(r => `<li><b>第${r.q}問</b>：あなた ${dev1(r.mine)}%／${refLabel} ${dev1(r.ref)}%` +
       (r.ref >= 60 ? `<span class="tag">${refLabel}が取れている所</span>` : "") + `</li>`).join("") + `</ul>` +
-      `<div class="note">${refLabel}の得点率より ${GAP}ポイント以上低い大問を、差の大きい順に出しています。${refLabel}が取れているのに落とした大問から見直すと、点が戻りやすいです。</div>`;
+      `<div class="note">${refLabel}の得点率より ${GAP}ポイント以上低い大問を、差の大きい順に出しています。</div>`;
   } else if (rows.some(r => r.gap !== null)) {
-    html += `<div class="note">${refLabel}と比べて大きく落とした大問はありません。得点率の低い大問から見直してください。</div>`;
+    html += `<div class="note">${refLabel}と比べて大きく落とした大問はありません。</div>`;
   } else {
     html += `<div class="note">大問ごとの点数を送った人が${STATS.minN}人以上になると、比べられるようになります。</div>`;
   }
@@ -454,8 +478,8 @@ function table(rows, firstCols, view) {
   const t = document.createElement("table");
   const head = document.createElement("tr");
   firstCols.forEach(c => head.append(th(c.label)));
-  if (view === "bands") STATS.bandLabels.forEach(b => head.append(th(b)));
-  else head.append(th("人数"), th("平均点"), th("中央値"), th(""));
+  if (view === "bands") STATS.bandLabels.forEach(b => head.append(th(b, "num")));
+  else head.append(th("人数", "num"), th("平均点", "num"), th("中央値", "num"), th(""));
   t.append(head);
   for (const r of rows) {
     const tr = document.createElement("tr");
@@ -556,6 +580,7 @@ async function init() {
     $("hist").addEventListener("pointerdown", showTip);
     $("hist").addEventListener("pointerleave", () => { $("tip").hidden = true; });
     window.addEventListener("resize", () => { const c = currentCell(); if (c) renderChart(c); });
+    if (window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { const c = currentCell(); if (c) renderChart(c); });
     // 自分の記録があればその回、なければ人数の多い回を最初に表示する
     const mineCell = MINE.map(m => CELLS.find(c => c.key === keyOf(m.subject, m.book, m.round))).filter(Boolean).pop();
     const first = mineCell || [...CELLS].sort((a, b) => b.n - a.n)[0];

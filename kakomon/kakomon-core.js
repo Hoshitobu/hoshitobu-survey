@@ -24,12 +24,14 @@
   const esc = s => String(s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
   const fmt = ms => { const t = Math.floor(ms / 1000); return String(Math.floor(t / 60)).padStart(2, "0") + ":" + String(t % 60).padStart(2, "0"); };
   // 大問の時間の表示：1分に満たなければ「たどり着けなかった？」（はかっていないときは —）
-  const qTime = (ms, anyTime) => ms >= 60000 ? fmt(ms) : anyTime ? '<span class="kk-faint" title="1分に満たない大問は、たどり着けなかったものとして、目安や平均に使いません">たどり着けなかった？</span>' : "—";
+  const qTime = (ms, anyTime) => ms >= 60000 ? fmt(ms) : anyTime ? '<span class="kk-faint" title="1分に満たない大問は、目安や平均に使いません">1分未満</span>' : "—";
   const comma = n => Number(n).toLocaleString("ja-JP");
   const dev = (x, mean, sd) => 50 + 10 * (x - mean) / sd;
   const topTxt = t => t < 0.1 ? "0.1%未満" : t.toFixed(1) + "%";
   const labelOf = k => k === "rev" ? "見直し" : `第${k}問`;
   const md = iso => { const d = new Date(iso); return `${d.getMonth() + 1}/${d.getDate()}`; };
+  // 画面に出す科目名：Ⅰ・Ⅱ・全角の英字を半角で組む（科目の選択肢の「数学IIBC」とそろえる。データの正式名は変えない）
+  const disp = s => String(s).replace(/Ⅱ/g, "II").replace(/Ⅰ/g, "I").replace(/[Ａ-Ｚ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
 
   // 予想問題集（点数集計の問題集・科目・配点の初期値と同じ。kakomon-data.js の KAKOMON_WB）。
   // 設問ごとのデータはないので、大問ごとに点数を入れる。ID は wb-問題集-科目-回（数学は前からの IA／IIBC のまま）
@@ -59,10 +61,10 @@
 
     root.classList.add("kk");
     root.innerHTML = `
-<section class="kk-card">
+<section class="kk-card" id="kk-herocard">
+  <div class="kk-eyebrow"><h3>解く過去問・問題集</h3></div>
   <div class="kk-hero">
     <div>
-      <div class="kk-hero-label">解く過去問・問題集</div>
       <div class="kk-tabs" role="tablist" id="kk-tabs">
         <button type="button" role="tab" data-tab="past">共通テストの過去問</button>
         <button type="button" role="tab" data-tab="wb">予想問題集</button>
@@ -79,20 +81,22 @@
       </div>
     </div>
     <div class="kk-hero-actions">
+      <a class="kk-btn kk-btn-secondary" id="kk-pdf-q" href="#" target="_blank" rel="noopener" hidden>問題（PDF）</a>
+      <a class="kk-btn kk-btn-secondary" id="kk-pdf-a" href="#" target="_blank" rel="noopener" hidden>正解（PDF）</a>
       <a class="kk-btn kk-btn-secondary" id="kk-dnc" href="https://www.dnc.ac.jp/kyotsu/kakomondai/" target="_blank" rel="noopener">問題と正解（大学入試センター）↗</a>
     </div>
     <div class="kk-meta" id="kk-meta"></div>
     <details class="kk-marktip" id="kk-marktip">
-      <summary>📝 過去問は、マークシートに塗って解こう（塗るのにも時間がかかります）</summary>
+      <summary>過去問は、マークシートに塗って解こう（塗るのにも時間がかかります）</summary>
       <ul>
         <li><b>塗るだけで時間がかかります。</b>星飛ぶが試しに測ってみると、マークするだけで 3〜6分 かかりました。数学はマークが 90個ほどあるので、1マーク1秒というかなり速いペースでも、1分半はかかります。</li>
         <li><b>問題冊子とマークシートを見比べる時間もかかります。</b>どの解答欄に塗ったか、ずれていないかを確かめる時間です。</li>
         <li>なので、過去問は<b>本番と同じようにマークシートに塗って、その時間もふくめて</b>はかるのがおすすめです。問題用紙だけで解いていると、本番で時間が足りなくなります。</li>
         <li>マークシートは、教学社の<a href="https://akahon.net/book/detail/9001000" target="_blank" rel="noopener">赤本ノートプラス（共通テスト用）↗</a>（B5・30枚。各ページにマークシート小問60問分と分析シート。共通テスト過去問研究の全科目に対応）などが使えます。星飛ぶが数学で使ってみて、問題なく使えました。赤本（共通テスト過去問研究）にも、マークシート解答用紙がついています。</li>
-        <li>塗ったマークシートは、下の「自己採点」の「📷 マークシートの写真から入れる」で、そのまま採点に使えます。</li>
+        <li>塗ったマークシートは、下の「自己採点」の「マークシートの写真から入れる」で、そのまま採点に使えます。</li>
       </ul>
     </details>
-    <p class="kk-faint kk-src" id="kk-srcnote">問題文と正解は、ここには載せていません。大学入試センターの「過去問題」のページから開いてください（古い年度は、センターのサイトから消えていることがあります）。</p>
+    <p class="kk-faint kk-src" id="kk-srcnote"></p>
   </div>
 </section>
 
@@ -108,7 +112,7 @@
       <div class="kk-eyebrow"><span class="kk-step" data-n="ox"></span><h3>自己採点</h3><span class="kk-aside" id="kk-oxcount"></span></div>
       <p class="kk-muted" id="kk-oxnote"></p>
       <details class="kk-ai" id="kk-ai">
-        <summary>📷 マークシートの写真から入れる（手持ちのAIを使う）</summary>
+        <summary>マークシートの写真から入れる（手持ちのAIを使う）</summary>
         <ol class="kk-ai-steps">
           <li><button type="button" class="kk-btn kk-btn-secondary" id="kk-aicopy">AIに渡す文章をコピー</button><span class="kk-faint" id="kk-aicopied"></span></li>
           <li id="kk-aistep2"></li>
@@ -116,7 +120,7 @@
         </ol>
         <textarea id="kk-aicode" rows="5" spellcheck="false" placeholder="例）&#10;KAKOMON 2026-IA&#10;1: ooxoooxoooooooxo&#10;2: oooxoxoooooo"></textarea>
         <div class="kk-ai-actions"><button type="button" class="kk-btn kk-btn-primary" id="kk-aiapply">反映する</button><span class="kk-faint" id="kk-aimsg"></span></div>
-        <p class="kk-faint">このサイトは、写真もコードも外に送りません（コードは、この画面の ○× を入れるのに使うだけです）。AI は読み間違えることがあるので、反映したあとで見直してください。</p>
+        <p class="kk-faint">写真もコードも、このサイトからは外に送りません。反映したあとで見直してください。</p>
       </details>
       <label class="kk-toggle" id="kk-onlyprev-wrap" hidden><input type="checkbox" id="kk-onlyprev">前回 × だった所だけ表示する（解き直し）</label>
       <div id="kk-ox"></div>
@@ -187,12 +191,12 @@
   <div class="kk-split">
     <div class="kk-sec" id="kk-stagesec">
       <h4>どんな力で落としたか</h4>
-      <p class="kk-muted">設問ごとの「力の種類」は星飛ぶの判断です（全体概観の動画の分け方）。正答率から、落とした原因までは決められません。</p>
+      <p class="kk-muted">「力の種類」は星飛ぶの分け方です（全体概観の動画と同じ）。</p>
       <div class="kk-bars" id="kk-stages"></div>
     </div>
     <div class="kk-sec" id="kk-whysec">
       <h4>落とした理由</h4>
-      <p class="kk-muted" id="kk-whynote">今回と、これまでの記録すべて（全部の年度・科目）で数えます。</p>
+      <p class="kk-muted" id="kk-whynote">今回と、これまでの全部の記録で数えます。</p>
       <div class="kk-bars" id="kk-whys"></div>
     </div>
   </div>
@@ -203,6 +207,7 @@
     <ul class="kk-miss" id="kk-miss"></ul>
   </div>
 
+  <div class="kk-savebar">
   <div id="kk-saveopts"></div>
   <div class="kk-actions">
     <button type="button" class="kk-btn kk-btn-primary" id="kk-save">この結果を記録する</button>
@@ -211,6 +216,7 @@
   </div>
   <div class="kk-flash" id="kk-flash" hidden></div>
   <div class="kk-muted kk-hostnote" id="kk-hostnote"></div>
+  </div>
 </section>
 
 <section class="kk-card" id="kk-trendcard">
@@ -221,16 +227,16 @@
   </div>
   <div id="kk-trendchart"></div>
   <div class="kk-scroll"><table class="kk-table" id="kk-trendtable"></table></div>
-  <p class="kk-muted" id="kk-trendhelp">年度によって難しさが違うので、伸びたかどうかは偏差値（全国の中での位置）で見るのがおすすめです。白丸は、全国の数字がない試験の「本番換算（推定）」です。</p>
+  <p class="kk-faint" id="kk-trendhelp">白丸は本番換算（全国の数字がない試験）。</p>
 </section>
 
-<section class="kk-card">
+<section class="kk-card" id="kk-histcard">
   <div class="kk-eyebrow"><h3>これまでの記録</h3><span class="kk-aside" id="kk-histnote"></span></div>
   <div class="kk-scroll"><table class="kk-table" id="kk-hist"></table></div>
   <p class="kk-muted" id="kk-histempty">まだ記録はありません。</p>
 </section>
 
-<p class="kk-foot">出典：大学入試センター「実施結果の概要」「科目別成績分布」「設問別得点率及び正答率」「正解（配点）」。平均点・標準偏差は、センターの公表値を kyotsu.org がまとめたものも使っています。偏差値は (得点 − 平均点) ÷ 標準偏差 × 10 ＋ 50 で計算した目安です。全国の順位は、科目別成績分布（1点ごとの人数）がある 2023〜2026年の本試験だけで数えています。「みんなの正答率」は、このサイトで解いて点数集計に送った人の ○× から出しています。</p>
+<p class="kk-foot">出典：大学入試センター「実施結果の概要」「科目別成績分布」「設問別得点率及び正答率」「正解（配点）」。平均点・標準偏差は、センターの公表値を kyotsu.org がまとめたものも使っています。偏差値＝(得点 − 平均点) ÷ 標準偏差 × 10 ＋ 50。全国の順位は、科目別成績分布（1点ごとの人数）がある 2023〜2026年の本試験だけで数えています。「みんなの正答率」は、このサイトで解いて点数集計に送った人の ○× から出しています。</p>
 
 <div class="kk-dock" id="kk-dock"><div class="kk-clock" id="kk-dockclock">00:00</div><div class="kk-dock-now" id="kk-docknow"></div><button type="button" class="kk-btn kk-btn-primary" id="kk-dockbtn">開始</button></div>`;
 
@@ -299,7 +305,15 @@
       store.set("lastExam", E.id);
       store.set(WB ? "lastWB" : "lastPast", E.id);
       syncPick();
-      q("#kk-dnc").hidden = WB;   // 予想問題集は手元の問題集で解く
+      // 問題・正解の PDF：2024〜はセンターの PDF へ直接、消えた年度の数学・理科はこのサイトに置いたもの（kakomon-pdf.js）
+      const PDF = WB ? null : (window.KAKOMON_PDF || {})[E.id] || null;
+      const pdfUrl = u => !u ? "" : /^https?:/.test(u) ? u : "kakomon/" + u;
+      [["#kk-pdf-q", PDF && PDF.mondai], ["#kk-pdf-a", PDF && PDF.seikai]].forEach(([sel, u]) => {
+        const a = q(sel); a.hidden = !u; if (u) a.href = pdfUrl(u);
+      });
+      q("#kk-pdf-q").textContent = PDF && PDF.host === "dnc" ? "問題（PDF・センター）↗" : "問題（PDF）";
+      q("#kk-pdf-a").textContent = PDF && PDF.host === "dnc" ? "正解（PDF・センター）↗" : "正解（PDF）";
+      q("#kk-dnc").hidden = WB || !!(PDF && PDF.mondai);   // 予想問題集は手元の問題集で解く。PDF があればそちらを出す
       const opt = E.optional.length;
       const unknownMax = SEC && E.qs.some(x => !x[2]);
       q("#kk-meta").innerHTML = [
@@ -311,14 +325,18 @@
           : `<span class="kk-pill">点数集計（このサイトの利用者）の数字で比べます</span>`,
       ].join("");
       q("#kk-srcnote").textContent = WB
-        ? "問題集の問題文・解答は、ここには載せていません。手元の問題集で解いて、大問ごとの得点を入れてください。"
-        : "問題文と正解は、ここには載せていません。大学入試センターの「過去問題」のページから開いてください（古い年度は、センターのサイトから消えていることがあります）。";
+        ? "問題集の問題・解答は載せていません。手元の問題集で解いてください。"
+        : PDF && PDF.host === "self"
+        ? `出典：大学入試センター「令和${E.year - 2018}年度 大学入学共通テスト ${E.year === 2021 ? (E.kind === "本試験" ? "本試験（第1日程）" : "追試験（第2日程）") : E.kind} ${E.label.replace(/（旧課程）$/, "")}」問題・正解。センターのサイトから消えた年度の問題を、センターの許諾を得て掲載しています。`
+        : PDF && PDF.mondai
+        ? "問題と正解のボタンは、大学入試センターのサイトの PDF を開きます。"
+        : "問題と正解は、大学入試センターの「過去問題」のページから開いてください。";
       q("#kk-oxnote").textContent = SEC
-        ? (WB ? (unknownMax ? "問題集の解答で採点して、大問ごとの得点と配点を入れてください（この科目は大問の配点が問題集ごとに違うので、配点も入れてください）。"
-                            : "問題集の解答で採点して、大問ごとの得点を入れてください。配点は本番の配点を入れてあります。問題集で違うときは直してください。")
-              : `センターの正解と配点で採点して、大問ごとの得点を入れてください。配点は${E.maxFrom ? `${E.maxFrom}の配点を仮に入れてあります。違うときは問題冊子・正解表の配点に直してください` : "わかっている配点を入れてあります"}。`)
-        : "センターの正解と照らし合わせて、採点の単位ごとに ○ か × を押してください。「ア–ウ」のようにまとめて採点する欄は、全部合っていれば ○ です。× を押したら、落とした理由も1つ選んでください。設問ごとの配点と正答率は、○× をつけた欄だけに出ます（解いている途中に見えないように）。" +
-          (E.items.some(it => it[3] === null) ? "この年度は全国の正答率が公表されていないので、このサイトで解いて点数集計に送った人の正答率（みんなの正答率）を出します。" : "");
+        ? (WB ? (unknownMax ? "大問ごとの得点と配点を入れてください（この科目は、配点が問題集ごとに違います）。"
+                            : "大問ごとの得点を入れてください。配点は本番の配点です（違うときは直してください）。")
+              : `大問ごとの得点を入れてください。配点は${E.maxFrom ? `${E.maxFrom}の配点を仮に入れています（違うときは正解表の配点に直してください）` : "わかっている分を入れています"}。`)
+        : "採点の単位ごとに ○ か × を押してください。「ア–ウ」のようにまとめた欄は、全部合っていれば ○ です。配点と正答率は、○× をつけた欄にだけ出ます。" +
+          (E.items.some(it => it[3] === null) ? "この年度の正答率は、点数集計に送った人の ○× から出しています（みんなの正答率）。" : "");
       q("#kk-devlabel").textContent = NAT() ? "全国の中での偏差値" : "本番換算の偏差値";
       q("#kk-ranklabel").textContent = NATR ? "全国の順位" : "このサイトの中での順位";
       q("#kk-minidevlabel").textContent = NAT() ? "全国偏差値" : "本番換算";
@@ -426,11 +444,14 @@
       q("#kk-start").textContent = label;
       q("#kk-dockbtn").textContent = label;
       const now = S.cur ? (S.since ? `<span class="kk-live"></span>いま <b>${labelOf(S.cur)}</b>` : `一時停止中（${labelOf(S.cur)}）`)
-        : `「開始」で第${chosen()[0]}問から計ります。大問を移るときは、下のその大問を押してください。`;
+        : `「開始」で第${chosen()[0]}問から計ります。大問を移るときは、その行を押してください。`;
       q("#kk-now").innerHTML = now;
       q("#kk-dockclock").textContent = fmt(total);
       q("#kk-docknow").innerHTML = S.cur ? (S.since ? `いま ${labelOf(S.cur)}` : `一時停止中`) : `${E.minutes}分`;
       q("#kk-dock").classList.toggle("is-over", over);
+      // 解いている最中は、周りの説明を控えめにする（kakomon.css の .is-running）
+      root.classList.toggle("is-running", !!S.since);
+      document.documentElement.classList.toggle("kk-running", !!S.since);
       const keys = [...chosen(), "rev"];
       const list = q("#kk-qlist");
       const sig = keys.map(k => k + ':' + (QMAX[k] || '')).join();
@@ -439,7 +460,7 @@
         list.innerHTML = keys.map(k => `<div class="kk-qrow" role="button" tabindex="0" data-k="${k}">
             <span class="kk-qname">${labelOf(k)}${k === "rev" ? "" : `<span class="kk-faint" style="font-weight:400"> ${QMAX[k] || "?"}点</span>`}</span>
             <span class="kk-qtime" data-t></span>
-            ${k === "rev" ? "" : `<span class="kk-goal">目安 <input type="number" min="1" max="${E.minutes}" data-goal="${k}" aria-label="第${k}問の目安（分）"> 分</span><span class="kk-qbar"><i></i></span>`}
+            ${k === "rev" ? "" : `<span class="kk-goal">目安 <input type="number" min="1" max="${E.minutes}" data-goal="${k}" aria-label="第${k}問の目安（分）"> 分</span><span class="kk-qleft" data-left></span><span class="kk-qbar"><i></i></span>`}
           </div>`).join("");
       }
       for (const row of list.children) {
@@ -451,6 +472,7 @@
           const g = S.goals[k] * 60000;
           row.classList.toggle("is-over", t > g);
           row.querySelector(".kk-qbar i").style.width = Math.min(100, t / g * 100) + "%";
+          row.querySelector("[data-left]").textContent = t > g ? `目安 +${fmt(t - g)}` : `残り ${fmt(g - t)}`;
           const inp = row.querySelector("input");
           if (document.activeElement !== inp) inp.value = S.goals[k];
         }
@@ -474,12 +496,9 @@
     function drawGoalNote(msg) {
       const sv = savedGoals();
       const sum = chosen().reduce((a, n) => a + (S.goals[n] || 0), 0);
-      const base = sv ? (sv.from === "exam" ? "この試験で保存した自分の目安" : "同じ科目で保存した自分の目安") : "配点に合わせた仮の目安";
-      q("#kk-goalnote").textContent = (msg ? msg + " " : "") +
-        `いまの目安：${base}。合計 ${sum}分（制限 ${E.minutes}分、` +
-        (sum > E.minutes ? `制限を${sum - E.minutes}分こえています。「制限に合わせて縮める」で、比率を保ったまま見直し${REVIEW_MIN}分を残す形に縮められます）。`
-                         : `見直しに残るのは ${E.minutes - sum}分）。`) +
-        "数字を押して書きかえ、「この目安を保存」で次からも使えます。";
+      const base = sv ? (sv.from === "exam" ? "この試験で保存した目安" : "同じ科目で保存した目安") : "配点から作った目安";
+      q("#kk-goalnote").textContent = (msg ? msg + " " : "") + `${base}・合計 ${sum}分` +
+        (sum > E.minutes ? `（制限を${sum - E.minutes}分こえています）。` : `（見直しに ${E.minutes - sum}分）。`);
     }
     // 自分の記録から、大問ごとにかかった時間（分）。同じ試験の記録がなければ、同じ科目のほかの年度の記録
     function myTimes() {
@@ -595,7 +614,7 @@
           return `<div class="kk-item ${m ? "is-" + m : ""}">
               <div class="kk-lab">${esc(it[1])}${prevX.has(i) ? '<span class="kk-prevx">前回 ×</span>' : ""}</div>
               <div class="kk-pts">${m ? `${it[2]}点` : ""}</div>
-              <div class="kk-rate">${m ? rateHtml(i) : `<span class="kk-faint">採点後に配点・正答率</span>`}</div>
+              <div class="kk-rate">${m ? rateHtml(i) : ""}</div>
               <div class="kk-ox" role="group" aria-label="${esc(it[1])}"><button type="button" class="kk-o" data-i="${i}" data-m="o" aria-pressed="${m === "o"}" aria-label="${esc(it[1])} 正解">○</button><button type="button" class="kk-x" data-i="${i}" data-m="x" aria-pressed="${m === "x"}" aria-label="${esc(it[1])} 不正解">×</button></div>
               ${m === "x" ? `<div class="kk-why"><span>理由</span>${WHYS.map(w => `<button type="button" data-why="${i}" data-w="${w}" aria-pressed="${S.why[i] === w}">${w}</button>`).join("")}</div>` : ""}
             </div>`;
@@ -817,7 +836,7 @@
       }
       const rp = siteReport(R), d = devNow(R, rp);
       q("#kk-miniavg").textContent = NAT() ? (on ? `全国平均との差 ${R.total >= E.mean ? "+" : ""}${(R.total - E.mean).toFixed(1)}` : `全国平均 ${E.mean}`)
-        : rp && rp.ok ? `サイト平均 ${rp.siteMean.toFixed(1)}` : "点数集計と比べます";
+        : rp && rp.ok ? `サイト平均 ${rp.siteMean.toFixed(1)}` : "";
       q("#kk-minidev").textContent = on && d !== null ? d.toFixed(1) : "—";
       q("#kk-minitop").textContent = on && rp && rp.ok ? `${rp.top}%` : "—";
     }
@@ -833,7 +852,7 @@
       if (!PEERS.scores && !PEERS.stats) { sub.textContent = PEERS.empty || "この年度は対象外です"; return; }
       const xs = PEERS.scores || [];
       const n = PEERS.stats ? PEERS.stats.n : xs.length, minN = PEERS.minN || 2;
-      if (n < minN) { sub.textContent = (PEERS.fewText ? PEERS.fewText(n) : `記録 ${n}人`) + `（${minN}人から出します）`; return; }
+      if (n < minN) { sub.textContent = (PEERS.fewText ? PEERS.fewText(n) : `記録 ${n}人`) + `（${minN}人から）`; return; }
       const m = PEERS.stats ? PEERS.stats.mean : xs.reduce((a, x) => a + x, 0) / n;
       const sd = PEERS.stats ? PEERS.stats.sd : Math.sqrt(xs.reduce((a, x) => a + (x - m) ** 2, 0) / n);
       if (!(sd > 0)) { sub.textContent = `${n}人（点数がそろいすぎて出せません）`; return; }
@@ -858,10 +877,10 @@
       if (!WBS || WBS.loading) return {msg: "点数集計を読み込み中…"};
       if (WBS.error) return {msg: "点数集計を読み込めませんでした。"};
       if (!L.hasSent(E.survey.subject, E.survey.book, E.survey.round || null)) {
-        return {msg: "この試験の点数を「点数集計」に送ると、目標の学力帯の人が大問ごとに何点・何分だったかが見られます（送った人だけに見せています）。"};
+        return {msg: "この試験の点数を点数集計に送ると、目標の学力帯の人の大問ごとの点数と時間が出ます。"};
       }
       const cell = siteCell(), bs = cell && cell.bandSections;
-      if (!bs) return {msg: "まだ大問ごとの点数を送った人が少ないため、目標を出せません（3人以上になると出ます）。"};
+      if (!bs) return {msg: "大問ごとの点数を送った人が3人以上になると出ます。"};
       const ready = bs.filter(b => b.band && b.sections);
       const labels = bs.map(b => b.band).filter(Boolean);
       // 自分の学力帯の1つ上（「わからない」や未設定なら、全員の平均）
@@ -884,7 +903,7 @@
       sel.innerHTML = opts.map(([v, lab]) => `<option value="${esc(v)}"${(t.pick.band || "") === v ? " selected" : ""}${v && !t.bs.find(b => b.band === v).sections ? " disabled" : ""}>${esc(lab)}</option>`).join("");
       const who = t.pick.band ? `学力帯「${t.pick.band}」の人（${t.pick.n}人）` : `大問ごとを送った全員（${t.pick.n}人）`;
       q("#kk-targetnote").textContent = (t.want && t.pick.band !== t.want ? `「${t.want}」の人はまだ少ないため、` : "") +
-        `${who}の、大問ごとの平均を目標として出しています。` + (t.auto && TARGET_BAND === null ? "ふつうは、あなたの学力帯の1つ上を目標にしています。" : "");
+        `${who}の大問ごとの平均です。` + (t.auto && TARGET_BAND === null ? "（あなたの学力帯の1つ上）" : "");
       const R = result();
       let sumT = 0, sumMine = 0, any = false;
       const rows = R.per.map(r => {
@@ -897,7 +916,7 @@
         return `<tr><td><b>第${r.q}問</b></td><td class="r">${r.done ? r.got : "—"} / ${r.max || "?"}</td><td class="r">${tPts === null ? "—" : tPts.toFixed(1)}</td><td>${gap}</td>` +
           `<td class="r">${qTime(r.ms, totalMs() > 0)}</td><td class="r">${tm === null ? "—" : Math.round(tm.v) + "分" + (tm.all ? '<span class="kk-faint">＊</span>' : "")}</td></tr>`;
       }).join("");
-      q("#kk-targetnote").textContent += "目標時間は、その大問で8割以上取れた人の平均時間です（＊は、8割以上の人が少ないため全員の平均）。1分に満たない時間（たどり着けなかった人）は入っていません。";
+      q("#kk-targetnote").textContent += "目標時間は8割以上取れた人の平均（＊は全員の平均）。";
       q("#kk-targettable").innerHTML = `<thead><tr><th>大問</th><th class="r">あなた</th><th class="r">目標点</th><th></th><th class="r">あなたの時間</th><th class="r">目標時間</th></tr></thead><tbody>${rows}` +
         `<tr class="kk-total"><td>合計</td><td class="r">${sumMine}</td><td class="r">${any ? sumT.toFixed(1) : "—"}</td><td></td><td class="r">${fmt(totalMs())}</td><td></td></tr></tbody>`;
     }
@@ -914,20 +933,20 @@
       const R = result(), on = R.done > 0;
       const rp = NATR ? null : siteReport(R);
       q("#kk-repnote").textContent = !on ? (SEC ? "大問ごとの得点を入れると、ここに出ます" : "○× をつけると、ここに出ます")
-        : R.done < R.all ? `未${doneWord()} ${R.all - R.done}${SEC ? "問" : "個"}（いまの点数で出しています）` : (SEC ? "全部の大問を入れました" : "全部の欄を採点しました");
+        : R.done < R.all ? `未${doneWord()} ${R.all - R.done}${SEC ? "問" : "個"}` : (SEC ? "全部の大問を入れました" : "全部の欄を採点しました");
       q("#kk-score").innerHTML = `${on ? R.total : "—"}<small> / ${E.full}</small>`;
       if (!NATR) {
         const d = devNow(R, rp);
         q("#kk-scoresub").textContent = NAT() ? `全国平均 ${E.mean}点` + (on ? `（${R.total >= E.mean ? "+" : ""}${(R.total - E.mean).toFixed(1)}）` : "")
-          : rp && rp.ok ? `このサイトの平均 ${rp.siteMean.toFixed(1)}点` : "点数集計の数字と比べます";
+          : rp && rp.ok ? `このサイトの平均 ${rp.siteMean.toFixed(1)}点` : "";
         q("#kk-dev").textContent = on && d !== null ? d.toFixed(1) : "—";
         q("#kk-devsub").textContent = NAT() ? `平均 ${E.mean}点・標準偏差 ${E.sd}`
-          : rp && rp.natDev !== null ? "このサイトの人が過去問の本試を解いたときの位置から推定"
-          : rp && rp.anchor ? `過去問本試の記録が${window.HoshitobuLink.ANCHOR_MIN}人分たまると出ます（いま${rp.anchor.n}人分）` : siteWhy();
+          : rp && rp.natDev !== null ? "このサイトの人の本試の位置から換算"
+          : rp && rp.anchor ? `本試の記録 ${window.HoshitobuLink.ANCHOR_MIN}人分から出ます（いま${rp.anchor.n}人分）` : "";
         q("#kk-rank").textContent = on && rp && rp.ok ? `${rp.rank}位` : "—";
         q("#kk-ranksub").textContent = rp && rp.ok ? `${rp.of || rp.n}人中・上位 ${rp.top}%` : siteWhy();
         q("#kk-peer").textContent = on && rp && rp.ok && rp.siteDev !== null ? rp.siteDev.toFixed(1) : "—";
-        q("#kk-peersub").textContent = rp && rp.ok ? `${rp.n}人・平均 ${rp.siteMean.toFixed(1)}点` : siteWhy();
+        q("#kk-peersub").textContent = rp && rp.ok ? `${rp.n}人・平均 ${rp.siteMean.toFixed(1)}点` : "";
       } else {
         q("#kk-scoresub").textContent = `全国平均 ${E.mean}点` + (on ? `（${R.total >= E.mean ? "+" : ""}${(R.total - E.mean).toFixed(1)}）` : "");
         q("#kk-dev").textContent = on ? dev(R.total, E.mean, E.sd).toFixed(1) : "—";
@@ -971,7 +990,7 @@
             `<td class="r"><b>${r.done ? r.got : "—"}</b> / ${r.max || "?"}</td><td class="r">${refTxt(r)}</td>` +
             (prev ? `<td class="r">${p ? p.got : "—"}</td>` : "") +
             `<td class="r ${r.ms > r.goal * 60000 ? "kk-over" : ""}">${qTime(r.ms, totalMs() > 0)} / ${r.goal}分</td>` +
-            (vid ? `<td>${url ? `<a class="kk-vid" href="${esc(url)}" target="_blank" rel="noopener">▶ 解説動画</a>` : `<span class="kk-vid-none">動画は準備中</span>`}</td>` : "") + `</tr>`;
+            (vid ? `<td>${url ? `<a class="kk-vid" href="${esc(url)}" target="_blank" rel="noopener">解説動画</a>` : `<span class="kk-vid-none">—</span>`}</td>` : "") + `</tr>`;
         }).join("") +
         `<tr class="kk-total"><td>合計</td><td></td><td class="r">${on ? R.total : "—"} / ${E.full}</td><td class="r">${natQ || NAT() ? (E.mean ?? "—") : (rp && rp.ok ? rp.siteMean.toFixed(1) : "—")}</td>` +
         (prev ? `<td class="r">${prev.total}</td>` : "") + `<td class="r">${fmt(totalMs())} / ${E.minutes}分</td>${vid ? "<td></td>" : ""}</tr></tbody>`;
@@ -992,7 +1011,7 @@
           const t = st[k];
           return bar(k, STAGES[k], [[t.got, "is-got"], [t.lost, "is-lost"]], t.pts,
             `<b>${t.lost ? "−" + t.lost : "0"}</b> / ${t.pts}点`, t.lost && t.lost === maxLost ? "is-top" : "");
-        }).join("") + `<div class="kk-legend"><span><i style="background:var(--kk-ok)"></i>取れた点</span><span><i style="background:var(--kk-warn)"></i>落とした点</span><span>右の数字：落とした点 / 配点</span></div>`;
+        }).join("") + `<div class="kk-legend"><span><i style="background:var(--kk-bar-soft)"></i>取れた点</span><span><i style="background:var(--kk-warn)"></i>落とした点</span><span>右：落とした点 / 配点</span></div>`;
       }
 
       // 落とした理由
@@ -1070,7 +1089,7 @@
         H[E.id] = res.history;
         S.savedAt = at; save(); if (E.survey) { WBS = null; WB_FRESH = true; loadWB(); } if (NATR) loadPeers();
         flash(`記録しました（${R.total}点）。` + (prev ? `前回より ${R.total - prev.total >= 0 ? "+" : ""}${R.total - prev.total}点。` : "") +
-          (res.message ? res.message + " " : "") + "もう一度解くときは「リセット」を押してから始めてください。");
+          (res.message || ""));
         drawAll();
       } catch (err) {
         flash("記録できませんでした：" + (err && err.message ? err.message : err), true);
@@ -1101,16 +1120,16 @@
       return `<svg class="kk-trendsvg" viewBox="0 0 ${W} ${Hh}" role="img" aria-label="得点の推移">` +
         ticks.map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" class="${TREND === "dev" && v === 50 ? "kk-tmid" : "kk-tgrid"}"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" class="kk-tlab">${v}</text>`).join("") +
         `<polyline class="kk-tline" points="${pts.map((p, i) => `${x(i)},${y(p.v)}`).join(" ")}"/>` +
-        pts.map((p, i) => `<g><circle cx="${x(i)}" cy="${y(p.v)}" r="5" class="${p.est && TREND === "dev" ? "kk-tdot is-est" : "kk-tdot"}"><title>${esc(md(p.at))} ${esc(p.ex.title)}：${p.total}点・${TREND === "dev" ? "偏差値 " + p.v.toFixed(1) : p.v.toFixed(0) + "%"}</title></circle>` +
+        pts.map((p, i) => `<g><circle cx="${x(i)}" cy="${y(p.v)}" r="5" class="${p.est && TREND === "dev" ? "kk-tdot is-est" : "kk-tdot"}"><title>${esc(md(p.at))} ${esc(disp(p.ex.title))}：${p.total}点・${TREND === "dev" ? "偏差値 " + p.v.toFixed(1) : p.v.toFixed(0) + "%"}</title></circle>` +
           `<text x="${x(i)}" y="${Hh - 12}" text-anchor="middle" class="kk-tlab">${md(p.at)}</text></g>`).join("") + `</svg>`;
     }
     function drawTrend() {
       const rows = trendRows();
       q("#kk-trendnote").textContent = rows.length ? `${subjName(E)}・${rows.length}回` : "";
-      q("#kk-trendchart").innerHTML = rows.length ? trendSvg(rows) : `<p class="kk-muted">${esc(subjName(E))}の記録がたまると、ここに推移が出ます（日付は記録したときに自動で入ります）。</p>`;
+      q("#kk-trendchart").innerHTML = rows.length ? trendSvg(rows) : `<p class="kk-muted">${esc(subjName(E))}の記録がたまると、ここに推移が出ます。</p>`;
       root.querySelectorAll("[data-trend]").forEach(b => b.classList.toggle("is-on", b.dataset.trend === TREND));
       q("#kk-trendtable").innerHTML = rows.length ? `<thead><tr><th>解いた日</th><th>試験</th><th class="r">得点</th><th class="r">得点率</th><th class="r">偏差値</th><th class="r">時間</th></tr></thead><tbody>` +
-        rows.slice().reverse().map(r => `<tr${r.ex.id === E.id ? ' class="is-now"' : ""}><td>${md(r.at)}</td><td>${esc(r.ex.title)}</td><td class="r"><b>${r.total}</b>${r.complete ? "" : '<span class="kk-faint">（途中）</span>'}</td>` +
+        rows.slice().reverse().map(r => `<tr${r.ex.id === E.id ? ' class="is-now"' : ""}><td>${md(r.at)}</td><td>${esc(disp(r.ex.title))}</td><td class="r"><b>${r.total}</b>${r.complete ? "" : '<span class="kk-faint">（途中）</span>'}</td>` +
           `<td class="r">${r.pct.toFixed(0)}%</td><td class="r">${r.dev === null ? "—" : r.dev.toFixed(1) + (r.est ? '<span class="kk-faint">（推定）</span>' : "")}</td><td class="r">${r.ms ? fmt(r.ms) : "—"}</td></tr>`).join("") + "</tbody>" : "";
     }
     root.querySelector(".kk-trendtabs").addEventListener("click", e => {
@@ -1175,28 +1194,28 @@
       const keep = TREND; TREND = "dev";
       const chart = tr.length ? trendSvg(tr) : "";
       TREND = keep;
-      const trendTable = tr.slice(-8).reverse().map(r => `<tr><td>${md(r.at)}</td><td>${esc(r.ex.title)}</td><td class="r">${r.total}</td><td class="r">${r.pct.toFixed(0)}%</td><td class="r">${r.dev === null ? "—" : r.dev.toFixed(1) + (r.est ? "（推定）" : "")}</td></tr>`).join("");
-      const css = `@page{size:A4;margin:12mm}*{box-sizing:border-box}body{font-family:"Hiragino Sans","Yu Gothic UI","Noto Sans JP",sans-serif;color:#141a2b;margin:0;font-size:11.5px;line-height:1.5;background:#fff}
-        .wrap{max-width:186mm;margin:0 auto;padding:6mm 0}h1{font-size:13px;color:#3559c7;margin:0}h2{font-size:19px;margin:2px 0 2px}h3{font-size:12.5px;margin:12px 0 6px;border-left:4px solid #3559c7;padding-left:6px}
-        .meta{color:#5d6680}.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0}.t{border:1px solid #d6dbe6;border-radius:8px;padding:6px 8px}.t.main{background:#3559c7;color:#fff;border-color:#3559c7}
-        .t .l{font-size:10.5px;opacity:.85}.t .v{font-size:20px;font-weight:800}.t .v small{font-size:11px;font-weight:600}.t .s{font-size:10px;opacity:.85}
-        table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid #e7eaf1;padding:3px 4px;text-align:left;vertical-align:top}th{font-size:10.5px;color:#5d6680;font-weight:600}.r{text-align:right}.f{color:#8d94a8;font-size:10px}
-        .bar{height:7px;background:#e7eaf1;border-radius:4px;overflow:hidden;margin-top:4px}.bar i{display:block;height:100%;background:#3559c7}
+      const trendTable = tr.slice(-8).reverse().map(r => `<tr><td>${md(r.at)}</td><td>${esc(disp(r.ex.title))}</td><td class="r">${r.total}</td><td class="r">${r.pct.toFixed(0)}%</td><td class="r">${r.dev === null ? "—" : r.dev.toFixed(1) + (r.est ? "（推定）" : "")}</td></tr>`).join("");
+      const css = `@page{size:A4;margin:12mm}*{box-sizing:border-box}body{font-family:"Inter","Noto Sans JP","Hiragino Sans","Yu Gothic UI",sans-serif;color:#111521;margin:0;font-size:11.5px;line-height:1.6;background:#fff;font-variant-numeric:tabular-nums}
+        .wrap{max-width:186mm;margin:0 auto;padding:6mm 0}h1{font-size:10.5px;color:#4e5567;margin:0;font-weight:400;letter-spacing:.08em}h2{font-family:"Inter","Noto Sans JP",sans-serif;font-weight:600;font-size:20px;margin:2px 0}h3{font-size:12.5px;margin:16px 0 6px}
+        .meta{color:#4e5567}.tiles{display:grid;grid-template-columns:repeat(4,1fr);margin:12px 0;padding:8px 0;border-top:1px solid #b9c0cc;border-bottom:1px solid #e4e7ed}.t{border-left:1px solid #e4e7ed;padding:2px 10px}.t:first-child{border-left:0;padding-left:0}
+        .t .l{font-size:10px;color:#4e5567}.t .v{font-family:"Inter","Noto Sans JP",sans-serif;font-size:20px;font-weight:400}.t.main .v{font-size:26px;font-weight:300}.t .v small{font-family:sans-serif;font-size:11px;font-weight:400;color:#7b8295}.t .s{font-size:10px;color:#4e5567}
+        table{width:100%;border-collapse:collapse;border-top:1px solid #b9c0cc;border-bottom:1px solid #b9c0cc}th,td{border-bottom:1px solid #e4e7ed;padding:3px 4px;text-align:left;vertical-align:top}th{font-size:10px;color:#4e5567;font-weight:400}.r{text-align:right}.f{color:#7b8295;font-size:10px}
+        .bar{height:5px;background:#e9ecf2;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:#3a4256}
         .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}ul{margin:0;padding-left:16px}li{margin:1px 0}
-        svg{width:100%;height:auto}.kk-tgrid{stroke:#e7eaf1}.kk-tmid{stroke:#c3c9d6;stroke-dasharray:4 4}.kk-tlab{fill:#8d94a8;font-size:11px}.kk-tline{fill:none;stroke:#3559c7;stroke-width:2.5}.kk-tdot{fill:#3559c7;stroke:#fff;stroke-width:2}.kk-tdot.is-est{fill:#fff;stroke:#3559c7}
-        .foot{margin-top:10px;color:#8d94a8;font-size:9.5px}.noprint{margin:8px 0 0}@media print{.noprint{display:none}}`;
-      return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>成績表 ${esc(E.title)}</title><style>${css}</style></head><body><div class="wrap">
+        svg{width:100%;height:auto}.kk-tgrid{stroke:#e4e7ed}.kk-tmid{stroke:#d1d6df;stroke-dasharray:3 4}.kk-tlab{fill:#7b8295;font-size:11px}.kk-tline{fill:none;stroke:#3a4256;stroke-width:1.5}.kk-tdot{fill:#3a4256;stroke:#fff;stroke-width:2}.kk-tdot.is-est{fill:#fff;stroke:#3a4256;stroke-width:1.5}
+        .foot{margin-top:12px;padding-top:6px;border-top:1px solid #e4e7ed;color:#7b8295;font-size:9.5px}.noprint{margin:8px 0 0}@media print{.noprint{display:none}}`;
+      return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>成績表 ${esc(disp(E.title))}</title><style>${css}</style></head><body><div class="wrap">
         <div class="noprint"><button onclick="print()">印刷・PDFで保存</button>（印刷の画面で「PDFに保存」を選ぶと、PDFになります）</div>
-        <h1>成績表　星飛ぶの勉強部屋　過去問演習</h1><h2>${esc(E.title)}</h2>
+        <h1>成績表　星飛ぶの勉強部屋　過去問演習</h1><h2>${esc(disp(E.title))}</h2>
         <div class="meta">${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}　${E.optional.length ? "選んだ大問：第" + chosen().join("・") + "問" : "全問必答"}${R.done < R.all ? "　（採点の途中）" : ""}</div>
         <div class="tiles">${tiles}</div>
         <h3>大問ごと</h3>
         <table><thead><tr><th>大問</th><th class="r">得点</th><th style="width:20%"></th><th class="r">${natQ ? "全国平均" : "みんなの得点率"}</th><th class="r">目標点</th><th class="r">時間</th><th class="r">自分の目安</th><th class="r">目標時間</th></tr></thead><tbody>${rows}</tbody></table>
-        <div class="f">${t.pick ? `目標点・目標時間：点数集計の${t.pick.band ? "学力帯「" + esc(t.pick.band) + "」" : "全員"}（${t.pick.n}人）の大問ごとの平均。目標時間は8割以上取れた人の平均（＊は全員の平均）。「たどり着けなかった？」は1分に満たなかった大問です。` : "目標点・目標時間：" + esc(t.msg || "")}</div>
+        <div class="f">${t.pick ? `目標点・目標時間：点数集計の${t.pick.band ? "学力帯「" + esc(t.pick.band) + "」" : "全員"}（${t.pick.n}人）の大問ごとの平均。目標時間は8割以上取れた人の平均（＊は全員の平均）。` : "目標点・目標時間：" + esc(t.msg || "")}</div>
         <div class="two"><div><h3>${SEC ? "復習すべき大問" : "落とした所（正答率の高い順）"}</h3><ul>${missHtml}</ul></div>
           <div><h3>落とした理由</h3><ul>${whyHtml || "<li>—</li>"}</ul></div></div>
         ${tr.length ? `<h3>得点の推移（${esc(subjName(E))}）</h3>${chart}<table><thead><tr><th>解いた日</th><th>試験</th><th class="r">得点</th><th class="r">得点率</th><th class="r">偏差値</th></tr></thead><tbody>${trendTable}</tbody></table>` : ""}
-        <div class="foot">出典：大学入試センター（平均点・標準偏差・成績分布・設問別正答率）。偏差値は (得点−平均点)÷標準偏差×10＋50 の目安。「みんな」「目標」は点数集計（このサイトの利用者）の数字です。</div>
+        <div class="foot">出典：大学入試センター（平均点・標準偏差・成績分布・設問別正答率）。偏差値＝(得点−平均点)÷標準偏差×10＋50。「みんな」「目標」は点数集計（このサイトの利用者）の数字です。</div>
       </div></body></html>`;
     }
     q("#kk-print").addEventListener("click", () => {
@@ -1213,14 +1232,14 @@
       const W = 1200, Hh = 675, c = document.createElement("canvas");
       c.width = W; c.height = Hh;
       const g = c.getContext("2d");
-      const F = '"Hiragino Sans", "Yu Gothic UI", "Noto Sans JP", sans-serif';
-      const ink = "#141a2b", sub = "#5d6680", acc = "#3559c7", line = "#e7eaf1", warn = "#d24343", ok = "#138a63";
-      g.fillStyle = "#f5f6fa"; g.fillRect(0, 0, W, Hh);
+      const F = '"Inter", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", sans-serif';
+      const ink = "#111521", sub = "#4e5567", acc = "#5653d6", line = "#e9ecf2", warn = "#bd3f5c", ok = "#3a4256";
+      g.fillStyle = "#eef0f4"; g.fillRect(0, 0, W, Hh);
       const rr = (x, y, w, h, r, fill) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); g.fillStyle = fill; g.fill(); };
-      rr(28, 28, W - 56, Hh - 56, 26, "#fff");
+      rr(28, 28, W - 56, Hh - 56, 8, "#ffffff");
       g.textBaseline = "alphabetic";
       g.fillStyle = acc; g.font = `700 18px ${F}`; g.fillText("成績表", 64, 82);
-      g.fillStyle = ink; g.font = `800 ${E.title.length > 30 ? 24 : 30}px ${F}`; g.fillText(E.title.replace(/　/g, " "), 64, 120);
+      g.fillStyle = ink; g.font = `800 ${E.title.length > 30 ? 24 : 30}px ${F}`; g.fillText(disp(E.title).replace(/　/g, " "), 64, 120);
       const d = new Date();
       g.fillStyle = sub; g.font = `18px ${F}`;
       g.fillText(`${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}　時間 ${fmt(totalMs())} / ${E.minutes}分` + (R.done < R.all ? `　（${doneWord()}の途中）` : ""), 64, 152);
@@ -1234,9 +1253,9 @@
            ["このサイトの中", rp && rp.ok ? `${rp.rank}位` : "—", rp && rp.ok ? `${rp.of || rp.n}人中・平均 ${rp.siteMean.toFixed(1)}点` : "記録が少ないため出せません", false]];
       tiles.forEach((t, i) => {
         const x = 64 + i * 362, y = 178;
-        rr(x, y, 344, 128, 18, t[3] ? acc : "#f1f4fb");
-        g.fillStyle = t[3] ? "rgba(255,255,255,.85)" : sub; g.font = `600 18px ${F}`; g.fillText(t[0], x + 22, y + 36);
-        g.fillStyle = t[3] ? "#fff" : ink; g.font = `800 ${t[1].length > 7 ? 40 : 52}px ${F}`; g.fillText(t[1], x + 22, y + 94);
+        rr(x, y, 344, 128, 8, t[3] ? ink : "#f4f5f8");
+        g.fillStyle = t[3] ? "rgba(255,255,255,.75)" : sub; g.font = `600 18px ${F}`; g.fillText(t[0], x + 22, y + 36);
+        g.fillStyle = t[3] ? "#ffffff" : ink; g.font = `300 ${t[1].length > 7 ? 40 : 52}px ${F}`; g.fillText(t[1], x + 22, y + 94);
         g.fillStyle = t[3] ? "rgba(255,255,255,.85)" : sub; g.font = `17px ${F}`; g.fillText(t[2], x + 22, y + 118);
       });
       const bx = 64, by = 352, bw = 690, rh = Math.min(40, 236 / R.per.length);
@@ -1245,7 +1264,7 @@
         const y = by + 16 + i * rh, w = bw - 180, bh = Math.min(16, rh - 16);
         g.fillStyle = ink; g.font = `${rh < 30 ? 15 : 18}px ${F}`; g.fillText(`第${r.q}問`, bx, y + rh * 0.62);
         rr(bx + 84, y + (rh - bh) / 2, w, bh, bh / 2, line);
-        if (r.got && r.max) rr(bx + 84, y + (rh - bh) / 2, Math.max(bh, w * r.got / r.max), bh, bh / 2, acc);
+        if (r.got && r.max) rr(bx + 84, y + (rh - bh) / 2, Math.max(bh, w * r.got / r.max), bh, bh / 2, ok);
         const ref = refPct(rp, r);
         if (ref !== null) { g.fillStyle = warn; g.fillRect(bx + 84 + w * ref / 100 - 1.5, y + (rh - bh) / 2 - 5, 3, bh + 10); }
         g.fillStyle = ink; g.font = `700 ${rh < 30 ? 15 : 18}px ${F}`; g.fillText(`${r.got} / ${r.max || "?"}`, bx + 100 + w, y + rh * 0.62);
