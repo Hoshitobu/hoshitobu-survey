@@ -371,11 +371,30 @@
         const T = window.KAKOMON_THANKS;
         q("#kk-thanks").hidden = !T;
         if (T) {
-          // 人数は、点数集計に送った人（回答者コードの数）。取れないとき・3人未満のときは、手で書いた数字を出す
-          const show = n => { q("#kk-thanks").innerHTML = `このサイトで解いてくれた人は <b>${Number(n).toLocaleString("ja-JP")}人</b> になりました。ありがとうございます！！<br>解説動画も、順次投稿していきます。`; };
-          show(T.solved);
+          // 人数・今日と今週の回数は点数集計から（回答者コードの数、送り直しは1回）。取れないとき・3人未満のときは、手で書いた人数を出す
+          const url = new URL("kakomon.html", (window.HoshitobuLink || {}).siteUrl || location.href).href;
+          const msg = "共通テストの過去問を、時間を測りながら解いて、自己採点・偏差値まで出せるサイトがあったよ。ログイン不要で、2021〜2026年の過去問が解ける。一緒にやろう！\n" + url;
+          const draw = (n, act) => {
+            let line = "", tier = "";
+            if (act && Number.isInteger(act.today) && Number.isInteger(act.week) && act.week > 0) {
+              line = `今週は <b>${act.week}回</b>、今日は <b>${act.today}回</b>、過去問が解かれました。`;
+              const y = act.today;
+              tier = y >= 11 ? `今日だけで${y}回も！本当にありがとうございます！！`
+                : y >= 6 ? "今日はたくさん解いてもらっています！ありがとうございます！"
+                : y >= 1 ? "今日も解いてくれている人がいます。コツコツ、ありがとうございます！" : "";
+            }
+            q("#kk-thanks").innerHTML = `このサイトで解いてくれた人は <b>${Number(n).toLocaleString("ja-JP")}人</b> になりました。ありがとうございます！！<br>` +
+              (line ? line + (tier ? tier : "") + "<br>" : "") + `解説動画も、順次投稿していきます。` +
+              `<div class="kk-share"><span class="kk-faint">友達にも教えてあげてください：</span>` +
+              `<a class="kk-btn kk-btn-secondary" href="https://line.me/R/share?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">LINEで送る</a>` +
+              `<button type="button" class="kk-btn kk-btn-secondary" id="kk-sharecopy">文面をコピー</button></div>`;
+            const cp = q("#kk-sharecopy");
+            cp.onclick = () => (navigator.clipboard ? navigator.clipboard.writeText(msg) : Promise.reject()).then(
+              () => { cp.textContent = "コピーしました"; }, () => { window.prompt("この文面をコピーしてください", msg); });
+          };
+          draw(T.solved, null);
           const L = window.HoshitobuLink;
-          if (L && L.stats) L.stats().then(st => { if (Number.isInteger(st.respondents)) show(st.respondents); }).catch(() => {});
+          if (L && L.stats) L.stats().then(st => draw(Number.isInteger(st.respondents) ? st.respondents : T.solved, st.activity)).catch(() => {});
         }
       }
       {
