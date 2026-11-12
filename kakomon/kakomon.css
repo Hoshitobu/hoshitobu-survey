@@ -410,3 +410,14 @@
 .kk .kk-thanks b { font-weight: 700; }
 .kk .kk-share { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-top: 12px; }
 .kk .kk-share .kk-faint { font-size: 12px; }
+.kk .kk-series { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px 16px; border-top: 0; }
+.kk .kk-series li { display: block; padding: 0; border: 0; }
+.kk .kk-vcard { display: block; color: inherit; text-decoration: none; }
+.kk .kk-vthumb { display: flex; align-items: center; justify-content: center; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 6px; background: var(--kk-line); }
+.kk .kk-vthumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity .2s; }
+.kk a.kk-vcard:hover .kk-vthumb img { opacity: .85; }
+.kk .kk-vt { display: block; margin-top: 8px; font-size: 13px; line-height: 1.6; }
+.kk .kk-vt small { display: block; font-size: 12px; color: var(--kk-faint); }
+.kk .kk-vthumb .kk-soon { margin: 0; text-align: center; font-size: 13px; line-height: 1.6; }
+.kk .kk-vthumb .kk-soon small { display: block; margin: 0; }
+.kk .kk-examvid { max-width: 280px; margin: 8px 0 16px; }

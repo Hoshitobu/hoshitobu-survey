@@ -177,6 +177,7 @@
 
   <div class="kk-sec">
     <h4>大問ごと</h4>
+    <div class="kk-examvid" id="kk-examvid" hidden></div>
     <div class="kk-scroll"><table class="kk-table" id="kk-qtable"></table></div>
     <div class="kk-legend"><span><i></i>取れた点</span><span><i class="is-avg"></i><span id="kk-avglegend">全国平均（選択問題は、その大問を選んだ人の平均）</span></span></div>
   </div>
@@ -398,6 +399,15 @@
         }
       }
       {
+        // 全問解説の動画（1本に全大問が入っている年度）は、サムネイルからも開ける
+        const urls = Object.values(E.videos || {}), ids = urls.map(u => (/[?&]v=([\w-]+)/.exec(u) || [])[1]);
+        const one = ids.length > 1 && ids[0] && ids.every(x => x === ids[0]) ? ids[0] : null;
+        q("#kk-examvid").hidden = !one;
+        if (one) q("#kk-examvid").innerHTML = `<a class="kk-vcard" href="https://www.youtube.com/watch?v=${esc(one)}" target="_blank" rel="noopener">` +
+          `<span class="kk-vthumb"><img src="https://i.ytimg.com/vi/${esc(one)}/mqdefault.jpg" alt="" loading="lazy"></span>` +
+          `<span class="kk-vt"><small>解説動画</small>全問解説（大問ごとにチャプターつき）</span></a>`;
+      }
+      {
         // 数学IAには、図形シリーズの動画を並べる。公開時刻（日本時間）前は「Coming soon」
         const S = E.part === "IA" && (window.KAKOMON_SERIES || {}).ia;
         q("#kk-seriessec").hidden = !S;
@@ -408,10 +418,12 @@
           q("#kk-seriesnote").textContent = S.note || "";
           q("#kk-serieslist").innerHTML = S.items.map(v => {
             const t = new Date(v.at), live = now >= t.getTime();
-            return `<li><span class="kk-sn">回${v.n}</span>` + (live
-              ? `<a class="kk-vid" href="https://www.youtube.com/watch?v=${esc(v.id)}" target="_blank" rel="noopener">${esc(v.title)}</a>`
-              : `<span class="kk-soon-t">${esc(v.title)}</span>`) +
-              (live ? "" : `<span class="kk-soon">Coming soon<small>${md(t)} 公開</small></span>`) + `</li>`;
+            return live
+              ? `<li><a class="kk-vcard" href="https://www.youtube.com/watch?v=${esc(v.id)}" target="_blank" rel="noopener">` +
+                `<span class="kk-vthumb"><img src="https://i.ytimg.com/vi/${esc(v.id)}/mqdefault.jpg" alt="" loading="lazy"></span>` +
+                `<span class="kk-vt"><small>回${v.n}</small>${esc(v.title)}</span></a></li>`
+              : `<li><div class="kk-vcard is-soon"><span class="kk-vthumb"><span class="kk-soon">Coming soon<small>${md(t)} 公開</small></span></span>` +
+                `<span class="kk-vt"><small>回${v.n}</small>${esc(v.title)}</span></div></li>`;
           }).join("");
         }
       }
