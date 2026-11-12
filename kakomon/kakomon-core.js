@@ -370,7 +370,13 @@
       {
         const T = window.KAKOMON_THANKS;
         q("#kk-thanks").hidden = !T;
-        if (T) q("#kk-thanks").innerHTML = `このサイトで解いてくれた人は <b>${Number(T.solved).toLocaleString("ja-JP")}人</b> になりました。ありがとうございます！！<br>解説動画も、順次投稿していきます。`;
+        if (T) {
+          // 人数は、点数集計に送った人（回答者コードの数）。取れないとき・3人未満のときは、手で書いた数字を出す
+          const show = n => { q("#kk-thanks").innerHTML = `このサイトで解いてくれた人は <b>${Number(n).toLocaleString("ja-JP")}人</b> になりました。ありがとうございます！！<br>解説動画も、順次投稿していきます。`; };
+          show(T.solved);
+          const L = window.HoshitobuLink;
+          if (L && L.stats) L.stats().then(st => { if (Number.isInteger(st.respondents)) show(st.respondents); }).catch(() => {});
+        }
       }
       {
         // 数学IAには、図形シリーズの動画を並べる。公開時刻（日本時間）前は「Coming soon」
