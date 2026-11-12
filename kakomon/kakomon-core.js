@@ -97,6 +97,7 @@
       </ul>
     </details>
     <p class="kk-faint kk-src" id="kk-srcnote"></p>
+    <p class="kk-thanks" id="kk-thanks" hidden></p>
   </div>
 </section>
 
@@ -205,6 +206,12 @@
     <h4 id="kk-misstitle">落とした所</h4>
     <p class="kk-muted" id="kk-missnote">全国の正答率が 70％以上なのに × だった所が、いちばん取り返しやすい所です。</p>
     <ul class="kk-miss" id="kk-miss"></ul>
+  </div>
+
+  <div class="kk-sec" id="kk-seriessec" hidden>
+    <h4 id="kk-seriestitle"></h4>
+    <p class="kk-muted" id="kk-seriesnote"></p>
+    <ul class="kk-series" id="kk-serieslist"></ul>
   </div>
 
   <div class="kk-savebar">
@@ -360,6 +367,29 @@
       q("#kk-limit").textContent = `制限 ${E.minutes}分`;
       drawGoalNote();
       q("#kk-stagesec").hidden = !E.items.some(it => it[4]);
+      {
+        const T = window.KAKOMON_THANKS;
+        q("#kk-thanks").hidden = !T;
+        if (T) q("#kk-thanks").innerHTML = `このサイトで解いてくれた人は <b>${Number(T.solved).toLocaleString("ja-JP")}人</b> になりました。ありがとうございます！！<br>解説動画も、順次投稿していきます。`;
+      }
+      {
+        // 数学IAには、図形シリーズの動画を並べる。公開時刻（日本時間）前は「Coming soon」
+        const S = E.part === "IA" && (window.KAKOMON_SERIES || {}).ia;
+        q("#kk-seriessec").hidden = !S;
+        if (S) {
+          const now = Date.now();
+          const md = d => `${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")}`;
+          q("#kk-seriestitle").textContent = S.title;
+          q("#kk-seriesnote").textContent = S.note || "";
+          q("#kk-serieslist").innerHTML = S.items.map(v => {
+            const t = new Date(v.at), live = now >= t.getTime();
+            return `<li><span class="kk-sn">回${v.n}</span>` + (live
+              ? `<a class="kk-vid" href="https://www.youtube.com/watch?v=${esc(v.id)}" target="_blank" rel="noopener">${esc(v.title)}</a>`
+              : `<span class="kk-soon-t">${esc(v.title)}</span>`) +
+              (live ? "" : `<span class="kk-soon">Coming soon<small>${md(t)} 公開</small></span>`) + `</li>`;
+          }).join("");
+        }
+      }
       q("#kk-hostnote").innerHTML = host.hostNote ? host.hostNote(E) : "";
       q("#kk-peerlabel").textContent = NATR ? (host.peerLabel || "仲間の中での偏差値") : "このサイトの中での偏差値";
       q("#kk-onlyprev").checked = false;

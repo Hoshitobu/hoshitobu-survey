@@ -399,3 +399,12 @@
   .kk .kk-dock { display: none !important; }
   .kk.is-running * { opacity: 1 !important; }
 }
+
+.kk .kk-series { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--kk-line, rgba(128,128,128,.25)); }
+.kk .kk-series li { display: flex; align-items: baseline; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--kk-line, rgba(128,128,128,.25)); font-size: 14px; }
+.kk .kk-series .kk-sn { width: 2.6em; color: var(--kk-faint); font-size: 12px; flex: none; }
+.kk .kk-series .kk-soon-t { color: var(--kk-faint); }
+.kk .kk-series .kk-soon { margin-left: auto; color: var(--kk-faint); font-size: 12px; white-space: nowrap; }
+.kk .kk-series .kk-soon small { margin-left: 8px; font-size: 12px; }
+.kk .kk-thanks { margin: 16px 0 0; font-size: 14px; line-height: 1.8; color: var(--kk-ink); }
+.kk .kk-thanks b { font-weight: 700; }
