@@ -70,16 +70,26 @@
   // 旧課程の社会（2024年までの共通テスト・センター試験）
   var OLD_SOCIAL = ["chiri_b", "chiri_a", "nihonshi_b", "nihonshi_a", "sekaishi_b", "sekaishi_a", "gensha", "rinri", "seikei", "rinsei"];
   var LABEL_SHORT = {"数学IIB": "IIB", "英語（筆記）": "英R", "英語（リスニング）": "英L"};
-  function shortOf(s) { return SHORT[s.id] || s.name; }
+  function shortOf(s) { return s.short || SHORT[s.id] || s.name; }
   function rowShort(s, book) {  // その試験だけ呼び名が違う科目（2024以前の数学IIB など）
     var l = book && book.labels && book.labels[s.id];
     return l ? (LABEL_SHORT[l] || l) : shortOf(s);
   }
   var PREF = ["kokugo", "eng_r", "eng_l", "math1a", "math2bc", "info1", "phys", "chem", "bio", "earth", "phys_basic", "chem_basic", "bio_basic",
     "earth_basic", "geo", "jhist", "whist", "ethics", "polieco", "chirekikou"].concat(OLD_SOCIAL);
+  // 理系の「社会」列：新課程の科目と、2024年までの旧課程の対応科目を1列にまとめる（行ごとに、その試験にある方を使う）
+  var SOCIAL_COL = "@social";
+  var SOCIALS = [{id: "geo", old: "chiri_b"}, {id: "jhist", old: "nihonshi_b"}, {id: "whist", old: "sekaishi_b"},
+    {id: "ethics", old: "rinri"}, {id: "polieco", old: "seikei"}, {id: "chirekikou", old: null}];
+  function socialDef(id) { return SOCIALS.find(function (x) { return x.id === id; }) || SOCIALS[0]; }
+  // その行の試験で実際に使う科目（列がまとめ列なら、あるものの先頭）。なければ null
+  function resolveSub(col, book) {
+    if (col.merged) return col.merged.filter(Boolean).find(function (x) { return !excluded(x, book); }) || null;
+    return excluded(col, book) ? null : col;
+  }
   var PRESETS = [
-    {id: "sci", name: "理系（物理・化学）", ids: ["kokugo", "eng_r", "eng_l", "math1a", "math2bc", "chem", "phys", "info1"]},
-    {id: "sci2", name: "理系（化学・生物）", ids: ["kokugo", "eng_r", "eng_l", "math1a", "math2bc", "chem", "bio", "info1"]},
+    {id: "sci", name: "理系（物理・化学）", ids: ["kokugo", "eng_r", "eng_l", "math1a", "math2bc", "chem", "phys", "info1", SOCIAL_COL]},
+    {id: "sci2", name: "理系（化学・生物）", ids: ["kokugo", "eng_r", "eng_l", "math1a", "math2bc", "chem", "bio", "info1", SOCIAL_COL]},
     {id: "arts", name: "文系", ids: ["kokugo", "eng_r", "eng_l", "math1a", "math2bc", "geo", "jhist", "whist", "ethics", "polieco", "info1"]},
     {id: "arts2", name: "文系（社会・理科基礎）", ids: ["kokugo", "eng_r", "eng_l", "math1a", "math2bc", "info1", "geo", "jhist", "whist", "ethics", "polieco",
       "chem_basic", "bio_basic", "phys_basic", "earth_basic"]},
@@ -235,7 +245,7 @@
     var embedded = !!(fixedBooks || fixedSubjects);
     var avgDefault = opts.avg !== undefined ? !!opts.avg : ds.avg !== undefined ? ds.avg === "1" : embedded;
     var openedAt = performance.now();
-    var S = {cfg: null, tables: [], table: null, preset: "sci", custom: [], drafts: {}, avgOn: avgDefault, stats: null, busy: false, tint: true};
+    var S = {cfg: null, tables: [], table: null, preset: "sci", social: "geo", custom: [], drafts: {}, avgOn: avgDefault, stats: null, busy: false, tint: true};
     var ui = {};
 
     el.classList.add("sg");
@@ -252,6 +262,8 @@
       S.table = S.tables.find(function (x) { return x.id === t; }) || S.tables[0];
       var pr = sget("grid-subjects");
       S.preset = PRESETS.some(function (x) { return x.id === pr; }) ? pr : "sci";
+      var sc = sget("grid-social");
+      S.social = SOCIALS.some(function (x) { return x.id === sc; }) ? sc : "geo";
       try { S.custom = JSON.parse(sget("grid-custom") || "[]"); } catch (e) { S.custom = []; }
       if (!Array.isArray(S.custom)) S.custom = [];
       el.textContent = "";
@@ -267,7 +279,15 @@
       if (fixedSubjects) ids = fixedSubjects;
       else if (S.preset === "custom") ids = S.custom.slice().sort(function (a, b) { return PREF.indexOf(a) - PREF.indexOf(b); });
       else ids = PRESETS.find(function (p) { return p.id === S.preset; }).ids;
-      return ids.map(byId).filter(Boolean);
+      return ids.map(function (id) {
+        if (id !== SOCIAL_COL) return byId(id);
+        var d = socialDef(S.social), nw = byId(d.id), od = d.old ? byId(d.old) : null;
+        return nw ? Object.assign({}, nw, {id: SOCIAL_COL, short: SHORT[nw.id], merged: [nw, od]}) : null;
+      }).filter(Boolean);
+    }
+    function presetHasSocial() {
+      var p = PRESETS.find(function (x) { return x.id === S.preset; });
+      return !fixedSubjects && !!(p && p.ids && p.ids.indexOf(SOCIAL_COL) >= 0);
     }
     function rowList() { return fixedBooks ? rowsForIds(S.cfg, fixedBooks) : S.table.rows; }
     function cellKey(row, s) { return row.book.id + "|" + (row.round || "") + "|" + s.id; }
@@ -299,9 +319,21 @@
             sset("grid-custom", JSON.stringify(S.custom));
             [].forEach.call(ui.custom.querySelectorAll("input"), function (x) { x.checked = S.custom.indexOf(x.value) >= 0; });
           }
-          ui.custom.hidden = S.preset !== "custom"; clearResult(); renderGrid();
+          ui.custom.hidden = S.preset !== "custom"; ui.socialF.hidden = !presetHasSocial(); clearResult(); renderGrid();
         });
         ctl.append(field("科目", ui.subj));
+        ui.social = h("select", {"aria-label": "社会の科目"});
+        SOCIALS.forEach(function (d) {
+          var sj = S.cfg.subjects.find(function (x) { return x.id === d.id; });
+          if (sj) ui.social.append(option(d.id, sj.name));
+        });
+        ui.social.value = S.social;
+        ui.social.addEventListener("change", function () {
+          S.social = ui.social.value; sset("grid-social", S.social); clearResult(); renderGrid();
+        });
+        ui.socialF = field("社会の科目", ui.social);
+        ui.socialF.hidden = !presetHasSocial();
+        ctl.append(ui.socialF);
       }
       ui.avg = h("label", {class: "sg-chk"}, h("input", {type: "checkbox"}), h("span", {text: "平均点を出す"}));
       ui.avg.firstChild.checked = S.avgOn;
@@ -439,10 +471,10 @@
       rows.forEach(function (row) {
         var tr = h("tr", null, h("th", {class: "sg-rh", scope: "row", text: row.label}));
         var sum = 0, mxAll = 0, mxSent = 0, n = 0, got = 0, devs = [], devAll = true;
-        subs.forEach(function (s) {
-          var td = h("td");
-          if (excluded(s, row.book)) {
-            td.append(h("div", {class: "sg-cell sg-na"}, h("input", {class: "sg-in", disabled: true, "aria-label": row.label + " " + s.name + "（この試験にはありません）"})));
+        subs.forEach(function (col) {
+          var td = h("td"), s = resolveSub(col, row.book);
+          if (!s) {
+            td.append(h("div", {class: "sg-cell sg-na"}, h("input", {class: "sg-in", disabled: true, "aria-label": row.label + " " + col.name + "（この試験にはありません）"})));
           } else {
             var k = cellKey(row, s), sent = mine[mineKey(s.name, row.book.name, row.round)], mx = maxOf(s, row.book);
             n++; mxAll += mx;
@@ -452,7 +484,7 @@
               if (dv !== null) devs.push(dv); else devAll = false;
             } else devAll = false;
             var val = S.drafts[k] !== undefined ? S.drafts[k] : sent !== undefined ? String(sent) : "";
-            var tag = rowShort(s, row.book) !== shortOf(s) ? h("span", {class: "sg-tag", text: rowShort(s, row.book)}) : null;
+            var tag = col.merged ? (s !== col.merged[0] ? h("span", {class: "sg-tag", text: shortOf(s)}) : null) : rowShort(s, row.book) !== shortOf(s) ? h("span", {class: "sg-tag", text: rowShort(s, row.book)}) : null;
             var input = h("input", {class: "sg-in", type: "number", min: 0, max: mx, step: 1, inputmode: "numeric",
               placeholder: String(mx), "aria-label": row.label + " " + s.name + "（" + mx + "点満点）", "data-k": k});
             input.value = val;
@@ -524,11 +556,13 @@
     }
     function predictFor(s, entries) {
       var ns = window.NATIONAL_STATS || {}, att = [], adjUsed = [];
+      var variants = s.merged ? s.merged.filter(Boolean) : [s];  // 社会の列は、新旧どちらの科目で解いた記録も合わせる
       entries.forEach(function (r) {
-        var n = ns[r.book] && ns[r.book][s.name];
+        var sub = variants.find(function (x) { return x.name === r.subject; });
+        var n = sub && ns[r.book] && ns[r.book][sub.name];
         var bk = S.cfg.books.find(function (b) { return b.name === r.book; });
-        if (r.subject === s.name && bk) addText(adjUsed, adjText(bk, s));
-        if (r.subject !== s.name || !n || typeof n.mean !== "number" || !(n.sd > 0) || typeof r.score !== "number" || isNaN(r.score)) return;
+        if (sub && bk) addText(adjUsed, adjText(bk, sub));
+        if (!sub || !n || typeof n.mean !== "number" || !(n.sd > 0) || typeof r.score !== "number" || isNaN(r.score)) return;
         att.push({dev: 50 + 10 * (r.score - n.mean) / n.sd, at: String(r.at || "")});
       });
       if (!att.length) return null;
@@ -536,7 +570,7 @@
       att = att.slice(0, 5);
       var w = 0, sum = 0;
       att.forEach(function (a, i) { var wt = 5 - i; w += wt; sum += wt * a.dev; });
-      var dev = sum / w, ref = natRef(s);
+      var dev = sum / w, ref = natRef(s.merged ? s.merged[0] : s);
       if (!ref) return null;
       var pred = Math.round(ref.mean + ref.sd * (dev - 50) / 10);
       return {dev: dev, adj: adjUsed, n: att.length, ref: ref, score: Math.max(0, Math.min(s.max, pred))};
@@ -548,11 +582,11 @@
       var need = Array.isArray(window.KAKOMON_EXAMS), cands = [];
       preds.forEach(function (x) {
         for (var i = 0; i < books.length; i++) {
-          var b = books[i];
-          if (excluded(x.s, b) || mine[mineKey(x.s.name, b.name, null)] !== undefined) continue;
-          var eid = examId(b.id, x.s.id);
+          var b = books[i], a = resolveSub(x.s, b);
+          if (!a || mine[mineKey(a.name, b.name, null)] !== undefined) continue;
+          var eid = examId(b.id, a.id);
           if (need && !eid) continue;
-          cands.push({s: x.s, b: b, eid: eid, dev: x.p ? x.p.dev : -1});
+          cands.push({s: a, b: b, eid: eid, dev: x.p ? x.p.dev : -1});
           return;
         }
       });
@@ -567,8 +601,9 @@
       subs.forEach(function (s) {
         var d = 0, t = 0;
         rows.forEach(function (row) {
-          if (excluded(s, row.book)) return;
-          t++; if (mine[mineKey(s.name, row.book.name, row.round)] !== undefined) d++;
+          var a = resolveSub(s, row.book);
+          if (!a) return;
+          t++; if (mine[mineKey(a.name, row.book.name, row.round)] !== undefined) d++;
         });
         if (t) per.push({s: s, d: d, t: t});
         done += d; total += t;
