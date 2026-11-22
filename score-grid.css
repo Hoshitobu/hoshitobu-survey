@@ -138,3 +138,36 @@
 .sg .sg-congrats-d { margin: 0; font-size: 16px; color: var(--sg-ink); }
 @keyframes sg-pop { from { transform: translateY(4px); opacity: 0; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .sg .sg-congrats { animation: none; } }
+
+/* いまの実力：進み具合の円グラフと本番予想得点（罫線だけで区切る） */
+.sg .sg-power { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--sg-line); }
+.sg .sg-pw-t { margin: 0 0 12px; font-size: 16px; font-weight: 700; line-height: 1.5; }
+.sg .sg-pw-t2 { margin: 0 0 4px; font-size: 14px; color: var(--sg-faint); line-height: 1.5; }
+.sg .sg-pw-body { display: flex; flex-wrap: wrap; gap: 20px 40px; align-items: flex-start; }
+.sg .sg-pw-prog { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-start; flex: 1 1 320px; min-width: 0; }
+.sg .sg-pw-pred { flex: 1 1 320px; min-width: 0; }
+.sg .sg-pw-dn { width: 190px; flex: none; }
+.sg .sg-donut { display: block; width: 120px; height: 120px; margin: 0 auto; }
+.sg .sg-d-track { stroke: var(--sg-line-strong); }
+.sg .sg-d-fill { stroke: var(--sg-fill); }
+.sg .sg-d-num { font-size: 20px; font-weight: 700; fill: var(--sg-ink); font-family: inherit; font-variant-numeric: tabular-nums; }
+.sg .sg-pw-cap { margin: 6px 0 0; font-size: 13px; line-height: 1.5; color: var(--sg-sub); text-align: center; }
+.sg .sg-pw-list { list-style: none; margin: 0; padding: 0; flex: 1 1 160px; min-width: 0; }
+.sg .sg-pw-list li { display: flex; align-items: center; gap: 10px; padding: 2px 0; font-size: 14px; line-height: 1.6; min-width: 0; }
+.sg .sg-pw-s { flex: none; width: 3.6em; color: var(--sg-sub); white-space: nowrap; }
+.sg .sg-pw-bar { flex: 1 1 auto; min-width: 30px; height: 3px; background: var(--sg-line-strong); border-radius: 2px; overflow: hidden; }
+.sg .sg-pw-bar > i { display: block; height: 100%; background: var(--sg-fill); }
+.sg .sg-pw-c { flex: none; min-width: 3.4em; text-align: right; color: var(--sg-sub); }
+.sg .sg-pw-pl { width: 100%; flex: none; }
+.sg .sg-pw-pl li { flex-wrap: wrap; row-gap: 0; }
+.sg .sg-pw-v { flex: none; min-width: 5.6em; font-size: 16px; font-weight: 700; color: var(--sg-ink); }
+.sg .sg-pw-v.is-none { font-weight: 400; color: var(--sg-faint); }
+.sg .sg-pw-d { flex: 1 1 auto; font-size: 13px; color: var(--sg-faint); min-width: 0; }
+.sg .sg-pw-sum { margin: 8px 0 0; padding-top: 8px; border-top: 1px solid var(--sg-line); font-size: 16px; font-weight: 700; }
+.sg .sg-pw-pred .sg-note { margin-top: 6px; }
+@media (max-width: 480px) {
+  .sg .sg-pw-prog { flex-direction: column; align-items: stretch; flex-basis: 100%; }
+  .sg .sg-pw-dn { width: 100%; }
+  .sg .sg-pw-pred { flex-basis: 100%; }
+  .sg .sg-pw-list { flex-basis: auto; }
+}

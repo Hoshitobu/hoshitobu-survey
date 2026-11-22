@@ -274,6 +274,7 @@
       });
       el.append(ui.custom);
 
+      if (!embedded) { ui.power = h("section", {class: "sg-power", "aria-label": "いまの実力"}); el.append(ui.power); }
       ui.scroll = h("div", {class: "sg-scroll", tabindex: "-1"});
       el.append(ui.scroll);
 
@@ -360,6 +361,7 @@
     function renderGrid() {
       var left = ui.scroll.scrollLeft, top = ui.scroll.scrollTop;
       var subs = subjectList(), rows = rowList(), mine = mineMap();
+      renderPower(subs, rows, mine);
       ui.scroll.textContent = "";
       if (!subs.length) { ui.scroll.append(h("p", {class: "sg-note", text: "科目を選んでください。"})); updateCount(); return; }
       var head = h("tr", null, h("th", {class: "sg-rh", scope: "col"}));
@@ -391,6 +393,89 @@
       ui.scroll.append(h("table", {class: "sg-table"}, h("thead", null, head), body));
       ui.scroll.scrollLeft = left; ui.scroll.scrollTop = top;
       fillAvg(); updateCount();
+    }
+    // ---- いまの実力（全体のマス目だけ）：進み具合の円グラフと、本番予想得点
+    function donut(done, total) {
+      var NS = "http://www.w3.org/2000/svg", R = 52, C = 2 * Math.PI * R;
+      function se(tag, a) { var x = document.createElementNS(NS, tag); for (var k in a) x.setAttribute(k, a[k]); return x; }
+      var svg = se("svg", {viewBox: "0 0 120 120", width: 120, height: 120, class: "sg-donut", role: "img", "aria-label": done + " / " + total});
+      svg.append(se("circle", {cx: 60, cy: 60, r: R, fill: "none", "stroke-width": 10, class: "sg-d-track"}));
+      if (total > 0 && done > 0) {
+        svg.append(se("circle", {cx: 60, cy: 60, r: R, fill: "none", "stroke-width": 10, class: "sg-d-fill", transform: "rotate(-90 60 60)",
+          "stroke-dasharray": (C * done / total).toFixed(2) + " " + C.toFixed(2)}));
+      }
+      var tx = se("text", {x: 60, y: 60, "text-anchor": "middle", "dominant-baseline": "central", class: "sg-d-num"});
+      tx.textContent = done + " / " + total;
+      svg.append(tx);
+      return svg;
+    }
+    function natRef(s) {  // その科目の全国平均・標準偏差がある、いちばん新しい年の本試験
+      var ns = window.NATIONAL_STATS || {}, keys = Object.keys(ns).filter(function (k) { return /^\d{4}/.test(k); })
+        .sort(function (a, b) { return parseInt(b, 10) - parseInt(a, 10); });
+      for (var i = 0; i < keys.length; i++) {
+        var n = ns[keys[i]][s.name];
+        if (n && typeof n.mean === "number" && n.sd > 0) return {key: keys[i], year: parseInt(keys[i], 10), mean: n.mean, sd: n.sd};
+      }
+      return null;
+    }
+    function predictFor(s, entries) {
+      var ns = window.NATIONAL_STATS || {}, att = [];
+      entries.forEach(function (r) {
+        var n = ns[r.book] && ns[r.book][s.name];
+        if (r.subject !== s.name || !n || typeof n.mean !== "number" || !(n.sd > 0) || typeof r.score !== "number" || isNaN(r.score)) return;
+        att.push({dev: 50 + 10 * (r.score - n.mean) / n.sd, at: String(r.at || "")});
+      });
+      if (!att.length) return null;
+      att.sort(function (a, b) { return a.at < b.at ? 1 : a.at > b.at ? -1 : 0; });
+      att = att.slice(0, 5);
+      var w = 0, sum = 0;
+      att.forEach(function (a, i) { var wt = 5 - i; w += wt; sum += wt * a.dev; });
+      var dev = sum / w, ref = natRef(s);
+      if (!ref) return null;
+      var pred = Math.round(ref.mean + ref.sd * (dev - 50) / 10);
+      return {dev: dev, n: att.length, ref: ref, score: Math.max(0, Math.min(s.max, pred))};
+    }
+    function renderPower(subs, rows, mine) {
+      if (!ui.power) return;
+      var box = ui.power; box.textContent = "";
+      var done = 0, total = 0, per = [];
+      subs.forEach(function (s) {
+        var d = 0, t = 0;
+        rows.forEach(function (row) {
+          if (excluded(s, row.book)) return;
+          t++; if (mine[mineKey(s.name, row.book.name, row.round)] !== undefined) d++;
+        });
+        if (t) per.push({s: s, d: d, t: t});
+        done += d; total += t;
+      });
+      var list = h("ul", {class: "sg-pw-list"});
+      per.forEach(function (p) {
+        var bar = h("span", {class: "sg-pw-bar", "aria-hidden": "true"}, h("i", {style: "width:" + (100 * p.d / p.t).toFixed(1) + "%"}));
+        list.append(h("li", null, h("span", {class: "sg-pw-s", title: p.s.name, text: shortOf(p.s)}), bar, h("span", {class: "sg-pw-c", text: p.d + "/" + p.t})));
+      });
+      var prog = h("div", {class: "sg-pw-prog"},
+        h("div", {class: "sg-pw-dn"}, donut(done, total), h("p", {class: "sg-pw-cap", text: (S.table ? S.table.label : "") + " " + total + "回分のうち" + done + "回分"})),
+        list);
+
+      var entries = readMine().filter(function (r) { return r && r.kind === "practice"; });
+      var preds = subs.map(function (s) { return {s: s, p: predictFor(s, entries)}; });
+      var any = preds.filter(function (x) { return x.p; });
+      var pl = h("ul", {class: "sg-pw-list sg-pw-pl"});
+      preds.forEach(function (x) {
+        var detail = x.p ? "（偏差値 " + x.p.dev.toFixed(1) + "、" + x.p.n + "回分から" + (x.p.ref.key !== "2026本試" ? "、" + x.p.ref.year + "年基準" : "") + "）" : "";
+        pl.append(h("li", null, h("span", {class: "sg-pw-s", title: x.s.name, text: shortOf(x.s)}),
+          h("span", {class: "sg-pw-v" + (x.p ? "" : " is-none"), text: x.p ? "予想 " + x.p.score + "点" : "—"}),
+          h("span", {class: "sg-pw-d", text: detail})));
+      });
+      var pred = h("div", {class: "sg-pw-pred"}, h("p", {class: "sg-pw-t2", text: "本番予想得点"}), pl);
+      if (any.length) {
+        var tot = any.reduce(function (a, x) { return a + x.p.score; }, 0), mx = any.reduce(function (a, x) { return a + x.s.max; }, 0);
+        pred.append(h("p", {class: "sg-pw-sum", text: "合計 " + tot + "点 ／ " + mx + "点満点（" + any.length + "科目）"}),
+          h("p", {class: "sg-note", text: "過去問（本試験）の全国偏差値から、2026年の本試験と同じ平均点・散らばりだった場合の点数を出しています。"}));
+      } else {
+        pred.append(h("p", {class: "sg-note", text: "過去問の点数を入れると、ここに予想が出ます。"}));
+      }
+      box.append(h("h3", {class: "sg-pw-t", text: "いまの実力"}), h("div", {class: "sg-pw-body"}, prog, pred));
     }
     function mark(input) {
       var c = input._cell, v = input.value.trim();

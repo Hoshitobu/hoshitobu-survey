@@ -127,3 +127,23 @@ main section.card[id] { scroll-margin-top: 16px; }
 }
 .dev-in input::placeholder { font-size: 15px; font-weight: 400; }
 @media (min-width: 1200px) { .toc ol { border-left-color: color-mix(in srgb, var(--sub) 45%, transparent); } }
+
+/* ---------- 解説動画：サムネイル ---------- */
+.vthumb { display: inline-flex; flex-direction: column; gap: 4px; max-width: 320px; text-decoration: none; color: var(--ink); }
+.vthumb img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; background: var(--surface-2); }
+.vthumb .vt-l { font-size: 15px; font-weight: 700; line-height: 1.5; }
+.vthumb .vt-t { font-size: 13px; color: var(--faint); font-variant-numeric: tabular-nums; }
+.vthumb:hover img { outline: 2px solid var(--accent); outline-offset: 2px; }
+.vthumb:hover .vt-l { color: var(--accent); }
+.vgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px 20px; }
+.vgrid .vthumb { max-width: none; }
+.vtable { width: auto; }
+.vtable th, .vtable td { vertical-align: top; padding: 14px 10px; }
+.vtable thead th { font-size: 14px; color: var(--sub); white-space: nowrap; }
+.vtable tbody th { position: sticky; left: 0; background: var(--bg); font-size: 16px; padding-right: 14px; white-space: nowrap; }
+.vtable td { width: 200px; min-width: 176px; }
+.vtable .vt-cell { width: 208px; max-width: none; }
+.vtable .vt-cell .vt-l { font-size: 14px; }
+.vtable .vt-p { display: inline-block; margin-top: 4px; font-size: 13px; }
+.vtable td.vt-none { color: var(--faint); text-align: center; vertical-align: middle; }
+#video .vthumb { margin-bottom: 12px; }
