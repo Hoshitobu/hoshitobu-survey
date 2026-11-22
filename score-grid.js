@@ -490,7 +490,7 @@
           h("div", {class: "sg-two"},
             h("label", {class: "sg-f"}, h("span", {text: "学力帯（直近の模試の偏差値）"}), h("div", {class: "sg-sel"}, ui.band)),
             h("label", {class: "sg-f"}, h("span", {text: "ニックネーム（" + cfg.nickname.maxLength + "文字まで・" + (cfg.nickname.required ? "必須" : "任意") + "）"}), ui.nick)),
-          h("label", {class: "sg-chk"}, ui.rank, h("span", {text: "ニックネームを集計ページのランキングに載せる"})),
+          h("label", {class: "sg-chk"}, ui.rank, h("span", {text: "80点以上（100点満点のとき。得点率80%以上）なら、ニックネームを集計ページのランキングに載せる"})),
           ui.pass ? h("label", {class: "sg-f"}, h("span", {text: "合言葉"}), ui.pass) : null,
           h("div", {class: "sg-codeline"}, h("span", {class: "sg-k", text: "回答者コード"}), ui.codeView, ui.copy,
             h("button", {type: "button", class: "sg-link", on: {click: function () { ui.codeWrap.hidden = !ui.codeWrap.hidden; }}}, "別のコードを入力")),

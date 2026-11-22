@@ -351,7 +351,9 @@ function renderDetail() {
   const rows = showAll ? cell.ranking : cell.ranking.slice(0, 10);
   rows.forEach(e => {
     const tr = document.createElement("tr");
-    tr.append(td(`${e.rank}位`), td(e.nickname || "匿名", e.nickname ? "" : "anon"), td(e.score, "num"));
+    // ニックネームは、得点率が80%以上（100点満点なら80点から）の記録だけ出す（ほかは「匿名」）
+    const nick = e.nickname && cell.max && e.score / cell.max >= 0.8 ? e.nickname : null;
+    tr.append(td(`${e.rank}位`), td(nick || "匿名", nick ? "" : "anon"), td(e.score, "num"));
     t.append(tr);
   });
   $("showAll").hidden = cell.ranking.length <= 10;
