@@ -1,0 +1,129 @@
+/* 年度・科目ページ用。色・書体・段組みは ../style.css の変数と .card をそのまま使う */
+header .sitename { color: var(--ink); font-weight: 700; font-size: 16px; text-decoration: none; }
+.crumbs { font-size: 14px; color: var(--faint); padding: 20px 0 0; }
+.crumbs a { color: var(--sub); text-decoration: none; }
+.crumbs a:hover { color: var(--ink); }
+.k-title { padding: 28px 0 40px; }
+.k-title h1 { font-size: 30px; line-height: 1.4; font-weight: 700; margin: 0 0 12px; }
+.k-title .note { max-width: 44em; margin: 0; }
+.note.small { font-size: 14px; color: var(--faint); }
+.faint { color: var(--faint); font-size: 14px; margin-left: 10px; }
+.card > p { margin: 0 0 12px; }
+.card h3 { margin: 24px 0 4px; }
+.card h3:first-of-type { margin-top: 0; }
+.links { list-style: none; margin: 0 0 12px; padding: 0; }
+.links li { padding: 8px 0; border-bottom: 1px solid var(--line); }
+.links li:last-child { border-bottom: 0; }
+.links .k { display: inline-block; min-width: 5em; font-weight: 700; margin-right: 8px; }
+.links .sep { color: var(--faint); margin: 0 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 4px 0 8px !important; }
+.chips a { text-decoration: none; color: var(--sub); border-bottom: 1px solid var(--line-strong); }
+.chips a:hover { color: var(--ink); border-bottom-color: var(--ink); }
+.chips a[aria-current="page"] { color: var(--ink); font-weight: 700; border-bottom-color: var(--ink); }
+details.seitou summary { cursor: pointer; color: var(--accent); font-size: 16px; padding: 2px 0 8px; }
+details.seitou summary:hover { color: var(--accent-ink); }
+.bar { display: inline-block; width: 72px; height: 4px; background: var(--bar-track); margin-left: 12px; vertical-align: middle; }
+.bar i { display: block; height: 100%; background: var(--bar); }
+.src { padding: 24px 0 0; border-top: 1px solid var(--line); }
+.src p { margin: 0; }
+.matrix th, .matrix td { padding: 10px 10px; text-align: center; white-space: nowrap; }
+.matrix th:first-child, .matrix td:first-child { text-align: left; position: sticky; left: 0; background: var(--bg); padding-right: 14px; }
+.matrix td a { text-decoration: none; }
+.matrix td a:hover { text-decoration: underline; }
+@media (max-width: 760px) {
+  .k-title { padding: 20px 0 28px; }
+  .k-title h1 { font-size: 24px; }
+  .links .k { display: block; }
+  .faint { display: block; margin-left: 0; }
+}
+
+/* ---------- 読みやすさ：文字を一段大きく、薄い灰色を濃く、押すところを大きく ---------- */
+:root { --sub: #454a55; --faint: #686d78; }
+@media (prefers-color-scheme: dark) { :root { --sub: #b4b9c4; --faint: #8f94a0; } }
+body { font-size: 18px; line-height: 1.8; }
+main .note { font-size: 17px; color: var(--sub); }
+.note.small, .faint { font-size: 15px; color: var(--faint); }
+.crumbs { font-size: 15px; }
+h2 { font-size: 18px; }
+h3 { font-size: 17px; }
+table { font-size: 17px; }
+th { font-size: 15px; color: var(--sub); font-weight: 700; }
+.card { padding: 32px 0; }
+.k-title h1 { font-size: 34px; }
+
+/* PDF・時間を計って解く：ボタンにする */
+.links li { padding: 12px 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.links .k { min-width: 4.5em; margin: 0; }
+.links .sep { display: none; }
+.links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1px solid var(--line-strong);
+           border-radius: 8px; text-decoration: none; font-weight: 700; color: var(--accent); background: var(--surface-2); }
+.links a:hover { border-color: var(--accent); }
+.links .faint { margin: 0; flex-basis: 100%; padding-left: calc(4.5em + 10px); }
+
+/* 年度・科目の切り替え：押しやすい丸い札 */
+.chips { gap: 8px !important; }
+.chips a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border: 1px solid var(--line-strong);
+           border-radius: 999px; color: var(--ink); font-size: 16px; }
+.chips a:hover { border-color: var(--ink); }
+.chips a[aria-current="page"] { background: var(--accent-fill); border-color: var(--accent-fill); color: var(--on-accent); }
+
+details.seitou summary { font-size: 17px; font-weight: 700; padding: 10px 0 12px; }
+.bar { width: 96px; height: 6px; border-radius: 3px; overflow: hidden; }
+
+@media (max-width: 760px) {
+  .k-title h1 { font-size: 28px; }
+  .card { padding: 24px 0; }
+  .card > h2 { margin-bottom: 8px; }
+  .links .faint { padding-left: 0; }
+}
+
+/* 得点を入れる（1科目だけのマス目）：表を横いっぱいに伸ばさず、マスを大きく */
+main .sg[data-score-grid] .sg-table { min-width: 0; font-size: 17px; }
+main .sg[data-score-grid] .sg-table th, main .sg[data-score-grid] .sg-table td { padding: 8px 14px; }
+main .sg[data-score-grid] .sg-table thead th { font-size: 15px; }
+main .sg[data-score-grid] .sg-cell { width: 104px; }
+main .sg[data-score-grid] .sg-in { height: 48px; font-size: 22px; font-weight: 700; }
+
+/* 偏差値を出す */
+.dev { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 16px 32px; }
+.dev-in { display: flex; flex-direction: column; gap: 6px; margin: 0; font-size: 15px; color: var(--sub); }
+.dev-in input { width: 160px; height: 56px; font-size: 26px; font-weight: 700; text-align: center; }
+.dev-out { min-height: 56px; }
+.dev-out p { margin: 0; }
+.dev-main { display: flex; align-items: baseline; gap: 12px; }
+.dev-k { font-size: 15px; color: var(--sub); font-weight: 700; }
+.dev-v { font-size: 44px; line-height: 1.1; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.dev-sub { font-size: 16px; color: var(--sub); }
+.dev-err { color: var(--warn); font-size: 15px; }
+.dev-congrats { font-size: 22px; font-weight: 700; color: var(--accent); }
+.dev.is-great .dev-v { color: var(--accent); }
+.dev.is-super .dev-v { color: var(--accent); }
+.dev.is-super .dev-out { padding-left: 14px; border-left: 3px solid var(--accent); }
+
+/* ---------- このページ（目次）。狭い画面：見出しの下に一覧。広い画面：左に固定、線の上の点で今の節 ---------- */
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+main section.card[id] { scroll-margin-top: 16px; }
+.toc { margin: 0 0 8px; padding: 0 0 24px; }
+.toc-h { margin: 0 0 8px; font-size: 13px; font-weight: 700; letter-spacing: .08em; color: var(--faint); }
+.toc ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.toc a { text-decoration: none; color: var(--sub); }
+.toc ol a { display: inline-flex; align-items: center; min-height: 36px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 999px; font-size: 14px; }
+.toc a:hover { color: var(--ink); }
+.toc-top { display: none; }
+
+@media (min-width: 1200px) {
+  body.has-toc main { max-width: calc(var(--page) + 32px + 208px); padding-left: 224px; position: relative; }
+  body.has-toc { --label: 176px; --gap: 40px; }
+  .toc { position: fixed; top: 96px; width: 176px; padding: 0;
+         left: calc(max(0px, (100vw - (var(--page) + 32px + 208px)) / 2) + 16px); }
+  .toc ol { display: block; position: relative; padding-left: 20px; border-left: 2px solid var(--line-strong); }
+  .toc ol li { position: relative; }
+  .toc ol a { display: block; min-height: 0; padding: 7px 0; border: 0; border-radius: 0; font-size: 14px; line-height: 1.5; }
+  .toc ol a.is-on { color: var(--accent); font-weight: 700; }
+  .toc ol a.is-on::before { content: ""; position: absolute; left: -27px; top: 50%; width: 12px; height: 12px; margin-top: -6px;
+                            border-radius: 50%; background: var(--accent-fill); box-shadow: 0 0 0 4px var(--accent-soft); }
+  .toc-top { display: inline-block; margin-top: 16px; padding-left: 22px; font-size: 14px; font-weight: 700; color: var(--accent); }
+}
+.dev-in input::placeholder { font-size: 15px; font-weight: 400; }
+@media (min-width: 1200px) { .toc ol { border-left-color: color-mix(in srgb, var(--sub) 45%, transparent); } }

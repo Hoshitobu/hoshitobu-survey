@@ -1,0 +1,140 @@
+/* 点数のマス目（score-grid.js）。すべて .sg の中だけに効かせる。
+ * 色はページ側の変数（--ink など）があればそれを使い、なければ冷たい無彩色＋インディゴ1色で描く。明暗どちらにも対応。 */
+.sg {
+  --sg-bg: var(--bg, #ffffff); --sg-field: var(--field, #ffffff);
+  --sg-ink: var(--ink, #15171c); --sg-sub: var(--sub, #555a65); --sg-faint: var(--faint, #868b96);
+  --sg-line: var(--line, #e7e9ed); --sg-line-strong: var(--line-strong, #cfd3da);
+  --sg-accent: var(--accent, #2f3fd0); --sg-accent-ink: var(--accent-ink, #2433b0); --sg-accent-soft: var(--accent-soft, #eef0fd);
+  --sg-fill: var(--accent-fill, #2f3fd0); --sg-fill-hover: var(--accent-fill-hover, #2433b0); --sg-on: var(--on-accent, #ffffff);
+  --sg-ok: var(--ok, #217a66); --sg-warn: var(--warn, #b4405a);
+  --sg-sans: var(--sans, "Inter", "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif);
+  display: block; min-width: 0; max-width: 100%; box-sizing: border-box;
+  color: var(--sg-ink); font-family: var(--sg-sans); font-size: 16px; line-height: 1.75; font-variant-numeric: tabular-nums;
+}
+@media (prefers-color-scheme: dark) {
+  .sg {
+    --sg-bg: var(--bg, #0a0b0f); --sg-field: var(--field, #0f1116);
+    --sg-ink: var(--ink, #e2e4e9); --sg-sub: var(--sub, #9ca1ac); --sg-faint: var(--faint, #6c717c);
+    --sg-line: var(--line, #1b1e26); --sg-line-strong: var(--line-strong, #2a2e38);
+    --sg-accent: var(--accent, #8d97ff); --sg-accent-ink: var(--accent-ink, #aab2ff); --sg-accent-soft: var(--accent-soft, #151933);
+    --sg-fill: var(--accent-fill, #4251de); --sg-fill-hover: var(--accent-fill-hover, #5260ec);
+    --sg-ok: var(--ok, #6fbca7); --sg-warn: var(--warn, #d98e9e);
+  }
+}
+.sg *, .sg *::before, .sg *::after { box-sizing: border-box; }
+.sg [hidden] { display: none !important; }
+.sg a { color: var(--sg-accent); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.sg a:hover { color: var(--sg-accent-ink); }
+.sg :focus-visible { outline: 2px solid var(--sg-accent); outline-offset: 2px; }
+.sg .sg-note { margin: 12px 0 0; font-size: 14px; color: var(--sg-faint); line-height: 1.7; }
+.sg .sg-note.sg-err { color: var(--sg-warn); font-size: 16px; }
+
+/* 選ぶ欄 */
+.sg .sg-ctl { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; }
+.sg .sg-f { display: block; margin: 0; font-size: 14px; color: var(--sg-faint); min-width: 0; }
+.sg .sg-f > span { display: block; margin: 0 0 4px; line-height: 1.5; }
+.sg .sg-sel { position: relative; }
+.sg .sg-sel::after { content: ""; position: absolute; right: 13px; top: 50%; width: 6px; height: 6px; margin-top: -5px;
+  border-right: 1.5px solid var(--sg-faint); border-bottom: 1.5px solid var(--sg-faint); transform: rotate(45deg); pointer-events: none; }
+.sg select, .sg input[type="text"] {
+  width: 100%; font: inherit; font-size: 18px; line-height: 1.5; color: var(--sg-ink); background: var(--sg-field);
+  border: 1px solid var(--sg-line-strong); border-radius: 4px; padding: 7px 10px; margin: 0; transition: border-color .15s; }
+.sg select { appearance: none; -webkit-appearance: none; padding-right: 32px; cursor: pointer; min-width: 180px; }
+.sg select:hover, .sg input[type="text"]:hover { border-color: var(--sg-faint); }
+.sg .sg-chk { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: 16px; color: var(--sg-ink); cursor: pointer; line-height: 1.6; }
+.sg .sg-chk input { width: 16px; height: 16px; margin: 0; flex: none; accent-color: var(--sg-fill); }
+.sg .sg-ctl > .sg-chk { padding-bottom: 8px; margin-left: auto; font-size: 14px; color: var(--sg-sub); }
+.sg .sg-custom { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 14px 0 0; }
+
+/* マス目：枠の中で横にスクロールする。ページ自体は横に動かない。左の列（試験）は固定 */
+.sg .sg-scroll { margin-top: 16px; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.sg .sg-table { border-collapse: separate; border-spacing: 0; width: max-content; min-width: 100%; margin: 0; font-size: 16px; }
+.sg .sg-table th, .sg .sg-table td { padding: 6px 4px; border-bottom: 1px solid var(--sg-line); text-align: center; vertical-align: top; }
+.sg .sg-table thead th { font-size: 14px; font-weight: 700; color: var(--sg-sub); white-space: nowrap; padding: 4px 4px 8px; border-bottom: 1px solid var(--sg-line-strong); vertical-align: bottom; }
+.sg .sg-table tbody tr:last-child > * { border-bottom: 0; }
+.sg .sg-table .sg-rh { position: sticky; left: 0; z-index: 1; background: var(--sg-bg); text-align: left; white-space: nowrap;
+  padding: 6px 14px 6px 0; font-weight: 700; font-size: 16px; color: var(--sg-ink); }
+.sg .sg-table thead .sg-rh { z-index: 2; }
+.sg .sg-table tbody .sg-rh { padding-top: 12px; box-shadow: 1px 0 0 var(--sg-line); }
+.sg .sg-cell { position: relative; width: 68px; margin: 0 auto; }
+.sg .sg-in { display: block; width: 100%; height: 38px; margin: 0; padding: 4px 2px; text-align: center; font: inherit; font-size: 18px; line-height: 1.5;
+  color: var(--sg-ink); background: var(--sg-field); border: 1px solid var(--sg-line-strong); border-radius: 4px; -moz-appearance: textfield; appearance: textfield; transition: border-color .15s, background-color .15s; }
+.sg .sg-in::-webkit-outer-spin-button, .sg .sg-in::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.sg .sg-in::placeholder { color: var(--sg-faint); opacity: .45; }
+.sg .sg-in:hover { border-color: var(--sg-faint); }
+.sg .sg-in:focus { outline: 2px solid var(--sg-accent); outline-offset: -1px; border-color: var(--sg-accent); }
+.sg .sg-in.is-new { border-color: var(--sg-ink); }
+.sg .sg-in.is-sent { background: var(--sg-accent-soft); border-color: var(--sg-accent-soft); color: var(--sg-accent-ink); font-weight: 700; }
+.sg .sg-in.is-sent:hover { border-color: var(--sg-accent); }
+.sg .sg-in.is-bad { border-color: var(--sg-warn); outline: 1px solid var(--sg-warn); }
+.sg .sg-na .sg-in { background: transparent; border-color: transparent; cursor: default; }
+.sg .sg-na .sg-in::placeholder { opacity: 0; }
+.sg .sg-na { background: repeating-linear-gradient(135deg, transparent 0 5px, var(--sg-line) 5px 6px); border-radius: 4px; height: 38px; }
+.sg .sg-tag { position: absolute; right: 3px; top: 1px; font-size: 12px; line-height: 1.3; color: var(--sg-faint); pointer-events: none; }
+.sg .sg-avg { display: flex; flex-direction: column; margin-top: 2px; font-size: 12px; line-height: 1.4; color: var(--sg-faint); white-space: nowrap; }
+
+/* 送る */
+.sg .sg-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 20px; }
+.sg .sg-btn { appearance: none; font: inherit; font-size: 16px; font-weight: 700; line-height: 1.4; cursor: pointer; margin: 0;
+  padding: 10px 20px; border: 1px solid var(--sg-fill); border-radius: 4px; background: var(--sg-fill); color: var(--sg-on); transition: background-color .15s; }
+.sg .sg-btn:hover { background: var(--sg-fill-hover); border-color: var(--sg-fill-hover); }
+.sg .sg-btn:disabled { opacity: .55; cursor: default; }
+.sg .sg-status { font-size: 16px; color: var(--sg-sub); }
+.sg .sg-status:empty, .sg .sg-msg:empty { display: none; }
+.sg .sg-msg { margin-top: 12px; font-size: 16px; color: var(--sg-warn); white-space: pre-wrap; }
+.sg .sg-link { background: none; border: 0; padding: 0; margin: 0; font: inherit; font-size: 14px; color: var(--sg-sub); cursor: pointer;
+  text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.sg .sg-link:hover { color: var(--sg-accent); }
+
+/* 送る人の情報：登録ずみのときはたたむ */
+.sg .sg-prof { margin-top: 24px; border-top: 1px solid var(--sg-line); padding-top: 12px; }
+.sg .sg-prof > summary { list-style: none; cursor: pointer; display: flex; flex-wrap: wrap; gap: 0 16px; align-items: baseline; font-size: 16px; font-weight: 700; padding: 4px 22px 4px 0; position: relative; }
+.sg .sg-prof > summary::-webkit-details-marker { display: none; }
+.sg .sg-prof > summary::after { content: ""; position: absolute; right: 4px; top: 50%; width: 6px; height: 6px; margin-top: -5px;
+  border-right: 1.5px solid var(--sg-faint); border-bottom: 1.5px solid var(--sg-faint); transform: rotate(45deg); }
+.sg .sg-prof[open] > summary::after { transform: rotate(-135deg); margin-top: -1px; }
+.sg .sg-sum { font-size: 14px; font-weight: 400; color: var(--sg-faint); }
+.sg .sg-prof-body { padding: 12px 0 4px; max-width: 40em; }
+.sg .sg-consent { align-items: flex-start; font-size: 16px; }
+.sg .sg-consent input { margin-top: 5px; }
+.sg .sg-two { display: flex; flex-wrap: wrap; gap: 12px 16px; margin: 14px 0; }
+.sg .sg-two > .sg-f { flex: 1 1 200px; }
+.sg .sg-two select { min-width: 0; }
+.sg .sg-prof-body > .sg-chk { margin-bottom: 10px; }
+.sg .sg-prof-body > .sg-f { margin-bottom: 10px; }
+.sg .sg-codeline { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin-top: 6px; }
+.sg .sg-k { font-size: 14px; color: var(--sg-faint); }
+.sg .sg-code { font-size: 22px; font-weight: 300; letter-spacing: .18em; }
+.sg .sg-codein { display: flex; gap: 12px; align-items: center; margin-top: 8px; }
+.sg .sg-codein input { width: 9em; }
+.sg .sg-hp { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+
+/* 送ったあと */
+.sg .sg-result { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--sg-line); }
+.sg .sg-done { margin: 0; padding: 2px 0 2px 14px; border-left: 2px solid var(--sg-ok); font-size: 16px; }
+.sg .sg-rt { width: 100%; }
+.sg .sg-rt th, .sg .sg-rt td { text-align: left; white-space: nowrap; padding: 10px 16px 10px 0; vertical-align: baseline; }
+.sg .sg-rt thead th { padding-bottom: 6px; font-weight: 400; color: var(--sg-faint); }
+.sg .sg-rt .sg-n { font-variant-numeric: tabular-nums; }
+.sg .sg-rt tbody .sg-rh { box-shadow: none; padding-top: 10px; }
+
+@media (max-width: 760px) {
+  .sg .sg-ctl > .sg-chk { margin-left: 0; width: 100%; padding-bottom: 0; }
+  .sg .sg-f, .sg .sg-sel { width: 100%; }
+  .sg .sg-ctl > .sg-f { flex: 1 1 100%; }
+  .sg .sg-table .sg-rh { padding-right: 10px; }
+  .sg .sg-cell { width: 58px; }
+  .sg .sg-btn { width: 100%; }
+}
+
+/* 全国偏差値60以上をお祝いする（サイトの藍青1色で。60以上は濃い縁、70以上は塗りつぶし） */
+.sg .sg-in.is-sent.is-great { border: 2px solid var(--sg-accent); }
+.sg .sg-in.is-sent.is-super { background: var(--accent-fill, #4251de); border-color: var(--accent-fill, #4251de); color: var(--on-accent, #fff); }
+.sg .sg-rt tr.is-great td.sg-you, .sg .sg-rt tr.is-great td:last-child,
+.sg .sg-rt tr.is-super td.sg-you, .sg .sg-rt tr.is-super td:last-child { color: var(--sg-accent); font-weight: 700; }
+.sg .sg-congrats { margin: 16px 0 8px; padding: 18px 20px; border-left: 3px solid var(--sg-accent); background: var(--sg-accent-soft);
+                   animation: sg-pop .5s ease-out; }
+.sg .sg-congrats-t { margin: 0 0 4px; font-size: 26px; font-weight: 700; color: var(--sg-accent); letter-spacing: .02em; }
+.sg .sg-congrats-d { margin: 0; font-size: 16px; color: var(--sg-ink); }
+@keyframes sg-pop { from { transform: translateY(4px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .sg .sg-congrats { animation: none; } }

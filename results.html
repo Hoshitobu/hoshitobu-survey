@@ -7,10 +7,19 @@
 <meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)">
 <meta name="referrer" content="no-referrer">
 <title>共テ予想問題集 点数集計 — 集計</title>
+<meta name="description" content="共通テストや予想問題集の点数集計の結果です。これまでに集まった点数の分布と平均、大問ごとの得点の傾向を見られます。">
+<link rel="canonical" href="https://hoshitobu.github.io/hoshitobu-survey/results.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="星飛ぶの勉強部屋">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="共テ予想問題集 点数集計 — 集計">
+<meta property="og:description" content="共通テストや予想問題集の点数集計の結果です。これまでに集まった点数の分布と平均、大問ごとの得点の傾向を見られます。">
+<meta property="og:url" content="https://hoshitobu.github.io/hoshitobu-survey/results.html">
+<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
-<link rel="stylesheet" href="style.css?v=20261109c">
+<link rel="stylesheet" href="style.css?v=20261122f">
 </head>
 <body>
 <header>
@@ -23,6 +32,7 @@
   </div>
   <nav>
     <a href="kakomon.html">過去問演習</a>
+    <a href="kyotsu/index.html">年度・科目別</a>
     <a href="results.html" aria-current="page">集計を見る</a>
   </nav>
 </header>
@@ -79,45 +89,45 @@
 </main>
 <style>
   .page-title { display: grid; grid-template-columns: var(--label) minmax(0, 1fr); column-gap: var(--gap); align-items: baseline; padding: 56px 0 32px; }
-  .page-title h2 { font-size: 20px; margin: 0; }
-  .foot { margin: 0; padding: 32px 0 0 calc(var(--label) + var(--gap)); border-top: 1px solid var(--line); color: var(--faint); font-size: 12px; }
+  .page-title h2 { font-size: 22px; margin: 0; }
+  .foot { margin: 0; padding: 32px 0 0 calc(var(--label) + var(--gap)); border-top: 1px solid var(--line); color: var(--faint); font-size: 14px; }
   /* 分布の数字：仕様表の1行 */
   .stat-row { display: flex; gap: 0; flex-wrap: wrap; margin-top: 24px; border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line); padding: 16px 0; }
-  .stat-row div { font-size: 12px; color: var(--faint); padding: 0 24px; border-left: 1px solid var(--line); }
+  .stat-row div { font-size: 14px; color: var(--faint); padding: 0 24px; border-left: 1px solid var(--line); }
   .stat-row div:first-child { padding-left: 0; border-left: 0; }
-  .stat-row b { display: block; font-weight: 300; font-size: 28px; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.3; }
-  .myrank { margin-top: 16px; padding: 2px 0 2px 14px; border-left: 2px solid var(--accent); font-size: 14px; }
-  .myrank b { font-size: 16px; }
+  .stat-row b { display: block; font-weight: 300; font-size: 30px; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.3; }
+  .myrank { margin-top: 16px; padding: 2px 0 2px 14px; border-left: 2px solid var(--accent); font-size: 16px; }
+  .myrank b { font-size: 18px; }
   .chart-wrap { position: relative; margin-top: 24px; }
   #hist { display: block; width: 100%; height: 240px; }
-  .tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 12px;
+  .tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 14px;
          padding: 2px 8px; border-radius: 3px; white-space: nowrap; transform: translate(-50%, -120%); }
   #savePng { width: auto; border: 0; padding: 0; color: var(--accent); font-weight: 400; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
   .mine-item { display: flex; justify-content: space-between; align-items: baseline; gap: 4px 16px; flex-wrap: wrap;
-               border-top: 1px solid var(--line); padding: 16px 0; font-size: 14px; }
+               border-top: 1px solid var(--line); padding: 16px 0; font-size: 16px; }
   #mine > .mine-item:first-child { border-top-color: var(--line-strong); }
-  .mine-item .what { color: var(--faint); font-size: 12px; }
+  .mine-item .what { color: var(--faint); font-size: 14px; }
   .mine-item .rank b { font-weight: 700; }
   td.anon { color: var(--faint); font-weight: 400; }
   /* 成績表：仕様表の組み方（左に太字の行見出し、右に内容） */
   details.report { margin: 0 0 16px; }
-  details.report > summary { cursor: pointer; padding: 0 0 8px; font-size: 14px; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  details.report > summary { cursor: pointer; padding: 0 0 8px; font-size: 16px; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
   details.report > summary:hover { color: var(--accent-ink); }
   .report .body { padding: 0 0 12px; }
   .report .kpis { border-top: 1px solid var(--line-strong); }
   .report .kpi { display: grid; grid-template-columns: 180px minmax(0, 1fr); column-gap: 24px; align-items: baseline; padding: 14px 0; border-bottom: 1px solid var(--line); }
-  .report .kpi .k { grid-column: 1; grid-row: 1 / span 2; font-size: 14px; font-weight: 700; color: var(--ink); }
-  .report .kpi .v { grid-column: 2; grid-row: 1; font-weight: 300; font-size: 28px; font-variant-numeric: tabular-nums; line-height: 1.2; letter-spacing: -.01em; }
-  .report .kpi .v small { font-size: 14px; font-weight: 400; color: var(--faint); }
-  .report .kpi .s { grid-column: 2; font-size: 12px; color: var(--sub); }
+  .report .kpi .k { grid-column: 1; grid-row: 1 / span 2; font-size: 16px; font-weight: 700; color: var(--ink); }
+  .report .kpi .v { grid-column: 2; grid-row: 1; font-weight: 300; font-size: 30px; font-variant-numeric: tabular-nums; line-height: 1.2; letter-spacing: -.01em; }
+  .report .kpi .v small { font-size: 16px; font-weight: 400; color: var(--faint); }
+  .report .kpi .s { grid-column: 2; font-size: 14px; color: var(--sub); }
   .report .kpi .s:empty { display: none; }
-  .report h4 { font-size: 14px; margin: 32px 0 4px; }
+  .report h4 { font-size: 16px; margin: 32px 0 4px; }
   .report .gap { font-weight: 700; color: var(--warn); }
   .report .good { font-weight: 700; color: var(--ok); }
-  .report ul.review { margin: 8px 0 4px; padding-left: 1.2em; font-size: 14px; }
+  .report ul.review { margin: 8px 0 4px; padding-left: 1.2em; font-size: 16px; }
   .report ul.review li { margin: 4px 0; }
-  .report .tag { font-size: 12px; color: var(--warn); margin-left: 8px; }
-  td button.link { font-size: 12px; font-weight: 400; }
+  .report .tag { font-size: 14px; color: var(--warn); margin-left: 8px; }
+  td button.link { font-size: 14px; font-weight: 400; }
   @media (max-width: 760px) {
     .page-title { grid-template-columns: minmax(0, 1fr); padding: 40px 0 24px; row-gap: 4px; }
     .foot { padding-left: 0; }

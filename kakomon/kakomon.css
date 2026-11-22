@@ -16,7 +16,7 @@
   --kk-jp: "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
   --kk-mono: var(--mono, "SFMono-Regular", Consolas, "Roboto Mono", monospace);
   --kk-label: var(--label, 232px); --kk-gap: var(--gap, 48px); --kk-r: 4px;
-  color: var(--kk-ink); font-size: 14px; line-height: 1.75; font-family: var(--kk-sans);
+  color: var(--kk-ink); font-size: 16px; line-height: 1.75; font-family: var(--kk-sans);
   font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased;
 }
 .kk *, .kk *::before, .kk *::after { box-sizing: border-box; }
@@ -33,20 +33,20 @@
 .kk .kk-card > .kk-eyebrow { grid-column: 1; grid-row: 1 / span 40; }
 .kk > .kk-card:first-child { border-top: 0; padding-top: 32px; }
 .kk .kk-eyebrow { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 8px; margin: 0; }
-.kk .kk-step { font-size: 14px; font-weight: 700; color: var(--kk-faint); line-height: 1.6; }
-.kk .kk-eyebrow h3 { font-weight: 700; font-size: 14px; line-height: 1.6; margin: 0; }
-.kk .kk-eyebrow .kk-aside { flex-basis: 100%; font-size: 12px; color: var(--kk-faint); line-height: 1.6; margin-top: 2px; }
-.kk .kk-muted { color: var(--kk-sub); font-size: 14px; line-height: 1.75; }
+.kk .kk-step { font-size: 16px; font-weight: 700; color: var(--kk-faint); line-height: 1.6; }
+.kk .kk-eyebrow h3 { font-weight: 700; font-size: 16px; line-height: 1.6; margin: 0; }
+.kk .kk-eyebrow .kk-aside { flex-basis: 100%; font-size: 14px; color: var(--kk-faint); line-height: 1.6; margin-top: 2px; }
+.kk .kk-muted { color: var(--kk-sub); font-size: 16px; line-height: 1.75; }
 .kk p.kk-muted { margin: 0 0 12px; max-width: 44em; }
-.kk .kk-faint { color: var(--kk-faint); font-size: 12px; line-height: 1.7; }
+.kk .kk-faint { color: var(--kk-faint); font-size: 14px; line-height: 1.7; }
 /* 試験の情報：仕様表の1行（細い縦罫で区切る） */
-.kk .kk-pill { display: inline-block; font-size: 14px; color: var(--kk-sub); padding: 0 14px; border-left: 1px solid var(--kk-line-strong); line-height: 1.4; }
+.kk .kk-pill { display: inline-block; font-size: 16px; color: var(--kk-sub); padding: 0 14px; border-left: 1px solid var(--kk-line-strong); line-height: 1.4; }
 .kk .kk-pill:first-child { padding-left: 0; border-left: 0; }
 .kk .kk-pill b { color: var(--kk-ink); font-weight: 700; }
 
 /* ---------- ボタン：主（濃い塗り）と、細い線・文字リンクだけ ---------- */
 .kk button { font-family: inherit; }
-.kk .kk-btn { appearance: none; border: 1px solid transparent; border-radius: var(--kk-r); padding: 9px 16px; font-size: 14px;
+.kk .kk-btn { appearance: none; border: 1px solid transparent; border-radius: var(--kk-r); padding: 9px 16px; font-size: 16px;
               font-weight: 700; cursor: pointer; line-height: 1.4; text-decoration: none; white-space: nowrap;
               transition: background-color .15s, border-color .15s, color .15s;
               display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: auto; margin: 0; }
@@ -59,18 +59,18 @@
 .kk .kk-btn-secondary:hover { border-color: var(--kk-ink); color: var(--kk-ink); }
 .kk .kk-btn-ghost { background: transparent; color: var(--kk-accent); padding: 8px 4px; font-weight: 400; }
 .kk .kk-btn-block { width: 100%; }
-.kk .kk-link { background: none; border: 0; color: var(--kk-sub); font-size: 12px; cursor: pointer; padding: 2px 0;
+.kk .kk-link { background: none; border: 0; color: var(--kk-sub); font-size: 14px; cursor: pointer; padding: 2px 0;
                text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 .kk .kk-link:hover { color: var(--kk-accent); }
 .kk .kk-chip { border: 1px solid var(--kk-line-strong); background: transparent; border-radius: var(--kk-r); padding: 2px 9px;
-               font: inherit; font-size: 12px; line-height: 1.6; color: var(--kk-ink); cursor: pointer; transition: border-color .15s; }
+               font: inherit; font-size: 14px; line-height: 1.6; color: var(--kk-ink); cursor: pointer; transition: border-color .15s; }
 .kk .kk-chip:hover { border-color: var(--kk-ink); }
 .kk .kk-chip.is-on { border-color: var(--kk-ink); }
 .kk .kk-chip.is-save { font-weight: 700; }
 
 .kk select, .kk input, .kk textarea { font-family: inherit; color: var(--kk-ink); }
 
-.kk .kk-flash { margin-top: 16px; padding: 2px 0 2px 14px; border-left: 2px solid var(--kk-ok); font-size: 14px; color: var(--kk-ink); }
+.kk .kk-flash { margin-top: 16px; padding: 2px 0 2px 14px; border-left: 2px solid var(--kk-ok); font-size: 16px; color: var(--kk-ink); }
 .kk .kk-flash.is-warn { border-left-color: var(--kk-warn); }
 
 /* ---------- 上：過去問を選ぶ（問題・正解を開くボタンは選ぶ欄の右） ---------- */
@@ -78,7 +78,7 @@
 .kk .kk-select-wrap { position: relative; }
 .kk .kk-select-wrap::after { content: ""; position: absolute; right: 14px; top: 50%; width: 7px; height: 7px; margin-top: -5px;
                              border-right: 1.5px solid var(--kk-faint); border-bottom: 1.5px solid var(--kk-faint); transform: rotate(45deg); pointer-events: none; }
-.kk .kk-select { appearance: none; -webkit-appearance: none; width: 100%; font-size: 16px; font-weight: 700;
+.kk .kk-select { appearance: none; -webkit-appearance: none; width: 100%; font-size: 18px; font-weight: 700;
                  padding: 8px 36px 8px 12px; border: 1px solid var(--kk-line-strong); border-radius: var(--kk-r); background: var(--kk-field);
                  cursor: pointer; margin: 0; line-height: 1.5; transition: border-color .15s; }
 .kk .kk-select:hover { border-color: var(--kk-faint); }
@@ -91,7 +91,7 @@
 .kk .kk-tabs { display: flex; gap: 24px; margin: 0 0 16px; border-bottom: 1px solid var(--kk-line); }
 .kk .kk-tabs[hidden] { display: none; }
 .kk .kk-tabs button, .kk .kk-trendtabs .kk-chip { border: 0; border-bottom: 1px solid transparent; border-radius: 0; background: none;
-               padding: 0 0 8px; margin: 0 0 -1px; font: inherit; font-size: 14px; font-weight: 700; color: var(--kk-faint); cursor: pointer;
+               padding: 0 0 8px; margin: 0 0 -1px; font: inherit; font-size: 16px; font-weight: 700; color: var(--kk-faint); cursor: pointer;
                transition: color .15s, border-color .15s; }
 .kk .kk-tabs button:hover, .kk .kk-trendtabs .kk-chip:hover { color: var(--kk-ink); }
 .kk .kk-tabs button.is-on, .kk .kk-trendtabs .kk-chip.is-on { color: var(--kk-ink); border-bottom-color: var(--kk-ink); }
@@ -101,27 +101,27 @@
 .kk .kk-pick[hidden] { display: none; }
 .kk .kk-pick > .kk-select-wrap { flex: 0 0 auto; min-width: 120px; display: block; margin: 0; }
 .kk .kk-pick > .kk-select-wrap.kk-grow { flex: 1 1 0; min-width: 0; }
-.kk .kk-pick > .kk-select-wrap > span { display: block; font-size: 12px; color: var(--kk-faint); margin: 0 0 4px; }
+.kk .kk-pick > .kk-select-wrap > span { display: block; font-size: 14px; color: var(--kk-faint); margin: 0 0 4px; }
 .kk .kk-pick > .kk-select-wrap::after { top: auto; bottom: 19px; margin-top: 0; }
 
 /* 開く・閉じる */
 .kk details > summary { list-style: none; cursor: pointer; }
 .kk details > summary::-webkit-details-marker { display: none; }
 .kk .kk-marktip, .kk .kk-ai { grid-column: 1 / -1; margin: 0; padding: 0; }
-.kk .kk-marktip > summary, .kk .kk-ai > summary { position: relative; display: inline-block; padding: 0 20px 0 0; font-size: 14px; font-weight: 400; color: var(--kk-accent);
+.kk .kk-marktip > summary, .kk .kk-ai > summary { position: relative; display: inline-block; padding: 0 20px 0 0; font-size: 16px; font-weight: 400; color: var(--kk-accent);
   text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 .kk .kk-marktip > summary::after, .kk .kk-ai > summary::after { content: ""; position: absolute; right: 2px; top: 50%; width: 6px; height: 6px; margin-top: -5px;
   border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); }
 .kk details[open] > summary::after { transform: rotate(-135deg); margin-top: -1px; }
 .kk .kk-marktip > summary:hover, .kk .kk-ai > summary:hover { color: var(--kk-accent-ink); }
-.kk .kk-marktip ul { margin: 12px 0 0; padding-left: 1.2em; font-size: 14px; color: var(--kk-ink); max-width: 44em; }
+.kk .kk-marktip ul { margin: 12px 0 0; padding-left: 1.2em; font-size: 16px; color: var(--kk-ink); max-width: 44em; }
 .kk .kk-marktip li { margin: 6px 0; }
 .kk .kk-marktip li::marker { color: var(--kk-faint); }
 .kk .kk-ai { margin: 0 0 8px; }
-.kk .kk-ai-steps { margin: 12px 0; padding-left: 1.4em; font-size: 14px; color: var(--kk-sub); }
+.kk .kk-ai-steps { margin: 12px 0; padding-left: 1.4em; font-size: 16px; color: var(--kk-sub); }
 .kk .kk-ai-steps li { margin: 8px 0; }
 .kk .kk-ai-steps li::marker { color: var(--kk-faint); }
-.kk .kk-ai textarea { width: 100%; font-family: var(--kk-mono); font-size: 14px; padding: 8px 10px; border: 1px solid var(--kk-line-strong);
+.kk .kk-ai textarea { width: 100%; font-family: var(--kk-mono); font-size: 16px; padding: 8px 10px; border: 1px solid var(--kk-line-strong);
                       border-radius: var(--kk-r); background: var(--kk-field); line-height: 1.6; }
 .kk .kk-ai-actions { display: flex; align-items: center; gap: 8px; margin: 8px 0 4px; flex-wrap: wrap; }
 .kk .kk-ai > p.kk-faint { margin: 4px 0 0; }
@@ -129,10 +129,10 @@
 /* ---------- 選ぶ大問 ---------- */
 .kk .kk-choices { display: grid; grid-template-columns: repeat(auto-fill, minmax(176px, 1fr)); gap: 8px; }
 .kk .kk-choice { position: relative; display: flex; flex-direction: column; gap: 0; padding: 10px 12px 10px 38px; border-radius: var(--kk-r);
-                 border: 1px solid var(--kk-line-strong); background: transparent; cursor: pointer; margin: 0; font-size: 14px; color: var(--kk-sub);
+                 border: 1px solid var(--kk-line-strong); background: transparent; cursor: pointer; margin: 0; font-size: 16px; color: var(--kk-sub);
                  line-height: 1.6; transition: border-color .15s; }
 .kk .kk-choice:hover { border-color: var(--kk-faint); }
-.kk .kk-choice b { color: var(--kk-ink); font-size: 14px; }
+.kk .kk-choice b { color: var(--kk-ink); font-size: 16px; }
 .kk .kk-choice input { position: absolute; opacity: 0; width: 1px; height: 1px; }
 .kk .kk-choice::before { content: ""; position: absolute; left: 12px; top: 14px; width: 14px; height: 14px; border-radius: 3px;
                          border: 1px solid var(--kk-line-strong); background: var(--kk-field); }
@@ -140,7 +140,7 @@
 .kk .kk-choice.is-on::before { border-color: var(--kk-fill); background: var(--kk-fill) no-repeat center / 10px 10px
   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.2 6.3l2.4 2.4 5.2-5.4' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
 .kk .kk-choice:focus-within { outline: 2px solid var(--kk-accent); outline-offset: 2px; }
-.kk .kk-warnline { color: var(--kk-warn); font-size: 14px; margin-top: 8px; }
+.kk .kk-warnline { color: var(--kk-warn); font-size: 16px; margin-top: 8px; }
 .kk .kk-warnline:empty { display: none; }
 
 /* ---------- 解く段：左の列に時計、右の列に採点 ---------- */
@@ -162,32 +162,32 @@
 .kk .kk-ring.is-over .kk-ring-fill { stroke: var(--kk-faint); }
 .kk .kk-ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .kk .kk-clock { font-family: var(--kk-sans); font-size: 44px; font-weight: 300; letter-spacing: -.01em; font-variant-numeric: tabular-nums; line-height: 1; }
-.kk .kk-clock-sub { font-size: 12px; color: var(--kk-faint); margin-top: 8px; }
-.kk .kk-now { text-align: center; font-size: 12px; color: var(--kk-sub); min-height: 22px; line-height: 1.7; }
+.kk .kk-clock-sub { font-size: 14px; color: var(--kk-faint); margin-top: 8px; }
+.kk .kk-now { text-align: center; font-size: 14px; color: var(--kk-sub); min-height: 22px; line-height: 1.7; }
 .kk .kk-now b { color: var(--kk-ink); }
 .kk .kk-live { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--kk-accent); margin-right: 8px; vertical-align: 2px; }
 @media (prefers-reduced-motion: reduce) { .kk .kk-ring .kk-ring-fill { transition: none; } }
 /* 開始・一時停止は時計のすぐ下 */
 .kk .kk-timer-actions { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin: 16px 0 0; }
-.kk .kk-timer-actions .kk-btn-primary { padding: 11px 16px; font-size: 16px; }
+.kk .kk-timer-actions .kk-btn-primary { padding: 11px 16px; font-size: 18px; }
 .kk .kk-qlist { display: flex; flex-direction: column; margin-top: 20px; border-top: 1px solid var(--kk-line); }
 .kk .kk-qrow { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 0 10px; padding: 9px 0 0 10px;
                border: 0; border-left: 2px solid transparent; background: transparent; cursor: pointer;
                text-align: left; width: 100%; margin: 0; color: var(--kk-ink); transition: border-color .15s, background-color .15s; }
 .kk .kk-qrow:hover { background: var(--kk-tint); }
 .kk .kk-qrow.is-on { border-left-color: var(--kk-accent); }
-.kk .kk-qrow .kk-qname { font-weight: 700; font-size: 14px; }
+.kk .kk-qrow .kk-qname { font-weight: 700; font-size: 16px; }
 .kk .kk-qrow .kk-qname .kk-faint { margin-left: 4px; }
-.kk .kk-qrow .kk-qtime { font-size: 16px; font-variant-numeric: tabular-nums; }
-.kk .kk-qrow .kk-qleft { font-size: 12px; color: var(--kk-faint); text-align: right; }
+.kk .kk-qrow .kk-qtime { font-size: 18px; font-variant-numeric: tabular-nums; }
+.kk .kk-qrow .kk-qleft { font-size: 14px; color: var(--kk-faint); text-align: right; }
 .kk .kk-qrow.is-over .kk-qleft { color: var(--kk-sub); }
 /* 行の区切りの罫線が、そのまま大問の時間の進み具合になる */
 .kk .kk-qrow .kk-qbar { grid-column: 1 / -1; height: 1px; background: var(--kk-line); overflow: hidden; margin: 9px 0 0 -12px; }
 .kk .kk-qrow .kk-qbar i { display: block; height: 100%; background: var(--kk-bar); }
 .kk .kk-qrow.is-over .kk-qbar i { background: var(--kk-faint); }
 .kk .kk-qrow[data-k="rev"] { padding-bottom: 9px; border-bottom: 1px solid var(--kk-line); }
-.kk .kk-goal { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--kk-faint); }
-.kk .kk-goal input { width: 40px; padding: 0 4px; font-size: 12px; text-align: center; border: 1px solid var(--kk-line);
+.kk .kk-goal { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; color: var(--kk-faint); }
+.kk .kk-goal input { width: 40px; padding: 0 4px; font-size: 14px; text-align: center; border: 1px solid var(--kk-line);
                      border-radius: 3px; background: var(--kk-field); margin: 0; }
 .kk .kk-goal input:hover { border-color: var(--kk-line-strong); }
 .kk .kk-goalmake { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 16px 0 0; }
@@ -197,68 +197,68 @@
 /* いまの点数 */
 .kk .kk-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
 .kk .kk-mini > div { padding: 8px 0 0; }
-.kk .kk-mini .kk-k { font-size: 12px; color: var(--kk-faint); }
-.kk .kk-mini .kk-v { font-size: 20px; font-weight: 300; font-variant-numeric: tabular-nums; line-height: 1.4; }
-.kk .kk-mini .kk-v small { font-size: 12px; color: var(--kk-faint); }
+.kk .kk-mini .kk-k { font-size: 14px; color: var(--kk-faint); }
+.kk .kk-mini .kk-v { font-size: 22px; font-weight: 300; font-variant-numeric: tabular-nums; line-height: 1.4; }
+.kk .kk-mini .kk-v small { font-size: 14px; color: var(--kk-faint); }
 .kk .kk-mini .kk-wide { grid-column: 1 / -1; display: flex; align-items: baseline; justify-content: space-between; padding: 0; }
-.kk .kk-mini .kk-wide .kk-v { font-size: 28px; }
+.kk .kk-mini .kk-wide .kk-v { font-size: 30px; }
 
 /* ---------- 採点 ---------- */
 .kk .kk-qcard { margin-top: 32px; }
 .kk .kk-qhead { display: flex; align-items: baseline; gap: 12px; padding: 0 0 8px; border-bottom: 1px solid var(--kk-line-strong); }
-.kk .kk-qhead h4 { margin: 0; font-size: 16px; font-weight: 700; }
-.kk .kk-qhead .kk-qfield { color: var(--kk-faint); font-size: 14px; font-weight: 400; margin-left: 10px; }
-.kk .kk-qhead .kk-qscore { margin-left: auto; font-weight: 400; font-size: 16px; font-variant-numeric: tabular-nums; }
-.kk .kk-qhead .kk-qscore small { color: var(--kk-faint); font-size: 12px; }
+.kk .kk-qhead h4 { margin: 0; font-size: 18px; font-weight: 700; }
+.kk .kk-qhead .kk-qfield { color: var(--kk-faint); font-size: 16px; font-weight: 400; margin-left: 10px; }
+.kk .kk-qhead .kk-qscore { margin-left: auto; font-weight: 400; font-size: 18px; font-variant-numeric: tabular-nums; }
+.kk .kk-qhead .kk-qscore small { color: var(--kk-faint); font-size: 14px; }
 .kk .kk-qprog { display: none; }
 .kk .kk-item { display: grid; grid-template-columns: 72px 40px minmax(0, 1fr) auto; align-items: center; gap: 4px 12px; padding: 6px 0; border-top: 1px solid var(--kk-line); }
 .kk .kk-item:first-of-type { border-top: 0; }
-.kk .kk-lab { font-weight: 700; font-size: 14px; }
-.kk .kk-prevx { display: block; font-size: 12px; font-weight: 400; color: var(--kk-warn); line-height: 1.4; }
-.kk .kk-pts { font-size: 12px; color: var(--kk-faint); font-variant-numeric: tabular-nums; }
-.kk .kk-rate { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--kk-faint); font-variant-numeric: tabular-nums; min-width: 0; }
+.kk .kk-lab { font-weight: 700; font-size: 16px; }
+.kk .kk-prevx { display: block; font-size: 14px; font-weight: 400; color: var(--kk-warn); line-height: 1.4; }
+.kk .kk-pts { font-size: 14px; color: var(--kk-faint); font-variant-numeric: tabular-nums; }
+.kk .kk-rate { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--kk-faint); font-variant-numeric: tabular-nums; min-width: 0; }
 .kk .kk-rate .kk-track { flex: 1; max-width: 112px; height: 1px; background: var(--kk-line-strong); overflow: hidden; }
 .kk .kk-rate .kk-track i { display: block; height: 100%; background: var(--kk-sub); }
 .kk .kk-ox { display: inline-flex; border: 1px solid var(--kk-line-strong); border-radius: var(--kk-r); overflow: hidden; }
-.kk .kk-ox button { width: 46px; height: 34px; border: 0; background: transparent; font-family: var(--kk-jp); font-size: 16px; font-weight: 400; cursor: pointer; color: var(--kk-faint);
+.kk .kk-ox button { width: 46px; height: 34px; border: 0; background: transparent; font-family: var(--kk-jp); font-size: 18px; font-weight: 400; cursor: pointer; color: var(--kk-faint);
                     margin: 0; padding: 0; transition: background-color .12s, color .12s; }
 .kk .kk-ox button + button { border-left: 1px solid var(--kk-line-strong); }
 .kk .kk-ox button:hover { background: var(--kk-tint); color: var(--kk-ink); }
 .kk .kk-ox .kk-o[aria-pressed="true"] { background: var(--kk-ok-soft); color: var(--kk-ok); font-weight: 700; }
 .kk .kk-ox .kk-x[aria-pressed="true"] { background: var(--kk-warn-soft); color: var(--kk-warn); font-weight: 700; }
 .kk .kk-why { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 2px 0 2px 84px; }
-.kk .kk-why span { font-size: 12px; color: var(--kk-faint); margin-right: 4px; }
+.kk .kk-why span { font-size: 14px; color: var(--kk-faint); margin-right: 4px; }
 .kk .kk-why button { border: 1px solid var(--kk-line-strong); background: transparent; color: var(--kk-sub); border-radius: var(--kk-r);
-                     font-size: 12px; padding: 1px 8px; cursor: pointer; margin: 0; line-height: 1.6; transition: border-color .15s, color .15s; }
+                     font-size: 14px; padding: 1px 8px; cursor: pointer; margin: 0; line-height: 1.6; transition: border-color .15s, color .15s; }
 .kk .kk-why button:hover { border-color: var(--kk-ink); color: var(--kk-ink); }
 .kk .kk-why button[aria-pressed="true"] { background: var(--kk-warn-soft); border-color: var(--kk-warn); color: var(--kk-warn); }
-.kk .kk-toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; margin: 12px 0 0; color: var(--kk-ink); }
+.kk .kk-toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 16px; cursor: pointer; margin: 12px 0 0; color: var(--kk-ink); }
 .kk .kk-toggle input { width: 16px; height: 16px; margin: 0; accent-color: var(--kk-fill); }
 .kk .kk-wbrow { display: flex; align-items: center; gap: 12px; padding: 12px 0 4px; flex-wrap: wrap; }
-.kk .kk-wbrow label { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--kk-sub); margin: 0; }
-.kk .kk-wbrow input { width: 72px; padding: 6px 8px; font-size: 20px; font-weight: 300; text-align: center; border: 1px solid var(--kk-line-strong);
+.kk .kk-wbrow label { display: inline-flex; align-items: center; gap: 8px; font-size: 16px; color: var(--kk-sub); margin: 0; }
+.kk .kk-wbrow input { width: 72px; padding: 6px 8px; font-size: 22px; font-weight: 300; text-align: center; border: 1px solid var(--kk-line-strong);
                       border-radius: var(--kk-r); background: var(--kk-field); margin: 0; font-variant-numeric: tabular-nums; }
-.kk .kk-wbrow input[data-wbm] { width: 64px; font-size: 16px; color: var(--kk-sub); }
+.kk .kk-wbrow input[data-wbm] { width: 64px; font-size: 18px; color: var(--kk-sub); }
 
 /* ---------- 成績表：仕様表の組み方（左に太字の行見出し、右に内容） ---------- */
 .kk .kk-kpis { display: block; border-top: 1px solid var(--kk-line-strong); }
 .kk .kk-kpi { display: grid; grid-template-columns: 200px minmax(0, 1fr); column-gap: 24px; align-items: baseline; padding: 20px 0; border-bottom: 1px solid var(--kk-line); }
-.kk .kk-kpi .kk-k { grid-column: 1; grid-row: 1 / span 2; font-size: 14px; font-weight: 700; color: var(--kk-ink); }
-.kk .kk-kpi .kk-v { grid-column: 2; grid-row: 1; font-weight: 300; font-size: 28px; line-height: 1.2; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.kk .kk-kpi .kk-k { grid-column: 1; grid-row: 1 / span 2; font-size: 16px; font-weight: 700; color: var(--kk-ink); }
+.kk .kk-kpi .kk-v { grid-column: 2; grid-row: 1; font-weight: 300; font-size: 30px; line-height: 1.2; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
 .kk .kk-kpi.is-main .kk-v { font-size: 44px; line-height: 1; letter-spacing: -.02em; }
-.kk .kk-kpi .kk-v small { font-size: 16px; font-weight: 400; color: var(--kk-faint); margin-left: 4px; letter-spacing: 0; }
-.kk .kk-kpi .kk-s { grid-column: 2; grid-row: 2; font-size: 12px; color: var(--kk-sub); margin-top: 6px; line-height: 1.6; }
+.kk .kk-kpi .kk-v small { font-size: 18px; font-weight: 400; color: var(--kk-faint); margin-left: 4px; letter-spacing: 0; }
+.kk .kk-kpi .kk-s { grid-column: 2; grid-row: 2; font-size: 14px; color: var(--kk-sub); margin-top: 6px; line-height: 1.6; }
 .kk .kk-kpi .kk-s:empty { display: none; }
-.kk .kk-prev { margin: 0; font-size: 14px; padding: 16px 0; border-bottom: 1px solid var(--kk-line); color: var(--kk-sub); }
+.kk .kk-prev { margin: 0; font-size: 16px; padding: 16px 0; border-bottom: 1px solid var(--kk-line); color: var(--kk-sub); }
 .kk .kk-prev b { color: var(--kk-ink); }
 .kk .kk-up { color: var(--kk-ok); font-weight: 700; } .kk .kk-down { color: var(--kk-warn); font-weight: 700; }
 .kk .kk-sec { margin-top: 48px; }
-.kk .kk-sec > h4 { font-size: 14px; font-weight: 700; margin: 0 0 4px; }
+.kk .kk-sec > h4 { font-size: 16px; font-weight: 700; margin: 0 0 4px; }
 .kk .kk-sec > .kk-muted { margin: 0 0 8px; }
 
-.kk table.kk-table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 8px 0 0; }
+.kk table.kk-table { width: 100%; border-collapse: collapse; font-size: 16px; margin: 8px 0 0; }
 .kk .kk-table th, .kk .kk-table td { padding: 12px 10px; border-bottom: 1px solid var(--kk-line); text-align: left; vertical-align: middle; }
-.kk .kk-table th { font-size: 12px; color: var(--kk-faint); font-weight: 400; background: none; white-space: nowrap; padding-top: 0; border-bottom-color: var(--kk-line-strong); }
+.kk .kk-table th { font-size: 14px; color: var(--kk-faint); font-weight: 400; background: none; white-space: nowrap; padding-top: 0; border-bottom-color: var(--kk-line-strong); }
 .kk .kk-table th:first-child, .kk .kk-table td:first-child { padding-left: 0; }
 .kk .kk-table th:last-child, .kk .kk-table td:last-child { padding-right: 0; }
 .kk .kk-table tr:last-child td { border-bottom: 0; }
@@ -269,65 +269,65 @@
 .kk .kk-sbar { position: relative; height: 4px; background: var(--kk-track); min-width: 96px; }
 .kk .kk-sbar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--kk-bar); }
 .kk .kk-sbar b { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--kk-ink); box-shadow: 0 0 0 1.5px var(--kk-bg); }
-.kk .kk-vid { font-size: 14px; white-space: nowrap; }
-.kk .kk-vid-none { color: var(--kk-faint); font-size: 12px; white-space: nowrap; }
+.kk .kk-vid { font-size: 16px; white-space: nowrap; }
+.kk .kk-vid-none { color: var(--kk-faint); font-size: 14px; white-space: nowrap; }
 .kk .kk-over { color: var(--kk-ink); font-weight: 700; }
-.kk .kk-legend { display: flex; gap: 6px 20px; flex-wrap: wrap; font-size: 12px; color: var(--kk-faint); margin-top: 10px; }
+.kk .kk-legend { display: flex; gap: 6px 20px; flex-wrap: wrap; font-size: 14px; color: var(--kk-faint); margin-top: 10px; }
 .kk .kk-legend i { display: inline-block; width: 14px; height: 4px; vertical-align: 2px; margin-right: 6px; background: var(--kk-bar); }
 .kk .kk-legend i.is-avg { width: 2px; height: 12px; background: var(--kk-ink); vertical-align: -2px; }
 
 .kk .kk-bars { display: flex; flex-direction: column; gap: 14px; }
 .kk .kk-brow { display: grid; grid-template-columns: 128px minmax(0, 1fr) 88px; gap: 12px; align-items: center; }
-.kk .kk-brow .kk-bname { font-weight: 700; font-size: 14px; line-height: 1.5; }
-.kk .kk-brow .kk-bname small { display: block; font-weight: 400; color: var(--kk-faint); font-size: 12px; line-height: 1.4; }
+.kk .kk-brow .kk-bname { font-weight: 700; font-size: 16px; line-height: 1.5; }
+.kk .kk-brow .kk-bname small { display: block; font-weight: 400; color: var(--kk-faint); font-size: 14px; line-height: 1.4; }
 .kk .kk-brow .kk-btrack { height: 4px; background: var(--kk-track); overflow: hidden; display: flex; }
 .kk .kk-brow .kk-btrack .is-got { background: var(--kk-bar-soft); }
 .kk .kk-brow .kk-btrack .is-lost { background: var(--kk-warn); }
 .kk .kk-brow .kk-btrack .is-why { background: var(--kk-warn); }
-.kk .kk-brow .kk-bval { text-align: right; font-size: 12px; font-variant-numeric: tabular-nums; color: var(--kk-faint); white-space: nowrap; }
-.kk .kk-brow .kk-bval b { color: var(--kk-ink); font-size: 14px; }
+.kk .kk-brow .kk-bval { text-align: right; font-size: 14px; font-variant-numeric: tabular-nums; color: var(--kk-faint); white-space: nowrap; }
+.kk .kk-brow .kk-bval b { color: var(--kk-ink); font-size: 16px; }
 .kk .kk-brow.is-top .kk-bname { color: inherit; }   /* いちばん落とした項目も色は変えない（棒の長さで分かる） */
 .kk .kk-split { display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; }
 
 .kk .kk-miss { list-style: none; margin: 8px 0 0; padding: 0; }
-.kk .kk-miss li { display: flex; flex-wrap: wrap; gap: 2px 12px; align-items: baseline; padding: 12px 0; border-top: 1px solid var(--kk-line); font-size: 14px; }
+.kk .kk-miss li { display: flex; flex-wrap: wrap; gap: 2px 12px; align-items: baseline; padding: 12px 0; border-top: 1px solid var(--kk-line); font-size: 16px; }
 .kk .kk-miss li:first-child { border-top-color: var(--kk-line-strong); }
-.kk .kk-miss li .kk-tag { font-size: 12px; color: var(--kk-warn); white-space: nowrap; }
-.kk .kk-miss li .kk-mrate { margin-left: auto; color: var(--kk-faint); font-size: 12px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.kk .kk-miss li .kk-tag { font-size: 14px; color: var(--kk-warn); white-space: nowrap; }
+.kk .kk-miss li .kk-mrate { margin-left: auto; color: var(--kk-faint); font-size: 14px; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .kk .kk-miss li.kk-muted { padding: 4px 0; border-top: 0; }
 
 /* 記録する・印刷・画像：成績表の下の1行（点数集計に送る設定もここ） */
 .kk .kk-savebar { margin-top: 48px; padding-top: 8px; border-top: 1px solid var(--kk-line-strong); }
 .kk .kk-actions { display: flex; gap: 8px 20px; flex-wrap: wrap; margin-top: 20px; align-items: center; }
-.kk .kk-actions .kk-btn-primary { padding: 11px 24px; font-size: 14px; }
+.kk .kk-actions .kk-btn-primary { padding: 11px 24px; font-size: 16px; }
 /* 印刷・画像は文字リンクに */
 .kk .kk-actions .kk-btn-secondary { border: 0; padding: 4px 0; background: none; color: var(--kk-accent); font-weight: 400;
   text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 .kk .kk-actions .kk-btn-secondary:hover { color: var(--kk-accent-ink); }
-.kk .kk-opt { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; margin: 16px 0 0; cursor: pointer; color: var(--kk-ink); line-height: 1.7; }
+.kk .kk-opt { display: flex; align-items: flex-start; gap: 10px; font-size: 16px; margin: 16px 0 0; cursor: pointer; color: var(--kk-ink); line-height: 1.7; }
 .kk .kk-opt input { width: 16px; height: 16px; margin: 4px 0 0; flex: none; accent-color: var(--kk-fill); }
-.kk .kk-hostnote { margin-top: 16px; font-size: 12px; color: var(--kk-faint); }
-.kk .kk-foot { color: var(--kk-faint); font-size: 12px; line-height: 1.8; margin: 0; padding: 32px 0 24px calc(var(--kk-label) + var(--kk-gap)); border-top: 1px solid var(--kk-line); }
+.kk .kk-hostnote { margin-top: 16px; font-size: 14px; color: var(--kk-faint); }
+.kk .kk-foot { color: var(--kk-faint); font-size: 14px; line-height: 1.8; margin: 0; padding: 32px 0 24px calc(var(--kk-label) + var(--kk-gap)); border-top: 1px solid var(--kk-line); }
 
 /* ---------- 予想問題集・推移・送る設定 ---------- */
 .kk .kk-targetpick { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 8px; }
 .kk .kk-targetpick select, .kk .kk-sendbox select { padding: 4px 28px 4px 8px; border: 1px solid var(--kk-line-strong); border-radius: var(--kk-r); font: inherit;
-                        font-size: 14px; background: var(--kk-field); width: auto; margin: 0; }
+                        font-size: 16px; background: var(--kk-field); width: auto; margin: 0; }
 .kk .kk-trendsvg { width: 100%; height: auto; display: block; margin: 0 0 8px; }
 .kk .kk-tgrid { stroke: var(--kk-line); stroke-width: 1; }
 .kk .kk-tmid { stroke: var(--kk-line-strong); stroke-width: 1; stroke-dasharray: 3 4; }
-.kk .kk-tlab { fill: var(--kk-faint); font-size: 11px; font-family: var(--kk-sans); }
+.kk .kk-tlab { fill: var(--kk-faint); font-size: 13px; font-family: var(--kk-sans); }
 .kk .kk-tline { fill: none; stroke: var(--kk-bar); stroke-width: 1.5; stroke-linejoin: round; }
 .kk .kk-tdot { fill: var(--kk-bar); stroke: var(--kk-bg); stroke-width: 2; }
 .kk .kk-tdot.is-est { fill: var(--kk-bg); stroke: var(--kk-bar); stroke-width: 1.5; }
 .kk .kk-table tr.is-now td { background: var(--kk-tint); }
 .kk .kk-sendbox { padding: 0; }
 .kk .kk-sendbox .kk-opt { margin: 16px 0 0; font-weight: 700; }
-.kk .kk-sendbox .kk-sendmore { margin: 12px 0 0 26px; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 10px 16px; align-items: center; font-size: 14px; color: var(--kk-sub); }
+.kk .kk-sendbox .kk-sendmore { margin: 12px 0 0 26px; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 10px 16px; align-items: center; font-size: 16px; color: var(--kk-sub); }
 .kk .kk-sendbox .kk-sendmore > select, .kk .kk-sendbox .kk-sendmore > input { justify-self: start; }
 .kk .kk-sendbox .kk-sendmore > .kk-opt, .kk .kk-sendbox .kk-sendmore > .kk-faint { grid-column: 1 / -1; margin: 0; }
 .kk .kk-sendbox .kk-sendmore .kk-opt { font-weight: 400; color: var(--kk-ink); }
-.kk .kk-sendbox input[type="text"] { padding: 4px 8px; border: 1px solid var(--kk-line-strong); border-radius: var(--kk-r); font-size: 14px; width: 11em; margin: 0; background: var(--kk-field); }
+.kk .kk-sendbox input[type="text"] { padding: 4px 8px; border: 1px solid var(--kk-line-strong); border-radius: var(--kk-r); font-size: 16px; width: 11em; margin: 0; background: var(--kk-field); }
 
 /* ---------- 解いている最中：時計・今の大問と目安・採点の入力だけを見せる ----------
  * 周りはほとんど見えなくする（マウスを乗せる・タップすると戻る）。アクセントは一時停止ボタンだけに残す。
@@ -359,9 +359,9 @@
   .kk .kk-dock { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; align-items: center; gap: 12px;
                  padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); background: var(--kk-bg); color: var(--kk-ink);
                  border-top: 1px solid var(--kk-line-strong); }
-  .kk .kk-dock .kk-clock { font-size: 28px; color: var(--kk-ink); }
-  .kk .kk-dock .kk-dock-now { font-size: 12px; color: var(--kk-sub); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .kk .kk-dock .kk-btn { padding: 9px 16px; font-size: 14px; min-width: 104px; }
+  .kk .kk-dock .kk-clock { font-size: 30px; color: var(--kk-ink); }
+  .kk .kk-dock .kk-dock-now { font-size: 14px; color: var(--kk-sub); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .kk .kk-dock .kk-btn { padding: 9px 16px; font-size: 16px; min-width: 104px; }
   .kk { padding-bottom: 80px; }
 }
 @media (max-width: 760px) {
@@ -401,23 +401,33 @@
 }
 
 .kk .kk-series { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--kk-line, rgba(128,128,128,.25)); }
-.kk .kk-series li { display: flex; align-items: baseline; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--kk-line, rgba(128,128,128,.25)); font-size: 14px; }
-.kk .kk-series .kk-sn { width: 2.6em; color: var(--kk-faint); font-size: 12px; flex: none; }
+.kk .kk-series li { display: flex; align-items: baseline; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--kk-line, rgba(128,128,128,.25)); font-size: 16px; }
+.kk .kk-series .kk-sn { width: 2.6em; color: var(--kk-faint); font-size: 14px; flex: none; }
 .kk .kk-series .kk-soon-t { color: var(--kk-faint); }
-.kk .kk-series .kk-soon { margin-left: auto; color: var(--kk-faint); font-size: 12px; white-space: nowrap; }
-.kk .kk-series .kk-soon small { margin-left: 8px; font-size: 12px; }
-.kk .kk-thanks { margin: 16px 0 0; font-size: 14px; line-height: 1.8; color: var(--kk-ink); }
+.kk .kk-series .kk-soon { margin-left: auto; color: var(--kk-faint); font-size: 14px; white-space: nowrap; }
+.kk .kk-series .kk-soon small { margin-left: 8px; font-size: 14px; }
+.kk .kk-thanks { margin: 16px 0 0; font-size: 16px; line-height: 1.8; color: var(--kk-ink); }
 .kk .kk-thanks b { font-weight: 700; }
 .kk .kk-share { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-top: 12px; }
-.kk .kk-share .kk-faint { font-size: 12px; }
+.kk .kk-share .kk-faint { font-size: 14px; }
 .kk .kk-series { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px 16px; border-top: 0; }
 .kk .kk-series li { display: block; padding: 0; border: 0; }
 .kk .kk-vcard { display: block; color: inherit; text-decoration: none; }
 .kk .kk-vthumb { display: flex; align-items: center; justify-content: center; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 6px; background: var(--kk-line); }
 .kk .kk-vthumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity .2s; }
 .kk a.kk-vcard:hover .kk-vthumb img { opacity: .85; }
-.kk .kk-vt { display: block; margin-top: 8px; font-size: 13px; line-height: 1.6; }
-.kk .kk-vt small { display: block; font-size: 12px; color: var(--kk-faint); }
-.kk .kk-vthumb .kk-soon { margin: 0; text-align: center; font-size: 13px; line-height: 1.6; }
+.kk .kk-vt { display: block; margin-top: 8px; font-size: 15px; line-height: 1.6; }
+.kk .kk-vt small { display: block; font-size: 14px; color: var(--kk-faint); }
+.kk .kk-vthumb .kk-soon { margin: 0; text-align: center; font-size: 15px; line-height: 1.6; }
 .kk .kk-vthumb .kk-soon small { display: block; margin: 0; }
 .kk .kk-examvid { max-width: 280px; margin: 8px 0 16px; }
+
+/* 点数だけ入れる：マス目と、その下の「大問ごと・所要時間も入れる」 */
+.qk-grid { margin: 32px 0 0 calc(var(--label) + var(--gap)); min-width: 0; }
+.qk-more { margin: 40px 0 0 calc(var(--label) + var(--gap)); padding-top: 16px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; }
+.qk-more-note { font-size: 14px; color: var(--faint); }
+#detailBox { margin-top: 8px; }
+@media (max-width: 760px) {
+  .qk-grid, .qk-more { margin-left: 0; }
+}
+

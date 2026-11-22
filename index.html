@@ -3,14 +3,62 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)">
 <meta name="referrer" content="no-referrer">
-<title>過去問演習・点数集計 — 星飛ぶの勉強部屋</title>
-<!-- 回答ページは過去問演習のページ（「点数だけ入れる」）にまとめた。前のリンク（動画の概要欄など）から来た人を移す -->
-<meta http-equiv="refresh" content="0; url=kakomon.html?view=quick">
-<script>location.replace("kakomon.html?view=quick" + location.hash);</script>
-<link rel="stylesheet" href="style.css?v=20261109c">
+<title>共通テスト 過去問演習・点数集計 — 星飛ぶの勉強部屋</title>
+<meta name="description" content="共通テストの自己採点を、マス目に点数を入れるだけで平均点と比べられます。時間を計って過去問を解く練習や、年度・科目ごとの平均点・正答率の一覧も使えます。">
+<link rel="canonical" href="https://hoshitobu.github.io/hoshitobu-survey/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="星飛ぶの勉強部屋">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="共通テスト 過去問演習・点数集計 — 星飛ぶの勉強部屋">
+<meta property="og:description" content="共通テストの自己採点を、マス目に点数を入れるだけで平均点と比べられます。時間を計って過去問を解く練習や、年度・科目ごとの平均点・正答率の一覧も使えます。">
+<meta property="og:url" content="https://hoshitobu.github.io/hoshitobu-survey/">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
+<link rel="stylesheet" href="style.css?v=20261122f">
+<link rel="stylesheet" href="kyotsu/kyotsu.css?v=20261122h">
+
+<!-- 昔のリンク（動画の概要欄など。#つき）から来た人を、点数を入れるページへ送る -->
+<script>if (location.hash && location.hash.length > 1) { location.replace("kakomon.html?view=quick" + location.hash); }</script>
 </head>
 <body>
-<main><p>点数の回答は、<a href="kakomon.html?view=quick">過去問演習のページの「点数だけ入れる」</a>に移りました。</p></main>
+<header>
+  <div class="brand">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.1 7.4 7.4 2.1-7.4 2.1L12 21.5l-2.1-7.4L2.5 12l7.4-2.1z" fill="currentColor"/></svg>
+    <div><a class="sitename" href="index.html">星飛ぶの勉強部屋</a></div>
+  </div>
+  <nav>
+    <a href="kakomon.html">過去問演習</a>
+    <a href="kyotsu/index.html">年度・科目別</a>
+    <a href="results.html">集計を見る</a>
+  </nav>
+</header>
+<main>
+<div class="k-title">
+  <h1>共通テスト 過去問演習・点数集計</h1>
+  <p class="note">共通テストの自己採点を平均点と比べる、過去問を時間を計って解く、年度や科目ごとの平均点と正答率を調べる。受験生が過去問に取り組むためのページです。</p>
+</div>
+<section class="card">
+<h2>点数を入れて平均と比べる</h2>
+<p class="note">自己採点の点数を、マス目に入れて送ります。送ると、このサイトに集まった点数の平均と、全国の平均点との差が出ます。</p><p><a href="kakomon.html?view=quick">点数を入れる →</a></p>
+</section>
+<section class="card">
+<h2>時間を計って過去問を解く</h2>
+<p class="note">共通テストの過去問を、本番と同じ制限時間で解けます。設問ごとに○×をつけると、全国の正答率と並べて見られます。</p><p><a href="kakomon.html">過去問演習を始める →</a></p>
+</section>
+<section class="card">
+<h2>集計を見る</h2>
+<p class="note">これまでに集まった点数の分布や平均を見られます。</p><p><a href="results.html">集計結果へ →</a></p>
+</section>
+<section class="card">
+<h2>年度・科目ごとの平均点と正答率</h2>
+<p class="note">2021年から2026年まで、科目ごとの平均点、大問ごとの平均点、設問ごとの正答率、問題・正解PDFへのリンクをまとめています。</p><p><a href="kyotsu/index.html">年度・科目別の一覧 →</a></p><h3>共通テスト2026</h3>
+<p class="chips"><a href="kyotsu/2026/kokugo.html">国語</a> <a href="kyotsu/2026/math1a.html">数学IA</a> <a href="kyotsu/2026/math2bc.html">数学IIBC</a> <a href="kyotsu/2026/eng_r.html">英語リーディング</a> <a href="kyotsu/2026/eng_l.html">英語リスニング</a> <a href="kyotsu/2026/phys.html">物理</a> <a href="kyotsu/2026/chem.html">化学</a> <a href="kyotsu/2026/bio.html">生物</a> <a href="kyotsu/2026/earth.html">地学</a> <a href="kyotsu/2026/phys_basic.html">物理基礎</a> <a href="kyotsu/2026/chem_basic.html">化学基礎</a> <a href="kyotsu/2026/bio_basic.html">生物基礎</a> <a href="kyotsu/2026/earth_basic.html">地学基礎</a> <a href="kyotsu/2026/info1.html">情報I</a> <a href="kyotsu/2026/geo.html">地理総合・地理探究</a> <a href="kyotsu/2026/jhist.html">歴史総合・日本史探究</a> <a href="kyotsu/2026/whist.html">歴史総合・世界史探究</a> <a href="kyotsu/2026/ethics.html">公共・倫理</a> <a href="kyotsu/2026/polieco.html">公共・政治経済</a></p>
+</section>
+</main>
 </body>
 </html>

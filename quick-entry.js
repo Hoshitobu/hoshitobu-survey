@@ -278,6 +278,8 @@ async function submit(ev) {
     }
     if (CFG.passphraseRequired) store.set("passphrase", $("passphrase").value);
     saveMine(rows);
+    store.set("consent", "1");
+    if (window.ScoreGrid) window.ScoreGrid.refresh();   // 送った点数をマス目にも反映する
     $("done").innerHTML = "";
     $("done").append(`${rows.length}件の記録を送信しました。 `);
     const a = document.createElement("a"); a.href = "results.html#mine"; a.textContent = "自分の順位と分布を見る →";
@@ -293,7 +295,19 @@ async function submit(ev) {
   }
 }
 
+function setupDetailToggle() {   // 詳しい入力（大問ごと・所要時間・本番の自己採点）は、マス目の下にたたんである
+  const btn = $("detailToggle");
+  if (!btn) return;
+  btn.addEventListener("click", () => {
+    const open = $("detailBox").hidden;
+    $("detailBox").hidden = !open;
+    btn.setAttribute("aria-expanded", String(open));
+    btn.textContent = open ? "大問ごと・所要時間の入力を閉じる" : "大問ごと・所要時間も入れる";
+  });
+}
+
 async function init() {
+  setupDetailToggle();
   try {
     CFG = await window.surveyApi.get("config");
     if (!CFG.ok) throw new Error(CFG.error);
@@ -309,6 +323,8 @@ async function init() {
   $("nickname").maxLength = CFG.nickname.maxLength;
   $("nickname").value = store.get("nickname") || "";
   $("ranking").checked = store.get("ranking") === "1";
+  $("consent").checked = store.get("consent") === "1";   // マス目（score-grid.js）と同じ保存を使う
+  $("consent").addEventListener("change", () => store.set("consent", $("consent").checked ? "1" : ""));
   $("nickMax").textContent = CFG.nickname.maxLength;
   $("nickReq").textContent = CFG.nickname.required ? "必須" : "任意";
   $("maxRows").textContent = CFG.limits.maxRows;

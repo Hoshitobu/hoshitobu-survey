@@ -7,27 +7,34 @@
 <meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)">
 <meta name="referrer" content="no-referrer">
 <title>過去問演習・点数集計 — 星飛ぶの勉強部屋</title>
+<meta name="description" content="共通テスト（2021〜2026）とセンター試験の過去問・予想問題集の点数をマス目に入れて、サイト内の平均点と全国平均点を見られます。時間を計って解く過去問演習、問題・正解のPDFもあります。">
+<link rel="canonical" href="https://hoshitobu.github.io/hoshitobu-survey/kakomon.html">
+<meta property="og:title" content="過去問演習・点数集計 — 星飛ぶの勉強部屋">
+<meta property="og:description" content="共通テスト（2021〜2026）とセンター試験の過去問・予想問題集の点数をマス目に入れて、サイト内の平均点と全国平均点を見られます。時間を計って解く過去問演習、問題・正解のPDFもあります。">
+<meta property="og:url" content="https://hoshitobu.github.io/hoshitobu-survey/kakomon.html">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
-<link rel="stylesheet" href="style.css?v=20261112e">
-<link rel="stylesheet" href="kakomon/kakomon.css?v=20261112e">
+<link rel="stylesheet" href="style.css?v=20261122f">
+<link rel="stylesheet" href="kakomon/kakomon.css?v=20261122f">
+<link rel="stylesheet" href="score-grid.css?v=20261122f">
 <style>
   /* お知らせ・題字も「左に見出し・右に中身」の2段 */
   .kk-row { display: grid; grid-template-columns: var(--label) minmax(0, 1fr); column-gap: var(--gap); align-items: baseline; }
-  .kk-news { padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
-  .kk-news-label { font-size: 12px; color: var(--faint); }
+  .kk-news { padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 16px; }
+  .kk-news-label { font-size: 14px; color: var(--faint); }
   .kk-news-body { color: var(--ink); }
-  .kk-news small { color: var(--faint); font-size: 12px; margin-left: 12px; }
+  .kk-news small { color: var(--faint); font-size: 14px; margin-left: 12px; }
   .kk-title { padding: 56px 0 32px; }
-  .kk-title h2 { font-weight: 700; font-size: 20px; line-height: 1.5; margin: 0; }
-  .kk-title p { margin: 0; color: var(--sub); font-size: 16px; max-width: 40em; }
+  .kk-title h2 { font-weight: 700; font-size: 22px; line-height: 1.5; margin: 0; }
+  .kk-title p { margin: 0; color: var(--sub); font-size: 18px; max-width: 40em; }
   /* 2つの使い方：時間をはかって解く／点数だけ入れる（右の列にそろえた下線のタブ） */
   .kk-viewtabs { display: flex; gap: 32px; margin: 0 0 0 calc(var(--label) + var(--gap)); }
   .kk-viewtabs button { display: flex; flex-direction: column; align-items: flex-start; text-align: left; border: 0; border-bottom: 1px solid transparent;
-                        margin: 0 0 -1px; background: none; padding: 0 0 10px; font: inherit; font-size: 14px; font-weight: 700; color: var(--faint);
+                        margin: 0 0 -1px; background: none; padding: 0 0 10px; font: inherit; font-size: 16px; font-weight: 700; color: var(--faint);
                         cursor: pointer; transition: color .15s, border-color .15s; line-height: 1.5; }
-  .kk-viewtabs button small { font-size: 12px; font-weight: 400; color: var(--faint); }
+  .kk-viewtabs button small { font-size: 14px; font-weight: 400; color: var(--faint); }
   .kk-viewtabs button:hover { color: var(--ink); }
   .kk-viewtabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--ink); }
   .kk-tabline { border-bottom: 1px solid var(--line); }
@@ -35,14 +42,14 @@
   #quickPanel .card:first-of-type { margin-top: 32px; }
   /* 大問ごとの点数（任意） */
   details.sec { margin-top: 12px; }
-  details.sec summary { cursor: pointer; font-size: 14px; color: var(--accent); padding: 4px 0; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  details.sec summary { cursor: pointer; font-size: 16px; color: var(--accent); padding: 4px 0; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
   details.sec summary:hover { color: var(--accent-ink); }
   .secgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px 16px; margin-top: 8px; }
-  .secgrid .cell b { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; }
-  .secgrid .pair { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--faint); }
+  .secgrid .cell b { display: block; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .secgrid .pair { display: flex; align-items: center; gap: 6px; font-size: 16px; color: var(--faint); }
   .secgrid .pair input { padding: 6px 4px; text-align: center; min-width: 0; }
   .secgrid .pair input[data-sm] { width: 52px; flex: none; color: var(--sub); }
-  .secsum { margin-top: 8px; font-size: 14px; color: var(--sub); }
+  .secsum { margin-top: 8px; font-size: 16px; color: var(--sub); }
   .secsum.bad { color: var(--warn); }
   /* 解いている最中は、ページの上の部分をほとんど見えなくする（マウスを乗せると戻る） */
   header, .kk-news, .kk-title, .kk-tabline { transition: opacity .4s ease; }
@@ -86,7 +93,11 @@
   </div></div>
   <div id="kakomon"></div>
   <section id="quickPanel" hidden>
-    <p class="note">解き終わった点数だけを、点数集計に送ります。何科目もまとめて送れます。センター試験（2010〜2020年）や「その他」の問題集、本番の自己採点（2027年1月18日から）もここから送ります。</p>
+    <p class="note">解き終わった点数を、マス目に入れてまとめて送ります。送ったマスは色がつき、サイト内の平均点と全国平均点を見られます。</p>
+    <div class="qk-grid"><div data-score-grid></div></div>
+    <div class="qk-more"><button type="button" class="link" id="detailToggle" aria-expanded="false" aria-controls="detailBox">大問ごと・所要時間も入れる</button>
+      <span class="qk-more-note">「その他」の問題集や、本番の自己採点（2027年1月18日から）もこちらです。</span></div>
+    <div id="detailBox" hidden>
 
 <div id="loadError" class="card warnbox" hidden></div>
 
@@ -169,6 +180,7 @@
 </div>
 
 </form>
+    </div>
   </section>
 </main>
 <template id="rowTpl">
@@ -191,14 +203,15 @@
     <div class="err" data-err></div>
   </div>
 </template>
-<script src="app-config.js?v=20261112e"></script>
-<script src="national-stats.js?v=20261112e"></script>
-<script src="kakomon/kakomon-data.js?v=20261112e"></script>
-<script src="kakomon/kakomon-series.js?v=20261112e"></script>
-<script src="kakomon/kakomon-pdf.js?v=20261112e"></script>
-<script src="kakomon/hoshitobu-link.js?v=20261112e"></script>
-<script src="quick-entry.js?v=20261112e"></script>
-<script src="kakomon/kakomon-core.js?v=20261112e"></script>
+<script src="app-config.js?v=20261122f"></script>
+<script src="national-stats.js?v=20261122f"></script>
+<script src="kakomon/kakomon-data.js?v=20261122f"></script>
+<script src="kakomon/kakomon-series.js?v=20261122f"></script>
+<script src="kakomon/kakomon-pdf.js?v=20261122f"></script>
+<script src="kakomon/hoshitobu-link.js?v=20261122f"></script>
+<script src="score-grid.js?v=20261122f"></script>
+<script src="quick-entry.js?v=20261122f"></script>
+<script src="kakomon/kakomon-core.js?v=20261122f"></script>
 <script>
 // 公開サイト用の host：記録はこの端末のブラウザに保存、仲間の偏差値と予想問題集の比べる相手は「点数集計」から
 (function () {
