@@ -168,3 +168,34 @@ button.link:hover { color: var(--accent-ink); }
 .sm-svg .sm-arr { fill: var(--faint); }
 .sm-svg a:hover .sm-b { stroke: var(--accent); }
 .sm-svg a:hover .sm-t { fill: var(--accent); }
+
+/* 目次は kyotsu.css から移した（どのページでも使う） */
+/* ---------- このページ（目次）。狭い画面：見出しの下に一覧。広い画面：左に固定、線の上の点で今の節 ---------- */
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+main section.card[id] { scroll-margin-top: 16px; }
+.toc { margin: 0 0 8px; padding: 0 0 24px; }
+.toc-h { margin: 0 0 8px; font-size: 13px; font-weight: 700; letter-spacing: .08em; color: var(--faint); }
+.toc ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.toc a { text-decoration: none; color: var(--sub); }
+.toc ol a { display: inline-flex; align-items: center; min-height: 36px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 999px; font-size: 14px; }
+.toc a:hover { color: var(--ink); }
+.toc-top { display: none; }
+
+@media (min-width: 1200px) {
+  body.has-toc main { max-width: calc(var(--page) + 32px + 208px); padding-left: 224px; position: relative; }
+  body.has-toc { --label: 176px; --gap: 40px; }
+  .toc { position: fixed; top: 96px; width: 176px; padding: 0;
+         left: calc(max(0px, (100vw - (var(--page) + 32px + 208px)) / 2) + 16px); }
+  .toc ol { display: block; position: relative; padding-left: 20px; border-left: 2px solid var(--line-strong); }
+  .toc ol li { position: relative; }
+  .toc ol a { display: block; min-height: 0; padding: 7px 0; border: 0; border-radius: 0; font-size: 14px; line-height: 1.5; }
+  .toc ol a.is-on { color: var(--accent); font-weight: 700; }
+  .toc ol a.is-on::before { content: ""; position: absolute; left: -27px; top: 50%; width: 12px; height: 12px; margin-top: -6px;
+                            border-radius: 50%; background: var(--accent-fill); box-shadow: 0 0 0 4px var(--accent-soft); }
+  .toc-top { display: inline-block; margin-top: 16px; padding-left: 22px; font-size: 14px; font-weight: 700; color: var(--accent); }
+}
+.dev-in input::placeholder { font-size: 15px; font-weight: 400; }
+@media (min-width: 1200px) { .toc ol { border-left-color: color-mix(in srgb, var(--sub) 45%, transparent); } }
+@media (min-width: 1200px) { .toc ol { border-left-color: color-mix(in srgb, var(--sub) 45%, transparent); } }
+header .sitename { color: var(--ink); font-weight: 700; font-size: 16px; text-decoration: none; }

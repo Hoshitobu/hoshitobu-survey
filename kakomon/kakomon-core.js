@@ -83,6 +83,8 @@
     <div class="kk-hero-actions">
       <a class="kk-btn kk-btn-secondary" id="kk-pdf-q" href="#" target="_blank" rel="noopener" hidden>問題（PDF）</a>
       <a class="kk-btn kk-btn-secondary" id="kk-pdf-a" href="#" target="_blank" rel="noopener" hidden>正解（PDF）</a>
+      <a class="kk-btn kk-btn-secondary" id="kk-pdf-au" href="#" target="_blank" rel="noopener" hidden>音声（Internet Archive）</a>
+      <a class="kk-btn kk-btn-secondary" id="kk-pdf-sc" href="#" target="_blank" rel="noopener" hidden>スクリプト（Internet Archive）</a>
       <a class="kk-btn kk-btn-secondary" id="kk-dnc" href="https://www.dnc.ac.jp/kyotsu/kakomondai/" target="_blank" rel="noopener">問題と正解（大学入試センター）↗</a>
     </div>
     <div class="kk-meta" id="kk-meta"></div>
@@ -319,8 +321,12 @@
       [["#kk-pdf-q", PDF && PDF.mondai], ["#kk-pdf-a", PDF && PDF.seikai]].forEach(([sel, u]) => {
         const a = q(sel); a.hidden = !u; if (u) a.href = pdfUrl(u);
       });
-      q("#kk-pdf-q").textContent = PDF && PDF.host === "dnc" ? "問題（PDF・センター）↗" : "問題（PDF）";
-      q("#kk-pdf-a").textContent = PDF && PDF.host === "dnc" ? "正解（PDF・センター）↗" : "正解（PDF）";
+      const ARC = !!(PDF && PDF.host === "archive");   // センターのサイトから消えた国語・英語は、Internet Archive に残る当時のファイル
+      [["#kk-pdf-au", PDF && PDF.audio], ["#kk-pdf-sc", PDF && PDF.script]].forEach(([sel, u]) => {
+        const a = q(sel); a.hidden = !(ARC && u); if (ARC && u) a.href = pdfUrl(u);
+      });
+      q("#kk-pdf-q").textContent = PDF && PDF.host === "dnc" ? "問題（PDF・センター）↗" : ARC ? "問題PDF（Internet Archive）" : "問題（PDF）";
+      q("#kk-pdf-a").textContent = PDF && PDF.host === "dnc" ? "正解（PDF・センター）↗" : ARC ? "正解PDF（Internet Archive）" : "正解（PDF）";
       q("#kk-dnc").hidden = WB || !!(PDF && PDF.mondai);   // 予想問題集は手元の問題集で解く。PDF があればそちらを出す
       const opt = E.optional.length;
       const unknownMax = SEC && E.qs.some(x => !x[2]);
@@ -336,6 +342,8 @@
         ? "問題集の問題・解答は載せていません。手元の問題集で解いてください。"
         : PDF && PDF.host === "self"
         ? `出典：大学入試センター「令和${E.year - 2018}年度 大学入学共通テスト ${E.year === 2021 ? (E.kind === "本試験" ? "本試験（第1日程）" : "追試験（第2日程）") : E.kind} ${E.label.replace(/（旧課程）$/, "")}」問題・正解。センターのサイトから消えた年度の問題を、センターの許諾を得て掲載しています。`
+        : ARC
+        ? "Internet Archive に保存された、大学入試センターの当時のファイルが開きます" + (PDF.audio || PDF.script ? "（問題・正解・リスニングの音声とスクリプト）。" : "（問題・正解）。")
         : PDF && PDF.mondai
         ? "問題と正解のボタンは、大学入試センターのサイトの PDF を開きます。"
         : "問題と正解は、大学入試センターの「過去問題」のページから開いてください。";

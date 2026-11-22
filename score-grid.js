@@ -64,7 +64,11 @@
   function excluded(s, book) { return !!(book && book.exclude && book.exclude.indexOf(s.id) >= 0); }
   var SHORT = {kokugo: "国語", eng_r: "英R", eng_l: "英L", math1a: "IA", math2bc: "IIBC", chem: "化学", bio: "生物", phys: "物理", earth: "地学",
     info1: "情報I", chem_basic: "化基", bio_basic: "生基", phys_basic: "物基", earth_basic: "地基", geo: "地理", jhist: "日本史", whist: "世界史",
-    ethics: "倫理", polieco: "政経", chirekikou: "地歴公"};
+    ethics: "倫理", polieco: "政経", chirekikou: "地歴公",
+    chiri_b: "地理B", chiri_a: "地理A", nihonshi_b: "日本史B", nihonshi_a: "日本史A", sekaishi_b: "世界史B", sekaishi_a: "世界史A",
+    gensha: "現社", rinri: "倫理", seikei: "政経", rinsei: "倫政"};
+  // 旧課程の社会（2024年までの共通テスト・センター試験）
+  var OLD_SOCIAL = ["chiri_b", "chiri_a", "nihonshi_b", "nihonshi_a", "sekaishi_b", "sekaishi_a", "gensha", "rinri", "seikei", "rinsei"];
   var LABEL_SHORT = {"数学IIB": "IIB", "英語（筆記）": "英R", "英語（リスニング）": "英L"};
   function shortOf(s) { return SHORT[s.id] || s.name; }
   function rowShort(s, book) {  // その試験だけ呼び名が違う科目（2024以前の数学IIB など）
@@ -72,11 +76,14 @@
     return l ? (LABEL_SHORT[l] || l) : shortOf(s);
   }
   var PREF = ["kokugo", "eng_r", "eng_l", "math1a", "math2bc", "info1", "phys", "chem", "bio", "earth", "phys_basic", "chem_basic", "bio_basic",
-    "earth_basic", "geo", "jhist", "whist", "ethics", "polieco", "chirekikou"];
+    "earth_basic", "geo", "jhist", "whist", "ethics", "polieco", "chirekikou"].concat(OLD_SOCIAL);
   var PRESETS = [
     {id: "sci", name: "理系（物理・化学）", ids: ["kokugo", "eng_r", "eng_l", "math1a", "math2bc", "chem", "phys", "info1"]},
     {id: "sci2", name: "理系（化学・生物）", ids: ["kokugo", "eng_r", "eng_l", "math1a", "math2bc", "chem", "bio", "info1"]},
     {id: "arts", name: "文系", ids: ["kokugo", "eng_r", "eng_l", "math1a", "math2bc", "geo", "jhist", "whist", "ethics", "polieco", "info1"]},
+    {id: "arts2", name: "文系（社会・理科基礎）", ids: ["kokugo", "eng_r", "eng_l", "math1a", "math2bc", "info1", "geo", "jhist", "whist", "ethics", "polieco",
+      "chem_basic", "bio_basic", "phys_basic", "earth_basic"]},
+    {id: "old", name: "旧課程の社会（2024年まで）", ids: OLD_SOCIAL},
     {id: "custom", name: "自分で選ぶ"},
   ];
 
@@ -307,6 +314,7 @@
       PREF.forEach(function (id) {
         var s = S.cfg.subjects.find(function (x) { return x.id === id; });
         if (!s) return;
+        if (id === OLD_SOCIAL[0]) ui.custom.append(h("div", {class: "sg-custom-h", text: "旧課程の社会（2024年まで）"}));
         var cb = h("input", {type: "checkbox", value: id});
         cb.checked = S.custom.indexOf(id) >= 0;
         cb.addEventListener("change", function () {

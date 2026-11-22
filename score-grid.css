@@ -44,6 +44,7 @@
 .sg .sg-chk { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: 16px; color: var(--sg-ink); cursor: pointer; line-height: 1.6; }
 .sg .sg-chk input { width: 16px; height: 16px; margin: 0; flex: none; accent-color: var(--sg-fill); }
 .sg .sg-ctl > .sg-chk { padding-bottom: 8px; margin-left: auto; font-size: 14px; color: var(--sg-sub); }
+.sg .sg-custom-h { flex: 0 0 100%; margin-top: 8px; font-size: 13px; color: var(--sg-sub); }
 .sg .sg-custom { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 14px 0 0; }
 
 /* マス目：枠の中で横にスクロールする。ページ自体は横に動かない。左の列（試験）は固定 */

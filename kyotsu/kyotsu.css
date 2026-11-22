@@ -194,3 +194,33 @@ main section.card[id] { scroll-margin-top: 16px; }
   .home .hero h1 { font-size: 28px; }
   .home .hero-lead { font-size: 16px; }
 }
+
+/* トップの見出し：意味の切れ目でだけ折る。幅に合わせて文字を小さく */
+.home .hero h1 { font-size: clamp(22px, 7vw, 40px); }
+.home .hero h1 .nw { display: inline-block; white-space: nowrap; }
+@media (max-width: 760px) { .home .hero-art { order: -1; } .home .hero-text { padding-top: 4px; } }
+/* 説明文は1文ずつ行を分ける（文の途中で折れないように、広い画面では1文1行） */
+.home .hero-lead .ln { display: block; }
+@media (min-width: 761px) { .home .hero-text { max-width: 640px; } .home .hero-lead .ln { white-space: nowrap; } }
+/* 説明文・呼びかけ・安心の一言：句の切れ目（.c）でだけ折る */
+.home .hero .c { display: inline-block; }
+.home .hero-lead { margin-bottom: 12px; }
+.home .hero-note { margin: 0 0 8px; font-size: 15px; line-height: 1.8; color: #d6d9ee; }
+.home .hero-note .ln { display: block; }
+.home .hero-safe { margin: 0 0 22px; font-size: 13px; line-height: 1.7; color: #aeb2cf; }
+@media (min-width: 761px) { .home .hero-note .ln { white-space: nowrap; } }
+@media (max-width: 360px) { .home .hero-lead { font-size: 15.5px; } .home .hero-note { font-size: 14.5px; } }
+
+/* 平均点の表：得点率で背景色（高い＝緑、低い＝橙。得点を入れる表の藍とは分ける） */
+:root { --r-hi: #d8efe0; --r-mid: #fbead2; --r-lo: #f6d1c4; --r-ink: #15171c; }
+@media (prefers-color-scheme: dark) { :root { --r-hi: #173a2a; --r-mid: #3d2c14; --r-lo: #4a1f17; --r-ink: #f1f2f6; } }
+.matrix td.r-hi { background: var(--r-hi); }
+.matrix td.r-mid { background: var(--r-mid); }
+.matrix td.r-lo { background: var(--r-lo); }
+.matrix td.r-hi a, .matrix td.r-mid a, .matrix td.r-lo a { color: var(--r-ink); font-weight: 700; }
+.matrix td .m-old { display: block; font-size: 11px; line-height: 1.2; color: var(--sub); font-weight: 400; }
+.rate-legend { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 8px 0 0; font-size: 13px; color: var(--sub); }
+.rate-legend .lg { display: inline-block; padding: 2px 10px; border-radius: 6px; border: 1px solid var(--line-strong); color: var(--ink); }
+.rate-legend .lg.r-hi { background: var(--r-hi); border-color: transparent; }
+.rate-legend .lg.r-mid { background: var(--r-mid); border-color: transparent; }
+.rate-legend .lg.r-lo { background: var(--r-lo); border-color: transparent; }

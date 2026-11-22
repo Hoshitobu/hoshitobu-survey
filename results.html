@@ -6,30 +6,34 @@
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)">
 <meta name="referrer" content="no-referrer">
-<title>共テ予想問題集 点数集計 — 集計</title>
+<title>共通テスト 点数の集計（平均点・分布・順位） — 星飛ぶの勉強部屋</title>
 <meta name="description" content="共通テストや予想問題集の点数集計の結果です。これまでに集まった点数の分布と平均、大問ごとの得点の傾向を見られます。">
 <link rel="canonical" href="https://hoshitobu.github.io/hoshitobu-survey/results.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="星飛ぶの勉強部屋">
 <meta property="og:locale" content="ja_JP">
-<meta property="og:title" content="共テ予想問題集 点数集計 — 集計">
+<meta property="og:title" content="共通テスト 点数の集計（平均点・分布・順位） — 星飛ぶの勉強部屋">
 <meta property="og:description" content="共通テストや予想問題集の点数集計の結果です。これまでに集まった点数の分布と平均、大問ごとの得点の傾向を見られます。">
 <meta property="og:url" content="https://hoshitobu.github.io/hoshitobu-survey/results.html">
-<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
-<link rel="stylesheet" href="style.css?v=20261122m">
+<link rel="stylesheet" href="style.css?v=20261122n">
+<meta property="og:image" content="https://hoshitobu.github.io/hoshitobu-survey/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script src="sitemap-nav.js?v=20261122a" defer></script>
+<script src="kyotsu/toc.js?v=20261122n" defer></script>
 </head>
 <body>
 <header>
   <div class="brand">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.1 7.4 7.4 2.1-7.4 2.1L12 21.5l-2.1-7.4L2.5 12l7.4-2.1z" fill="currentColor"/></svg>
-    <div>
-      <h1>共テ予想問題集 点数集計</h1>
-      <div class="community">星飛ぶの勉強部屋</div>
-    </div>
+    <div><a class="sitename" href="index.html">星飛ぶの勉強部屋</a></div>
   </div>
   <nav>
     <a href="kakomon.html">過去問演習</a>
@@ -88,6 +92,7 @@
 <div id="practice"></div>
 
 <p class="foot">人数が<span class="minN">3</span>人未満の欄は「—」で表示しています。同じ人が同じ回を何度か送った場合は、最初の点数だけを集計しています。</p>
+<footer class="src"><p class="note small">全国の平均点などの出典：大学入試センター『実施結果の概要』『科目別成績分布』（<a href="https://www.dnc.ac.jp/" rel="noopener">大学入試センター</a>）。このサイトの集計は、送られた点数から作っています。</p></footer>
 </main>
 <style>
   .page-title { display: grid; grid-template-columns: var(--label) minmax(0, 1fr); column-gap: var(--gap); align-items: baseline; padding: 56px 0 32px; }
@@ -138,8 +143,8 @@
     .stat-row div:nth-child(4) { border-left: 0; padding-left: 0; }
   }
 </style>
-<script src="app-config.js?v=20261109c"></script>
-<script src="national-stats.js?v=20261109c"></script>
+<script src="app-config.js?v=20261122g"></script>
+<script src="national-stats.js?v=20261122g"></script>
 <script>
 let STATS = null, CELLS = [], MINE = [], showAll = false;
 const $ = id => document.getElementById(id);
@@ -199,7 +204,7 @@ function drawHistogram(ctx, W, H, cell, mine, frame) {
     ctx.fillStyle = COLOR.sub; ctx.font = `12px ${FONT}`;
     ctx.fillText(`点数分布（${cell.n}人・${cell.max}点満点）　平均 ${fmt(cell.mean)}点　中央値 ${fmt(cell.median)}点`, pad.l, 50);
     ctx.textAlign = "right";
-    ctx.fillText("星飛ぶの勉強部屋　共テ予想問題集 点数集計", W - pad.r, H - 12);
+    ctx.fillText("星飛ぶの勉強部屋", W - pad.r, H - 12);
   }
   const maxCount = Math.max(...bins.map(b => b.count));
   const step = Math.max(1, Math.ceil(maxCount / 4));

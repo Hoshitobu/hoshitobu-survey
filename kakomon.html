@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)">
 <meta name="referrer" content="no-referrer">
-<title>過去問演習・点数集計 — 星飛ぶの勉強部屋</title>
+<title>共通テスト 過去問演習（時間を計って解く・点数を入れる） — 星飛ぶの勉強部屋</title>
 <meta name="description" content="共通テスト（2021〜2026）とセンター試験の過去問・予想問題集の点数をマス目に入れて、サイト内の平均点と全国平均点を見られます。時間を計って解く過去問演習、問題・正解のPDFもあります。">
 <link rel="canonical" href="https://hoshitobu.github.io/hoshitobu-survey/kakomon.html">
 <meta property="og:title" content="過去問演習・点数集計 — 星飛ぶの勉強部屋">
@@ -16,9 +16,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
-<link rel="stylesheet" href="style.css?v=20261122m">
-<link rel="stylesheet" href="kakomon/kakomon.css?v=20261122h">
-<link rel="stylesheet" href="score-grid.css?v=20261122h">
+<link rel="stylesheet" href="style.css?v=20261122n">
+<link rel="stylesheet" href="kakomon/kakomon.css?v=20261122i">
+<link rel="stylesheet" href="score-grid.css?v=20261122i">
 <style>
   /* お知らせ・題字も「左に見出し・右に中身」の2段 */
   .kk-row { display: grid; grid-template-columns: var(--label) minmax(0, 1fr); column-gap: var(--gap); align-items: baseline; }
@@ -64,16 +64,21 @@
     #quickPanel > .note:first-child { margin-left: 0; }
   }
 </style>
+<meta property="og:image" content="https://hoshitobu.github.io/hoshitobu-survey/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script src="sitemap-nav.js?v=20261122a" defer></script>
+<script src="kyotsu/toc.js?v=20261122n" defer></script>
 </head>
 <body class="page-kakomon">
 <header>
   <div class="brand">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.1 7.4 7.4 2.1-7.4 2.1L12 21.5l-2.1-7.4L2.5 12l7.4-2.1z" fill="currentColor"/></svg>
-    <div>
-      <h1>共テ予想問題集 点数集計</h1>
-      <div class="community">星飛ぶの勉強部屋</div>
-    </div>
+    <div><a class="sitename" href="index.html">星飛ぶの勉強部屋</a></div>
   </div>
   <nav>
     <a href="kakomon.html" aria-current="page">過去問演習</a>
@@ -207,14 +212,14 @@
   </div>
 </template>
 <script src="app-config.js?v=20261122f"></script>
-<script src="national-stats.js?v=20261122f"></script>
-<script src="kakomon/kakomon-data.js?v=20261122f"></script>
+<script src="national-stats.js?v=20261122g"></script>
+<script src="kakomon/kakomon-data.js?v=20261122j"></script>
 <script src="kakomon/kakomon-series.js?v=20261122f"></script>
-<script src="kakomon/kakomon-pdf.js?v=20261122f"></script>
+<script src="kakomon/kakomon-pdf.js?v=20261122j"></script>
 <script src="kakomon/hoshitobu-link.js?v=20261122f"></script>
-<script src="score-grid.js?v=20261122h"></script>
-<script src="quick-entry.js?v=20261122h"></script>
-<script src="kakomon/kakomon-core.js?v=20261122f"></script>
+<script src="score-grid.js?v=20261122i"></script>
+<script src="quick-entry.js?v=20261122i"></script>
+<script src="kakomon/kakomon-core.js?v=20261122j"></script>
 <script>
 // 公開サイト用の host：記録はこの端末のブラウザに保存、仲間の偏差値と予想問題集の比べる相手は「点数集計」から
 (function () {
