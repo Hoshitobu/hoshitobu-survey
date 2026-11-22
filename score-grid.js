@@ -112,8 +112,15 @@
     var out = [], groups = [];
     cfg.books.forEach(function (b) { if (b.group && b.group !== "予想問題集" && b.group !== "その他" && groups.indexOf(b.group) < 0) groups.push(b.group); });
     groups.forEach(function (g) {
-      out.push({id: "g:" + g, label: g, group: "", rows: cfg.books.filter(function (b) { return b.group === g; })
-        .map(function (b) { return {book: b, round: null, label: b.name}; })});
+      var rows = [];
+      cfg.books.filter(function (b) { return b.group === g; }).forEach(function (b) {
+        if (b.roundCount && b.rounds !== "none") {   // 模試：回ごとに1行（河合 全統共通テスト模試 第1回 …）
+          for (var n = 1; n <= b.roundCount; n++) rows.push({book: b, round: n, label: (b.short || b.name) + " 第" + n + "回"});
+        } else {
+          rows.push({book: b, round: null, label: b.short || b.name});
+        }
+      });
+      out.push({id: "g:" + g, label: g, group: "", rows: rows});
     });
     cfg.books.filter(function (b) { return b.group === "予想問題集"; }).forEach(function (b) {
       out.push({id: "b:" + b.id, label: b.name, group: "予想問題集", rows: roundRows(b, false)});
@@ -175,6 +182,26 @@
     return 50 + 10 * (+score - n.mean) / n.sd;
   }
 
+  // ---- 目標の得点率（%）・全国偏差値での色づけ（この端末の保存）
+  function goalRead() { var n = parseFloat(sget("grid-goal")); return n > 0 && n <= 100 ? n : 0; }
+  // 全国偏差値を5段階に（0〜4）。全国の平均・標準偏差がない試験は null
+  function devStep(dev) { return dev === null ? null : dev < 45 ? 0 : dev < 50 ? 1 : dev < 55 ? 2 : dev < 60 ? 3 : 4; }
+  // ---- 共通テスト過去問の「解く」リンク（kakomon.html のときだけ。KAKOMON_EXAMS が無ければ出さない）
+  var EXAM_IDX = null;
+  function examId(bookId, subjectId) {
+    var L = window.KAKOMON_EXAMS;
+    if (!Array.isArray(L)) return null;
+    if (!EXAM_IDX || EXAM_IDX.n !== L.length) {
+      EXAM_IDX = {n: L.length, m: {}};
+      L.forEach(function (e) {
+        var sv = e && e.survey;
+        if (sv && sv.bookId && sv.subjectId) { var k = sv.bookId + "|" + sv.subjectId; if (!(k in EXAM_IDX.m)) EXAM_IDX.m[k] = e.id; }
+      });
+    }
+    return EXAM_IDX.m[bookId + "|" + subjectId] || null;
+  }
+  function solveHref(eid) { return near("kakomon.html?exam=" + encodeURIComponent(eid)); }
+
   var instances = [];
 
   function mount(el, opts) {
@@ -185,7 +212,7 @@
     var embedded = !!(fixedBooks || fixedSubjects);
     var avgDefault = opts.avg !== undefined ? !!opts.avg : ds.avg !== undefined ? ds.avg === "1" : embedded;
     var openedAt = performance.now();
-    var S = {cfg: null, tables: [], table: null, preset: "sci", custom: [], drafts: {}, avgOn: avgDefault, stats: null, busy: false};
+    var S = {cfg: null, tables: [], table: null, preset: "sci", custom: [], drafts: {}, avgOn: avgDefault, stats: null, busy: false, tint: true};
     var ui = {};
 
     el.classList.add("sg");
@@ -197,6 +224,7 @@
       S.tables = buildTables(cfg);
       var savedAvg = sget("grid-avg");
       if (!embedded && opts.avg === undefined && ds.avg === undefined && (savedAvg === "1" || savedAvg === "0")) S.avgOn = savedAvg === "1";
+      S.tint = sget("grid-dev") !== "0";
       var t = sget("grid-table");
       S.table = S.tables.find(function (x) { return x.id === t; }) || S.tables[0];
       var pr = sget("grid-subjects");
@@ -258,6 +286,21 @@
         S.avgOn = ui.avg.firstChild.checked; if (!embedded) sset("grid-avg", S.avgOn ? "1" : "0"); renderGrid();
       });
       ctl.append(ui.avg);
+      if (!embedded) {
+        ui.goal = h("input", {type: "number", min: 1, max: 100, step: 1, inputmode: "numeric", class: "sg-goal-in", placeholder: "例 80", "aria-label": "目標の得点率（%）"});
+        var g0 = goalRead(); if (g0) ui.goal.value = String(g0);
+        ui.goal.addEventListener("input", function () {
+          var n = parseFloat(ui.goal.value);
+          sset("grid-goal", n > 0 && n <= 100 ? String(n) : "");
+          ui.goal.classList.toggle("is-bad", ui.goal.value.trim() !== "" && !(n > 0 && n <= 100));
+          renderGrid();
+        });
+        ctl.append(h("label", {class: "sg-goal"}, h("span", {text: "目標の得点率"}), ui.goal, h("span", {text: "%"})));
+        ui.tint = h("label", {class: "sg-chk"}, h("input", {type: "checkbox"}), h("span", {text: "全国偏差値で色をつける"}));
+        ui.tint.firstChild.checked = S.tint;
+        ui.tint.firstChild.addEventListener("change", function () { S.tint = ui.tint.firstChild.checked; sset("grid-dev", S.tint ? "1" : "0"); renderGrid(); });
+        ctl.append(ui.tint);
+      }
       el.append(ctl);
 
       ui.custom = h("div", {class: "sg-custom", hidden: S.preset !== "custom" || !!fixedSubjects});
@@ -364,33 +407,67 @@
       renderPower(subs, rows, mine);
       ui.scroll.textContent = "";
       if (!subs.length) { ui.scroll.append(h("p", {class: "sg-note", text: "科目を選んでください。"})); updateCount(); return; }
+      var showTotal = !embedded, goal = goalRead(), anyNat = false;
       var head = h("tr", null, h("th", {class: "sg-rh", scope: "col"}));
       subs.forEach(function (s) { head.append(h("th", {scope: "col", title: s.name, text: shortOf(s)})); });
+      if (showTotal) head.append(h("th", {scope: "col", class: "sg-tot", text: "合計"}));
       var body = h("tbody");
       rows.forEach(function (row) {
         var tr = h("tr", null, h("th", {class: "sg-rh", scope: "row", text: row.label}));
+        var sum = 0, mxAll = 0, mxSent = 0, n = 0, got = 0, devs = [], devAll = true;
         subs.forEach(function (s) {
           var td = h("td");
           if (excluded(s, row.book)) {
             td.append(h("div", {class: "sg-cell sg-na"}, h("input", {class: "sg-in", disabled: true, "aria-label": row.label + " " + s.name + "（この試験にはありません）"})));
           } else {
-            var k = cellKey(row, s), sent = mine[mineKey(s.name, row.book.name, row.round)];
+            var k = cellKey(row, s), sent = mine[mineKey(s.name, row.book.name, row.round)], mx = maxOf(s, row.book);
+            n++; mxAll += mx;
+            if (sent !== undefined) {
+              got++; sum += sent; mxSent += mx;
+              var dv = natDev({book: row.book, subject: s}, sent);
+              if (dv !== null) devs.push(dv); else devAll = false;
+            } else devAll = false;
             var val = S.drafts[k] !== undefined ? S.drafts[k] : sent !== undefined ? String(sent) : "";
             var tag = rowShort(s, row.book) !== shortOf(s) ? h("span", {class: "sg-tag", text: rowShort(s, row.book)}) : null;
-            var input = h("input", {class: "sg-in", type: "number", min: 0, max: maxOf(s, row.book), step: 1, inputmode: "numeric",
-              placeholder: String(maxOf(s, row.book)), "aria-label": row.label + " " + s.name + "（" + maxOf(s, row.book) + "点満点）", "data-k": k});
+            var input = h("input", {class: "sg-in", type: "number", min: 0, max: mx, step: 1, inputmode: "numeric",
+              placeholder: String(mx), "aria-label": row.label + " " + s.name + "（" + mx + "点満点）", "data-k": k});
             input.value = val;
             if (sent !== undefined) { input.readOnly = true; input.title = "送った点数"; }  // 集計は最初に送った点数だけを数えるので、送ったマスは書き換えない
-            input._cell = {row: row, subject: s, key: k, sent: sent};
+            input._cell = {row: row, subject: s, key: k, sent: sent, goal: goal};
             input.addEventListener("input", function () { S.drafts[k] = input.value.trim(); mark(input); updateCount(); });
             mark(input);
-            td.append(h("div", {class: "sg-cell"}, input, tag, S.avgOn && sent !== undefined ? h("div", {class: "sg-avg", "data-avg": k}) : null));
+            var eid = row.round ? null : examId(row.book.id, s.id);
+            var solve = eid ? h("a", {class: "sg-solve", href: solveHref(eid), title: row.label + " " + s.name + "を解く", text: "解く"}) : null;
+            td.append(h("div", {class: "sg-cell"}, input, tag, solve, S.avgOn && sent !== undefined ? h("div", {class: "sg-avg", "data-avg": k}) : null));
           }
           tr.append(td);
         });
+        if (showTotal) {
+          var tot = h("td", {class: "sg-tot"});
+          if (n) {
+            var done = got === n;
+            tot.append(h("div", {class: "sg-tot-n" + (done ? " is-done" : ""), text: sum + " / " + mxAll}));
+            if (got && n === got && devAll && devs.length) {
+              anyNat = true;
+              tot.append(h("div", {class: "sg-tot-s", title: "この行の各科目の全国偏差値の平均", text: "平均偏差値 " + (devs.reduce(function (a, b) { return a + b; }, 0) / devs.length).toFixed(1)}));
+            }
+            if (goal && got) {
+              var rate = Math.round(100 * sum / mxSent);
+              tot.append(h("div", {class: "sg-tot-s" + (100 * sum / mxSent >= goal ? " is-goal" : ""), text: rate + "% / 目標" + fmt(goal) + "%"}));
+            }
+          }
+          tr.append(tot);
+        }
         body.append(tr);
       });
-      ui.scroll.append(h("table", {class: "sg-table"}, h("thead", null, head), body));
+      ui.scroll.append(h("table", {class: "sg-table" + (S.tint ? " is-tint" : "")}, h("thead", null, head), body));
+      if (!embedded && S.tint) {
+        var lg = h("div", {class: "sg-legend", "aria-label": "全国偏差値の色"}, h("span", {class: "sg-lg-t", text: "全国偏差値"}));
+        ["〜45", "45〜", "50〜", "55〜", "60〜"].forEach(function (t, i) {
+          lg.append(h("span", {class: "sg-lg-i"}, h("i", {class: "sg-dv" + i}), t));
+        });
+        ui.scroll.append(lg);
+      }
       ui.scroll.scrollLeft = left; ui.scroll.scrollTop = top;
       fillAvg(); updateCount();
     }
@@ -435,6 +512,25 @@
       var pred = Math.round(ref.mean + ref.sd * (dev - 50) / 10);
       return {dev: dev, n: att.length, ref: ref, score: Math.max(0, Math.min(s.max, pred))};
     }
+    // 次に解く1回：予想偏差値がいちばん低い科目（まだ解いていない科目があればそちら）の、未提出の本試験でいちばん新しい年
+    function nextPick(subs, preds, mine) {
+      var books = S.cfg.books.filter(function (b) { return /^honshi\d{4}$/.test(b.id); })
+        .sort(function (a, b) { return parseInt(b.id.slice(6), 10) - parseInt(a.id.slice(6), 10); });
+      var need = Array.isArray(window.KAKOMON_EXAMS), cands = [];
+      preds.forEach(function (x) {
+        for (var i = 0; i < books.length; i++) {
+          var b = books[i];
+          if (excluded(x.s, b) || mine[mineKey(x.s.name, b.name, null)] !== undefined) continue;
+          var eid = examId(b.id, x.s.id);
+          if (need && !eid) continue;
+          cands.push({s: x.s, b: b, eid: eid, dev: x.p ? x.p.dev : -1});
+          return;
+        }
+      });
+      if (!cands.length) return null;
+      cands.sort(function (a, b) { return a.dev - b.dev; });  // まだ解いていない科目（-1）が先頭。同じなら列の順
+      return cands[0];
+    }
     function renderPower(subs, rows, mine) {
       if (!ui.power) return;
       var box = ui.power; box.textContent = "";
@@ -475,7 +571,11 @@
       } else {
         pred.append(h("p", {class: "sg-note", text: "過去問の点数を入れると、ここに予想が出ます。"}));
       }
-      box.append(h("h3", {class: "sg-pw-t", text: "いまの実力"}), h("div", {class: "sg-pw-body"}, prog, pred));
+      var nx = nextPick(subs, preds, mine);
+      box.append(h("h3", {class: "sg-pw-t", text: "いまの実力"}), h("div", {class: "sg-pw-body"}, prog, pred),
+        nx ? h("p", {class: "sg-pw-next"}, h("span", {class: "sg-k", text: "次に解くなら："}),
+          h("strong", {text: nx.s.name + " " + nx.b.name}), "（まだ解いていない年のうち最新）",
+          nx.eid ? h("a", {class: "sg-solve", href: solveHref(nx.eid), text: "解く"}) : null) : null);
     }
     function mark(input) {
       var c = input._cell, v = input.value.trim();
@@ -485,6 +585,10 @@
       var dev = sent ? natDev({book: c.row.book, subject: c.subject}, v) : null;
       input.classList.toggle("is-great", dev !== null && dev >= GREAT);
       input.classList.toggle("is-super", dev !== null && dev >= SUPER);
+      var st = S.tint && dev !== null ? devStep(dev) : null;
+      for (var q = 0; q < 5; q++) input.classList.toggle("sg-dv" + q, st === q);
+      var mxc = maxOf(c.subject, c.row.book);
+      input.classList.toggle("is-goal", sent && c.goal > 0 && mxc > 0 && 100 * (+v) / mxc >= c.goal);
       if (dev !== null) input.title = "送った点数・全国偏差値 " + dev.toFixed(1);
       input.classList.remove("is-bad");
     }

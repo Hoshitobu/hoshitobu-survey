@@ -7,26 +7,27 @@
 <meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)">
 <meta name="referrer" content="no-referrer">
 <title>共通テスト 過去問演習・点数集計 — 星飛ぶの勉強部屋</title>
-<meta name="description" content="共通テストの自己採点を、マス目に点数を入れるだけで平均点と比べられます。時間を計って過去問を解く練習や、年度・科目ごとの平均点・正答率の一覧も使えます。">
+<meta name="description" content="共通テスト（2021〜2026）の全科目の平均点・偏差値・設問ごとの正答率。点数を入れると全国の偏差値と順位が出ます。時間を計って解く過去問演習、全問解説動画も。">
 <link rel="canonical" href="https://hoshitobu.github.io/hoshitobu-survey/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="星飛ぶの勉強部屋">
 <meta property="og:locale" content="ja_JP">
 <meta property="og:title" content="共通テスト 過去問演習・点数集計 — 星飛ぶの勉強部屋">
-<meta property="og:description" content="共通テストの自己採点を、マス目に点数を入れるだけで平均点と比べられます。時間を計って過去問を解く練習や、年度・科目ごとの平均点・正答率の一覧も使えます。">
+<meta property="og:description" content="共通テスト（2021〜2026）の全科目の平均点・偏差値・設問ごとの正答率。点数を入れると全国の偏差値と順位が出ます。時間を計って解く過去問演習、全問解説動画も。">
 <meta property="og:url" content="https://hoshitobu.github.io/hoshitobu-survey/">
 <meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
-<link rel="stylesheet" href="style.css?v=20261122f">
-<link rel="stylesheet" href="kyotsu/kyotsu.css?v=20261122i">
+<link rel="stylesheet" href="style.css?v=20261122m">
+<link rel="stylesheet" href="kyotsu/kyotsu.css?v=20261122m">
 
+<script src="sitemap-nav.js?v=20261122a" defer></script>
 <meta name="google-site-verification" content="FhTG6UnXGEFf9rV8DYRvQ5E9GSjMbBuQYl2MiEfjOA4">
 <!-- 昔のリンク（動画の概要欄など。#つき）から来た人を、点数を入れるページへ送る -->
 <script>if (location.hash && location.hash.length > 1) { location.replace("kakomon.html?view=quick" + location.hash); }</script>
 </head>
-<body>
+<body class="home">
 <header>
   <div class="brand">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.1 7.4 7.4 2.1-7.4 2.1L12 21.5l-2.1-7.4L2.5 12l7.4-2.1z" fill="currentColor"/></svg>
@@ -34,37 +35,64 @@
   </div>
   <nav>
     <a href="kakomon.html">過去問演習</a>
-    <a href="kyotsu/index.html">年度・科目別</a>
+    <a href="kyotsu/index.html">過去問の平均点</a>
     <a href="videos.html">解説動画</a>
     <a href="results.html">集計を見る</a>
   </nav>
 </header>
 <main>
-<div class="k-title">
-  <h1>共通テスト 過去問演習・点数集計</h1>
-  <p class="note">共通テストの自己採点を平均点と比べる、過去問を時間を計って解く、年度や科目ごとの平均点と正答率を調べる。受験生が過去問に取り組むためのページです。</p>
-</div>
-<section class="card">
-<h2>点数を入れて平均と比べる</h2>
-<p class="note">自己採点の点数を、マス目に入れて送ります。送ると、このサイトに集まった点数の平均と、全国の平均点との差が出ます。</p><p><a href="kakomon.html?view=quick">点数を入れる →</a></p>
+<section class="hero">
+  <div class="hero-text">
+    <p class="hero-kicker">共通テスト 2021〜2026</p>
+    <h1>共通テストの過去問を、<br>解いて、比べる。</h1>
+    <p class="hero-lead">全科目の平均点と偏差値、設問ごとの正答率。点数を入れると、全国での位置がすぐに分かります。</p>
+    <p class="hero-cta"><a class="btn btn-primary" href="kakomon.html?view=quick">点数を入れる</a><a class="btn" href="#pick">年度・科目を選ぶ</a></p>
+  </div>
+  <div class="hero-art"><img class="hero-ill" src="img/hero_small.jpg" srcset="img/hero_small.jpg 960w, img/hero.jpg 1920w" sizes="(min-width: 900px) 1080px, 100vw" alt="" width="1920" height="960" fetchpriority="high"></div>
 </section>
-<section class="card">
-<h2>時間を計って過去問を解く</h2>
-<p class="note">共通テストの過去問を、本番と同じ制限時間で解けます。設問ごとに○×をつけると、全国の正答率と並べて見られます。</p><p><a href="kakomon.html">過去問演習を始める →</a></p>
+
+<section class="home-sec" id="pick">
+  <h2>年度と科目を選ぶ</h2>
+  <p class="note">選ぶと、その年の平均点と偏差値の計算、問題・正解のPDFのページに進みます。</p>
+  <div class="pick"><div class="pick-tabs" role="group" aria-label="年度"><button type="button" class="yr" data-y="2026" aria-pressed="true">2026</button><button type="button" class="yr" data-y="2025" aria-pressed="false">2025</button><button type="button" class="yr" data-y="2024" aria-pressed="false">2024</button><button type="button" class="yr" data-y="2023" aria-pressed="false">2023</button><button type="button" class="yr" data-y="2022" aria-pressed="false">2022</button><button type="button" class="yr" data-y="2021" aria-pressed="false">2021</button></div>
+<p class="chips pick-list" data-y="2026"><a href="kyotsu/2026/kokugo.html">国語</a> <a href="kyotsu/2026/math1a.html">数学IA</a> <a href="kyotsu/2026/math2bc.html">数学IIBC</a> <a href="kyotsu/2026/eng_r.html">英語R</a> <a href="kyotsu/2026/eng_l.html">英語L</a> <a href="kyotsu/2026/phys.html">物理</a> <a href="kyotsu/2026/chem.html">化学</a> <a href="kyotsu/2026/bio.html">生物</a> <a href="kyotsu/2026/earth.html">地学</a> <a href="kyotsu/2026/phys_basic.html">物基</a> <a href="kyotsu/2026/chem_basic.html">化基</a> <a href="kyotsu/2026/bio_basic.html">生基</a> <a href="kyotsu/2026/earth_basic.html">地基</a> <a href="kyotsu/2026/info1.html">情報I</a> <a href="kyotsu/2026/geo.html">地理</a> <a href="kyotsu/2026/jhist.html">日本史</a> <a href="kyotsu/2026/whist.html">世界史</a> <a href="kyotsu/2026/ethics.html">倫理</a> <a href="kyotsu/2026/polieco.html">政経</a></p>
+<p class="chips pick-list" data-y="2025" hidden><a href="kyotsu/2025/kokugo.html">国語</a> <a href="kyotsu/2025/math1a.html">数学IA</a> <a href="kyotsu/2025/math2bc.html">数学IIBC</a> <a href="kyotsu/2025/eng_r.html">英語R</a> <a href="kyotsu/2025/eng_l.html">英語L</a> <a href="kyotsu/2025/phys.html">物理</a> <a href="kyotsu/2025/chem.html">化学</a> <a href="kyotsu/2025/bio.html">生物</a> <a href="kyotsu/2025/earth.html">地学</a> <a href="kyotsu/2025/phys_basic.html">物基</a> <a href="kyotsu/2025/chem_basic.html">化基</a> <a href="kyotsu/2025/bio_basic.html">生基</a> <a href="kyotsu/2025/earth_basic.html">地基</a> <a href="kyotsu/2025/info1.html">情報I</a> <a href="kyotsu/2025/geo.html">地理</a> <a href="kyotsu/2025/jhist.html">日本史</a> <a href="kyotsu/2025/whist.html">世界史</a> <a href="kyotsu/2025/ethics.html">倫理</a> <a href="kyotsu/2025/polieco.html">政経</a></p>
+<p class="chips pick-list" data-y="2024" hidden><a href="kyotsu/2024/kokugo.html">国語</a> <a href="kyotsu/2024/math1a.html">数学IA</a> <a href="kyotsu/2024/math2bc.html">数学IIB</a> <a href="kyotsu/2024/eng_r.html">英語R</a> <a href="kyotsu/2024/eng_l.html">英語L</a> <a href="kyotsu/2024/phys.html">物理</a> <a href="kyotsu/2024/chem.html">化学</a> <a href="kyotsu/2024/bio.html">生物</a> <a href="kyotsu/2024/earth.html">地学</a> <a href="kyotsu/2024/phys_basic.html">物基</a> <a href="kyotsu/2024/chem_basic.html">化基</a> <a href="kyotsu/2024/bio_basic.html">生基</a> <a href="kyotsu/2024/earth_basic.html">地基</a> <span class="pick-sep">旧課程</span> <a href="kyotsu/2024/chiri_b.html">地理B</a> <a href="kyotsu/2024/chiri_a.html">地理A</a> <a href="kyotsu/2024/nihonshi_b.html">日本史B</a> <a href="kyotsu/2024/nihonshi_a.html">日本史A</a> <a href="kyotsu/2024/sekaishi_b.html">世界史B</a> <a href="kyotsu/2024/sekaishi_a.html">世界史A</a> <a href="kyotsu/2024/gensha.html">現社</a> <a href="kyotsu/2024/rinri.html">倫理</a> <a href="kyotsu/2024/seikei.html">政経</a> <a href="kyotsu/2024/rinsei.html">倫政</a></p>
+<p class="chips pick-list" data-y="2023" hidden><a href="kyotsu/2023/kokugo.html">国語</a> <a href="kyotsu/2023/math1a.html">数学IA</a> <a href="kyotsu/2023/math2bc.html">数学IIB</a> <a href="kyotsu/2023/eng_r.html">英語R</a> <a href="kyotsu/2023/eng_l.html">英語L</a> <a href="kyotsu/2023/phys.html">物理</a> <a href="kyotsu/2023/chem.html">化学</a> <a href="kyotsu/2023/bio.html">生物</a> <a href="kyotsu/2023/earth.html">地学</a> <a href="kyotsu/2023/phys_basic.html">物基</a> <a href="kyotsu/2023/chem_basic.html">化基</a> <a href="kyotsu/2023/bio_basic.html">生基</a> <a href="kyotsu/2023/earth_basic.html">地基</a> <span class="pick-sep">旧課程</span> <a href="kyotsu/2023/chiri_b.html">地理B</a> <a href="kyotsu/2023/chiri_a.html">地理A</a> <a href="kyotsu/2023/nihonshi_b.html">日本史B</a> <a href="kyotsu/2023/nihonshi_a.html">日本史A</a> <a href="kyotsu/2023/sekaishi_b.html">世界史B</a> <a href="kyotsu/2023/sekaishi_a.html">世界史A</a> <a href="kyotsu/2023/gensha.html">現社</a> <a href="kyotsu/2023/rinri.html">倫理</a> <a href="kyotsu/2023/seikei.html">政経</a> <a href="kyotsu/2023/rinsei.html">倫政</a></p>
+<p class="chips pick-list" data-y="2022" hidden><a href="kyotsu/2022/kokugo.html">国語</a> <a href="kyotsu/2022/math1a.html">数学IA</a> <a href="kyotsu/2022/math2bc.html">数学IIB</a> <a href="kyotsu/2022/eng_r.html">英語R</a> <a href="kyotsu/2022/eng_l.html">英語L</a> <a href="kyotsu/2022/phys.html">物理</a> <a href="kyotsu/2022/chem.html">化学</a> <a href="kyotsu/2022/bio.html">生物</a> <a href="kyotsu/2022/earth.html">地学</a> <a href="kyotsu/2022/phys_basic.html">物基</a> <a href="kyotsu/2022/chem_basic.html">化基</a> <a href="kyotsu/2022/bio_basic.html">生基</a> <a href="kyotsu/2022/earth_basic.html">地基</a> <span class="pick-sep">旧課程</span> <a href="kyotsu/2022/chiri_b.html">地理B</a> <a href="kyotsu/2022/chiri_a.html">地理A</a> <a href="kyotsu/2022/nihonshi_b.html">日本史B</a> <a href="kyotsu/2022/nihonshi_a.html">日本史A</a> <a href="kyotsu/2022/sekaishi_b.html">世界史B</a> <a href="kyotsu/2022/sekaishi_a.html">世界史A</a> <a href="kyotsu/2022/gensha.html">現社</a> <a href="kyotsu/2022/rinri.html">倫理</a> <a href="kyotsu/2022/seikei.html">政経</a> <a href="kyotsu/2022/rinsei.html">倫政</a></p>
+<p class="chips pick-list" data-y="2021" hidden><a href="kyotsu/2021/kokugo.html">国語</a> <a href="kyotsu/2021/math1a.html">数学IA</a> <a href="kyotsu/2021/math2bc.html">数学IIB</a> <a href="kyotsu/2021/eng_r.html">英語R</a> <a href="kyotsu/2021/eng_l.html">英語L</a> <a href="kyotsu/2021/phys.html">物理</a> <a href="kyotsu/2021/chem.html">化学</a> <a href="kyotsu/2021/bio.html">生物</a> <a href="kyotsu/2021/earth.html">地学</a> <a href="kyotsu/2021/phys_basic.html">物基</a> <a href="kyotsu/2021/chem_basic.html">化基</a> <a href="kyotsu/2021/bio_basic.html">生基</a> <a href="kyotsu/2021/earth_basic.html">地基</a> <span class="pick-sep">旧課程</span> <a href="kyotsu/2021/chiri_b.html">地理B</a> <a href="kyotsu/2021/chiri_a.html">地理A</a> <a href="kyotsu/2021/nihonshi_b.html">日本史B</a> <a href="kyotsu/2021/nihonshi_a.html">日本史A</a> <a href="kyotsu/2021/sekaishi_b.html">世界史B</a> <a href="kyotsu/2021/sekaishi_a.html">世界史A</a> <a href="kyotsu/2021/gensha.html">現社</a> <a href="kyotsu/2021/rinri.html">倫理</a> <a href="kyotsu/2021/seikei.html">政経</a> <a href="kyotsu/2021/rinsei.html">倫政</a></p></div>
 </section>
-<section class="card">
-<h2>解説動画</h2>
-<p class="note">共通テストの過去問を、年度ごとに1本で全問解説しています。大問ごとにチャプターがあるので、解いた問題に飛べます。</p><p><a href="videos.html">解説動画の一覧 →</a></p>
+
+<section class="home-sec">
+  <h2>できること</h2>
+  <div class="feats">
+<a class="feat" href="kakomon.html?view=quick"><img class="feat-ill" src="img/spot-score.jpg" alt="" width="480" height="480" loading="lazy"><span class="feat-t">点数を入れて、平均と比べる</span><span class="feat-d">年度×科目のマス目に点数を入れて送ると、サイト内の平均点と全国の平均点、全国偏差値が出ます。本番の予想得点と、過去問の進み具合も。</span><span class="feat-go">点数を入れる →</span></a>
+<a class="feat" href="kakomon.html"><img class="feat-ill" src="img/spot-timer.jpg" alt="" width="480" height="480" loading="lazy"><span class="feat-t">時間を計って解く</span><span class="feat-d">本番と同じ制限時間で過去問を解き、設問ごとに○×をつけると、全国の正答率と並べて見られます。</span><span class="feat-go">過去問演習へ →</span></a>
+<a class="feat" href="videos.html"><img class="feat-ill" src="img/spot-video.jpg" alt="" width="480" height="480" loading="lazy"><span class="feat-t">全問解説の動画</span><span class="feat-d">数学IA・数学IIB/IIBC・化学・物理・生物を、年度ごとに1本で全問解説。大問ごとのチャプターつき。</span><span class="feat-go">解説動画の一覧 →</span></a>
+<a class="feat" href="kyotsu/index.html"><img class="feat-ill" src="img/spot-data.jpg" alt="" width="480" height="480" loading="lazy"><span class="feat-t">過去問の平均点</span><span class="feat-d">2021〜2026年の全科目の平均点、大問ごとの平均点、設問ごとの正答率と、問題・正解のPDF。</span><span class="feat-go">年度・科目別の一覧 →</span></a>
+  </div>
 </section>
-<section class="card">
-<h2>集計を見る</h2>
-<p class="note">これまでに集まった点数の分布や平均を見られます。</p><p><a href="results.html">集計結果へ →</a></p>
+
+<section class="home-sec">
+  <h2>2026年の全問解説</h2>
+  <div class="vgrid">
+<a class="vthumb" href="https://www.youtube.com/watch?v=QDeDxWh_duI" rel="noopener" title="2026共通テスト 数学ⅠA】全問解説｜第1問〜第4問"><img src="https://i.ytimg.com/vi/QDeDxWh_duI/mqdefault.jpg" alt="" width="320" height="180" loading="lazy"><span class="vt-l">2026 数学IA</span><span class="vt-t">1:04:38</span></a>
+<a class="vthumb" href="https://www.youtube.com/watch?v=yCODemyocu4" rel="noopener" title="【2026共通テスト 数学ⅡBC】全問解説｜第1問〜第7問"><img src="https://i.ytimg.com/vi/yCODemyocu4/mqdefault.jpg" alt="" width="320" height="180" loading="lazy"><span class="vt-l">2026 数学IIBC</span><span class="vt-t">1:01:05</span></a>
+<a class="vthumb" href="https://www.youtube.com/watch?v=Lr1y-_K4Cms" rel="noopener" title="【2026共通テスト 化学】全問解説｜第1問〜第5問　大問ごとにチャプターつき"><img src="https://i.ytimg.com/vi/Lr1y-_K4Cms/mqdefault.jpg" alt="" width="320" height="180" loading="lazy"><span class="vt-l">2026 化学</span><span class="vt-t">1:09:07</span></a>
+<a class="vthumb" href="https://www.youtube.com/watch?v=FMB8FIB4zxU" rel="noopener" title="【2026共通テスト 物理】全問解説｜第1問〜第4問　大問ごとにチャプターつき"><img src="https://i.ytimg.com/vi/FMB8FIB4zxU/mqdefault.jpg" alt="" width="320" height="180" loading="lazy"><span class="vt-l">2026 物理</span><span class="vt-t">46:14</span></a>
+  </div>
+  <p class="note"><a href="videos.html">解説動画の一覧 →</a></p>
 </section>
-<section class="card">
-<h2>年度・科目ごとの平均点と正答率</h2>
-<p class="note">2021年から2026年まで、科目ごとの平均点、大問ごとの平均点、設問ごとの正答率、問題・正解PDFへのリンクをまとめています。</p><p><a href="kyotsu/index.html">年度・科目別の一覧 →</a></p><h3>共通テスト2026</h3>
-<p class="chips"><a href="kyotsu/2026/kokugo.html">国語</a> <a href="kyotsu/2026/math1a.html">数学IA</a> <a href="kyotsu/2026/math2bc.html">数学IIBC</a> <a href="kyotsu/2026/eng_r.html">英語リーディング</a> <a href="kyotsu/2026/eng_l.html">英語リスニング</a> <a href="kyotsu/2026/phys.html">物理</a> <a href="kyotsu/2026/chem.html">化学</a> <a href="kyotsu/2026/bio.html">生物</a> <a href="kyotsu/2026/earth.html">地学</a> <a href="kyotsu/2026/phys_basic.html">物理基礎</a> <a href="kyotsu/2026/chem_basic.html">化学基礎</a> <a href="kyotsu/2026/bio_basic.html">生物基礎</a> <a href="kyotsu/2026/earth_basic.html">地学基礎</a> <a href="kyotsu/2026/info1.html">情報I</a> <a href="kyotsu/2026/geo.html">地理総合・地理探究</a> <a href="kyotsu/2026/jhist.html">歴史総合・日本史探究</a> <a href="kyotsu/2026/whist.html">歴史総合・世界史探究</a> <a href="kyotsu/2026/ethics.html">公共・倫理</a> <a href="kyotsu/2026/polieco.html">公共・政治経済</a></p>
-</section>
+
+<footer class="src"><p class="note small">平均点・正答率などの数値の出典：大学入試センター『実施結果の概要』『科目別成績分布』『設問別得点率及び正答率』（<a href="https://www.dnc.ac.jp/" rel="noopener">大学入試センター</a>）。</p></footer>
 </main>
+<script>
+document.querySelectorAll(".pick-tabs .yr").forEach(function (b) {
+  b.addEventListener("click", function () {
+    document.querySelectorAll(".pick-tabs .yr").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+    document.querySelectorAll(".pick-list").forEach(function (l) { l.hidden = l.dataset.y !== b.dataset.y; });
+  });
+});
+</script>
 </body>
 </html>

@@ -171,3 +171,34 @@
   .sg .sg-pw-pred { flex-basis: 100%; }
   .sg .sg-pw-list { flex-basis: auto; }
 }
+
+/* 目標の得点率・全国偏差値の色・合計列・解くリンク */
+.sg .sg-ctl > .sg-chk ~ .sg-chk, .sg .sg-ctl > .sg-goal ~ .sg-chk { margin-left: 0; }
+.sg .sg-goal { display: inline-flex; align-items: center; gap: 6px; padding-bottom: 8px; font-size: 14px; color: var(--sg-sub); margin: 0; }
+.sg .sg-goal-in { width: 4.5em; height: 34px; font: inherit; font-size: 16px; text-align: center; color: var(--sg-ink); background: var(--sg-field);
+  border: 1px solid var(--sg-line-strong); border-radius: 4px; padding: 2px; -moz-appearance: textfield; appearance: textfield; }
+.sg .sg-goal-in.is-bad { border-color: var(--sg-warn); }
+.sg .sg-solve { display: inline-block; margin-top: 1px; font-size: 12px; line-height: 1.4; }
+.sg .sg-in.is-sent.is-goal { box-shadow: inset 0 -3px 0 var(--sg-accent); }
+.sg .sg-in.is-sent.sg-dv0 { background: color-mix(in srgb, var(--sg-accent) 6%, var(--sg-field)); border-color: transparent; color: var(--sg-ink); }
+.sg .sg-in.is-sent.sg-dv1 { background: color-mix(in srgb, var(--sg-accent) 14%, var(--sg-field)); border-color: transparent; color: var(--sg-ink); }
+.sg .sg-in.is-sent.sg-dv2 { background: color-mix(in srgb, var(--sg-accent) 26%, var(--sg-field)); border-color: transparent; color: var(--sg-ink); }
+.sg .sg-in.is-sent.sg-dv3 { background: color-mix(in srgb, var(--sg-accent) 42%, var(--sg-field)); border-color: transparent; color: var(--sg-ink); }
+.sg .sg-in.is-sent.sg-dv4 { background: var(--sg-fill); border-color: var(--sg-fill); color: var(--sg-on); }
+.sg .sg-in.is-sent.sg-dv3.is-great { border: 2px solid var(--sg-accent); }
+.sg .sg-table .sg-tot { padding-left: 12px; padding-right: 4px; white-space: nowrap; text-align: right; }
+.sg .sg-table tbody .sg-tot { padding-top: 8px; }
+.sg .sg-tot-n { font-size: 16px; line-height: 1.5; color: var(--sg-sub); }
+.sg .sg-tot-n.is-done { font-weight: 700; color: var(--sg-ink); }
+.sg .sg-tot-s { font-size: 12px; line-height: 1.4; color: var(--sg-faint); }
+.sg .sg-tot-s.is-goal { color: var(--sg-accent-ink); font-weight: 700; }
+.sg .sg-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 12px; margin-top: 10px; font-size: 12px; color: var(--sg-faint); }
+.sg .sg-lg-i { display: inline-flex; align-items: center; gap: 4px; }
+.sg .sg-lg-i > i { display: inline-block; width: 14px; height: 10px; border-radius: 2px; border: 1px solid var(--sg-line); }
+.sg .sg-lg-i > .sg-dv0 { background: color-mix(in srgb, var(--sg-accent) 6%, var(--sg-field)); }
+.sg .sg-lg-i > .sg-dv1 { background: color-mix(in srgb, var(--sg-accent) 14%, var(--sg-field)); }
+.sg .sg-lg-i > .sg-dv2 { background: color-mix(in srgb, var(--sg-accent) 26%, var(--sg-field)); }
+.sg .sg-lg-i > .sg-dv3 { background: color-mix(in srgb, var(--sg-accent) 42%, var(--sg-field)); }
+.sg .sg-lg-i > .sg-dv4 { background: var(--sg-fill); border-color: var(--sg-fill); }
+.sg .sg-pw-next { flex: 1 1 100%; margin: 4px 0 0; padding-top: 10px; border-top: 1px solid var(--sg-line); font-size: 16px; }
+.sg .sg-pw-next .sg-solve { margin-left: 10px; font-size: 14px; }
