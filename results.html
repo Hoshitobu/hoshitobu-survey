@@ -602,8 +602,12 @@ async function init() {
   STATS.bandLabels = (STATS.practice[0] || STATS.honban[0] || {bands: []}).bands.map(b => b.band);
   document.querySelectorAll(".minN").forEach(el => { el.textContent = STATS.minN; });
   const updated = STATS.generatedAt ? new Date(STATS.generatedAt).toLocaleString("ja-JP") : "";
+  // 回答数＝集計に数えている記録の数（除外した行と、同じ人が同じ回・科目を送り直した分は数えない。Code.gs の activity_ の total）
+  const answers = STATS.activity && typeof STATS.activity.total === "number" ? STATS.activity.total : null;
   $("summary").textContent = (STATS.respondents === null
-    ? "回答者数: " + DASH : `回答者数: ${STATS.respondents}人`) + (updated ? `（${updated} 時点）` : "");
+    ? "回答者数 " + DASH : `回答者数 ${STATS.respondents}人`)
+    + (answers === null ? "" : ` ／ 回答数 ${answers.toLocaleString("ja-JP")}件`)
+    + (updated ? `（${updated} 時点）` : "");
 
   const subjects = [...new Set([...STATS.honban, ...STATS.practice].map(r => r.subject))];
   $("subjectFilter").append(...subjects.map(s => { const o = document.createElement("option"); o.value = o.textContent = s; return o; }));
