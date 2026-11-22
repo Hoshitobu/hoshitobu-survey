@@ -6,19 +6,19 @@
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)">
 <meta name="referrer" content="no-referrer">
-<title>共通テスト 点数の集計（平均点・分布・順位） — 星飛ぶの勉強部屋</title>
-<meta name="description" content="共通テストや予想問題集の点数集計の結果です。これまでに集まった点数の分布と平均、大問ごとの得点の傾向を見られます。">
+<title>共通テスト 点数の集計結果 — 星飛ぶの勉強部屋</title>
+<meta name="description" content="共通テストや予想問題集の点数集計の結果です。これまでに集まった点数の分布と平均、大問ごとの点数の傾向を見られます。">
 <link rel="canonical" href="https://hoshitobu.github.io/hoshitobu-survey/results.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="星飛ぶの勉強部屋">
 <meta property="og:locale" content="ja_JP">
-<meta property="og:title" content="共通テスト 点数の集計（平均点・分布・順位） — 星飛ぶの勉強部屋">
-<meta property="og:description" content="共通テストや予想問題集の点数集計の結果です。これまでに集まった点数の分布と平均、大問ごとの得点の傾向を見られます。">
+<meta property="og:title" content="共通テスト 点数の集計結果 — 星飛ぶの勉強部屋">
+<meta property="og:description" content="共通テストや予想問題集の点数集計の結果です。これまでに集まった点数の分布と平均、大問ごとの点数の傾向を見られます。">
 <meta property="og:url" content="https://hoshitobu.github.io/hoshitobu-survey/results.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
-<link rel="stylesheet" href="style.css?v=20261122n">
+<link rel="stylesheet" href="style.css?v=20261123a">
 <meta property="og:image" content="https://hoshitobu.github.io/hoshitobu-survey/img/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -26,8 +26,8 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<script src="sitemap-nav.js?v=20261122a" defer></script>
-<script src="kyotsu/toc.js?v=20261122n" defer></script>
+<script src="sitemap-nav.js?v=20261123a" defer></script>
+<script src="kyotsu/toc.js?v=20261123a" defer></script>
 </head>
 <body>
 <header>
@@ -45,7 +45,7 @@
 <main>
 
 <div class="page-title">
-  <h2>集計結果</h2>
+  <h1>点数の集計結果</h1>
   <div class="note" id="summary">読み込み中…</div>
 </div>
 
@@ -92,11 +92,11 @@
 <div id="practice"></div>
 
 <p class="foot">人数が<span class="minN">3</span>人未満の欄は「—」で表示しています。同じ人が同じ回を何度か送った場合は、最初の点数だけを集計しています。</p>
-<footer class="src"><p class="note small">全国の平均点などの出典：大学入試センター『実施結果の概要』『科目別成績分布』（<a href="https://www.dnc.ac.jp/" rel="noopener">大学入試センター</a>）。このサイトの集計は、送られた点数から作っています。</p></footer>
+<footer class="src"><p class="note small">全国の平均点などの出典：大学入試センター『実施結果の概要』『科目別成績分布』（<a href="https://www.dnc.ac.jp/" target="_blank" rel="noopener">大学入試センター</a>）。このサイトの集計は、送られた点数から作っています。</p></footer>
 </main>
 <style>
   .page-title { display: grid; grid-template-columns: var(--label) minmax(0, 1fr); column-gap: var(--gap); align-items: baseline; padding: 56px 0 32px; }
-  .page-title h2 { font-size: 22px; margin: 0; }
+  .page-title h1 { font-weight: 700; font-size: 22px; line-height: 1.5; margin: 0; }
   .foot { margin: 0; padding: 32px 0 0 calc(var(--label) + var(--gap)); border-top: 1px solid var(--line); color: var(--faint); font-size: 14px; }
   /* 分布の数字：仕様表の1行 */
   .stat-row { display: flex; gap: 0; flex-wrap: wrap; margin-top: 24px; border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line); padding: 16px 0; }
@@ -143,8 +143,9 @@
     .stat-row div:nth-child(4) { border-left: 0; padding-left: 0; }
   }
 </style>
-<script src="app-config.js?v=20261122g"></script>
-<script src="national-stats.js?v=20261122g"></script>
+<script src="app-config.js?v=20261123a"></script>
+<script src="national-stats.js?v=20261123a"></script>
+<script src="kakomon/kakomon-adjust.js?v=20261123a"></script>
 <script>
 let STATS = null, CELLS = [], MINE = [], showAll = false;
 const $ = id => document.getElementById(id);
@@ -160,7 +161,24 @@ function pageColors() {
 let COLOR = LIGHT;
 
 const keyOf = (subject, book, round) => `${subject}|${book}|${round === null || round === undefined ? "" : round}`;
-const cellLabel = c => c.book === "" ? "2027 本番（自己採点）" : c.book + (c.round === null ? "" : ` 第${c.round}回`);
+// 科目の表示名：2024以前の本試は「数学IIB」（集計のキーは同じ「数学IIBC」のまま。表示だけ変える）
+let CONFIG = null;
+function dispSub(subject, book) {
+  if (!CONFIG || !book) return subject;
+  const sb = (CONFIG.subjects || []).find(x => x.name === subject), bk = (CONFIG.books || []).find(x => x.name === book);
+  return (sb && bk && bk.labels && bk.labels[sb.id]) || subject;
+}
+// 得点調整のあった試験（kakomon-adjust.js の bookName・subjectName で突き合わせる）
+// 注記の文は項目ごと（各項目の text）。複数の試験が並ぶときは、違う文を1回ずつ出す
+function isAdj(book, subject) {   // 注記の文を返す（なければ空）
+  const A = window.KAKOMON_ADJUST;
+  if (!A) return "";
+  const a = Object.keys(A).map(id => A[id]).find(x => x.bookName === book && x.subjectName === subject);
+  return (a && a.text) || "";
+}
+const adjTextsOf = pairs => [...new Set(pairs.map(([b, s]) => isAdj(b, s)).filter(Boolean))];
+const cellBase = c => c.book === "" ? "2027 本番（自己採点）" : c.book + (c.round === null ? "" : ` 第${c.round}回`);
+const cellLabel = c => cellBase(c) + (dispSub(c.subject, c.book) !== c.subject ? `（${dispSub(c.subject, c.book)}）` : "");
 function fmt(v) { return v === null || v === undefined ? null : (Number.isInteger(v) ? v.toFixed(0) : v.toFixed(1)); }
 
 function td(text, cls) {
@@ -200,7 +218,7 @@ function drawHistogram(ctx, W, H, cell, mine, frame) {
   ctx.fillRect(0, 0, W, H);
   if (frame) {
     ctx.fillStyle = COLOR.ink; ctx.font = `700 17px ${FONT}`; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
-    ctx.fillText(`${cell.subject}｜${cellLabel(cell)}`, pad.l, 30);
+    ctx.fillText(`${dispSub(cell.subject, cell.book)}｜${cellBase(cell)}`, pad.l, 30);
     ctx.fillStyle = COLOR.sub; ctx.font = `12px ${FONT}`;
     ctx.fillText(`点数分布（${cell.n}人・${cell.max}点満点）　平均 ${fmt(cell.mean)}点　中央値 ${fmt(cell.median)}点`, pad.l, 50);
     ctx.textAlign = "right";
@@ -256,7 +274,7 @@ function renderChart(cell) {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   COLOR = pageColors();
   GEOM = drawHistogram(ctx, W, H, cell, myFirstScore(cell), false);
-  canvas.setAttribute("aria-label", `${cell.subject} ${cellLabel(cell)} の点数分布。` +
+  canvas.setAttribute("aria-label", `${dispSub(cell.subject, cell.book)} ${cellBase(cell)} の点数分布。` +
     GEOM.bins.map(b => `${b.from}〜${b.to}点 ${b.count}人`).join("、"));
 }
 
@@ -287,7 +305,7 @@ function savePng() {
   canvas.toBlob(blob => {
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = `点数分布_${cell.subject}_${cellLabel(cell).replace(/\s+/g, "_")}.png`;
+    a.download = `点数分布_${dispSub(cell.subject, cell.book)}_${cellBase(cell).replace(/\s+/g, "_")}.png`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   }, "image/png");
@@ -402,13 +420,14 @@ function reportHtml(m, cell) {
   const full = m.sections ? Math.min(cell.max, secMax) : cell.max;
   const kpi = (k, v, sub, main) => `<div class="kpi${main ? " main" : ""}"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${sub || ""}</div></div>`;
   let html = `<div class="kpis">` +
-    kpi("得点", `${m.score}<small> / ${full}</small>`, full < cell.max ? `入れた大問だけ（満点 ${cell.max}）` : "", true) +
+    kpi("点数", `${m.score}<small> / ${full}</small>`, full < cell.max ? `入れた大問だけ（満点 ${cell.max}）` : "", true) +
     kpi("順位", rk ? `${rk.rank}<small> / ${rk.n}人</small>` : "—", rk ? `上位 ${rk.top}%` : "") +
-    kpi("偏差値（このサイト）", siteDev === null ? "—" : dev1(siteDev), `${st.n}人の中で`) +
+    kpi("偏差値（このサイト・目安）", siteDev === null ? "—" : dev1(siteDev), `${st.n}人の中で`) +
     kpi("平均点（このサイト）", fmt(Math.round(st.m * 10) / 10), `中央値 ${fmt(cell.median)}`) +
     kpi(nat ? "偏差値（全国）" : "偏差値（本番換算）", natDev === null ? "—" : dev1(natDev), nat ? "実際の本試" : "推定") +
     kpi(nat ? "全国平均" : "全国平均（推定）", natMean === null ? "—" : fmt(Math.round(natMean * 10) / 10), "") +
-    `</div><div class="note" style="margin-top:6px">${esc(natNote)}</div>`;
+    `</div><div class="note" style="margin-top:6px">${esc(natNote)}</div>` +
+    adjTextsOf([[cell.book, cell.subject]]).map(t => `<div class="note" style="margin-top:6px">${esc(t)}</div>`).join("");
 
   // 大問ごと：自分の得点率と、みんな（過去問の本試なら全国）の得点率をくらべる
   if (!m.sections) {
@@ -459,7 +478,7 @@ function renderMine() {
     item.className = "mine-item";
     const left = document.createElement("div");
     const what = document.createElement("div"); what.className = "what";
-    what.textContent = `${m.subject}｜${m.kind === "honban" ? "2027 本番（自己採点）" : m.book + (m.round === null ? "" : ` 第${m.round}回`)}`;
+    what.textContent = `${m.kind === "honban" ? m.subject : dispSub(m.subject, m.book)}｜${m.kind === "honban" ? "2027 本番（自己採点）" : m.book + (m.round === null ? "" : ` 第${m.round}回`)}`;
     const rank = document.createElement("div"); rank.className = "rank";
     const r = cell ? myRank(cell, m.score) : null;
     if (r) {
@@ -541,12 +560,18 @@ function renderList() {
   }
   $("practice").innerHTML = "";
   const subjects = [...new Set(STATS.practice.map(r => r.subject))].filter(s => !filter || s === filter);
+  const groups = [];
   for (const s of subjects) {
-    const rows = STATS.practice.filter(r => r.subject === s);
+    // 同じ科目名でも、表示名の違う年度（2024以前の数学IIB）は別のまとまりにする
+    const byLabel = new Map();
+    STATS.practice.filter(r => r.subject === s).forEach(r => { const l = dispSub(s, r.book); if (!byLabel.has(l)) byLabel.set(l, []); byLabel.get(l).push(r); });
+    byLabel.forEach((rows, label) => groups.push([label, rows]));
+  }
+  for (const [s, rows] of groups) {
     // センター英語（筆記200・リスニング50）のように満点の違う年度が混ざるときは行ごとに満点を出す
     const maxes = new Set(rows.map(r => r.max));
     const common = maxes.size === 1 ? rows[0].max : null;
-    $("practice").append(card(common ? `${s}（${common}点満点）` : s, view === "bands" ? "学力帯別の平均点" : "",
+    $("practice").append(card(common ? `${s}（${common}点満点）` : s, (view === "bands" ? "学力帯別の平均点" : "") + (adjTextsOf(rows.map(r => [r.book, r.subject])).length ? (view === "bands" ? "。" : "") + adjTextsOf(rows.map(r => [r.book, r.subject])).join("") : ""),
       table(rows, [
         {label: "問題集", get: r => common ? r.book : `${r.book}（${r.max}点満点）`},
         {label: "回", get: r => r.round === null ? "" : `第${r.round}回`},
@@ -568,6 +593,7 @@ async function init() {
     $("summary").textContent = "集計サーバーにつながりませんでした。時間をおいて再読み込みしてください。";
     return;
   }
+  try { const c = await window.surveyApi.get("config"); if (c && c.ok) CONFIG = c; } catch (e) { /* なくても表示できる */ }
   try { MINE = JSON.parse(localStorage.getItem("hoshitobu-survey:mine") || "[]"); } catch (e) { MINE = []; }
   STATS.practice.forEach(c => { c.key = keyOf(c.subject, c.book, c.round); });
   STATS.honban.forEach(c => { c.book = ""; c.round = null; c.key = keyOf(c.subject, "", null); });

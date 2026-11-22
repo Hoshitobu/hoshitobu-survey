@@ -72,6 +72,7 @@
 .sg .sg-na .sg-in::placeholder { opacity: 0; }
 .sg .sg-na { background: repeating-linear-gradient(135deg, transparent 0 5px, var(--sg-line) 5px 6px); border-radius: 4px; height: 38px; }
 .sg .sg-tag { position: absolute; right: 3px; top: 1px; font-size: 12px; line-height: 1.3; color: var(--sg-faint); pointer-events: none; }
+.sg .sg-adj { display: inline-block; margin-top: 1px; margin-right: 6px; font-size: 12px; line-height: 1.4; color: var(--sg-faint); border-bottom: 1px dotted currentColor; cursor: help; }
 .sg .sg-avg { display: flex; flex-direction: column; margin-top: 2px; font-size: 12px; line-height: 1.4; color: var(--sg-faint); white-space: nowrap; }
 
 /* 送る */

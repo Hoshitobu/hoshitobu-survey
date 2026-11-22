@@ -5,7 +5,7 @@
 :root {
   color-scheme: light dark;
   --bg: #ffffff; --surface: #ffffff; --surface-2: #f6f7f9; --field: #ffffff; --tint: #f3f4f7;
-  --ink: #15171c; --sub: #555a65; --faint: #868b96;
+  --ink: #15171c; --sub: #454a55; --faint: #686d78;
   --line: #e7e9ed; --line-strong: #cfd3da; --rule: #cfd3da;
   --bar: #2b2f38; --bar-track: #eceef2; --bar-soft: #c5c9d1;
   --accent: #2f3fd0; --accent-ink: #2433b0; --accent-soft: #eef0fd;
@@ -22,7 +22,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #0a0b0f; --surface: #0a0b0f; --surface-2: #111318; --field: #0f1116; --tint: #15171e;
-    --ink: #e2e4e9; --sub: #9ca1ac; --faint: #6c717c;
+    --ink: #e2e4e9; --sub: #b4b9c4; --faint: #8f94a0;
     --line: #1b1e26; --line-strong: #2a2e38; --rule: #2a2e38;
     --bar: #c9cdd6; --bar-track: #1c1f27; --bar-soft: #464b57;
     --accent: #8d97ff; --accent-ink: #aab2ff; --accent-soft: #151933;
@@ -197,5 +197,7 @@ main section.card[id] { scroll-margin-top: 16px; }
 }
 .dev-in input::placeholder { font-size: 15px; font-weight: 400; }
 @media (min-width: 1200px) { .toc ol { border-left-color: color-mix(in srgb, var(--sub) 45%, transparent); } }
-@media (min-width: 1200px) { .toc ol { border-left-color: color-mix(in srgb, var(--sub) 45%, transparent); } }
 header .sitename { color: var(--ink); font-weight: 700; font-size: 16px; text-decoration: none; }
+/* 地図：狭い画面は、縮めない縦長の図に切り替わる（文字は実寸で12px以上） */
+.sm-svg.sm-n .sm-t { font-size: 13.5px; }
+.sm-svg.sm-n .sm-here, .sm-svg.sm-n .sm-col { font-size: 14px; }

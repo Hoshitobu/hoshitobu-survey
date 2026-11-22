@@ -209,6 +209,22 @@
   }
   function solveHref(eid) { return near("kakomon.html?exam=" + encodeURIComponent(eid)); }
 
+  // ---- 得点調整のあった試験（kakomon/kakomon-adjust.js の window.KAKOMON_ADJUST。なければ何も出さない）
+  // 注記の文は項目ごと（各項目の text）。同じ文は1回だけ出す
+  function adjTexts() {
+    var A = window.KAKOMON_ADJUST, out = {};
+    if (!A) return out;
+    Object.keys(A).forEach(function (id) {
+      var a = A[id];
+      if (a && a.bookId && a.subjectId && a.text) out[a.bookId + "|" + a.subjectId] = a.text;
+    });
+    return out;
+  }
+  function adjText(book, subject) { return (book && subject && adjTexts()[book.id + "|" + subject.id]) || ""; }
+  function isAdj(book, subject) { return !!adjText(book, subject); }
+  function addText(list, t) { if (t && list.indexOf(t) < 0) list.push(t); }
+  function adjNoteEls(list) { return list.map(function (t) { return h("p", {class: "sg-note sg-adjnote", text: t}); }); }
+
   var instances = [];
 
   function mount(el, opts) {
@@ -415,7 +431,7 @@
       renderPower(subs, rows, mine);
       ui.scroll.textContent = "";
       if (!subs.length) { ui.scroll.append(h("p", {class: "sg-note", text: "科目を選んでください。"})); updateCount(); return; }
-      var showTotal = !embedded, goal = goalRead(), anyNat = false;
+      var showTotal = !embedded, goal = goalRead(), anyNat = false, anyAdj = [];
       var head = h("tr", null, h("th", {class: "sg-rh", scope: "col"}));
       subs.forEach(function (s) { head.append(h("th", {scope: "col", title: s.name, text: shortOf(s)})); });
       if (showTotal) head.append(h("th", {scope: "col", class: "sg-tot", text: "合計"}));
@@ -445,8 +461,10 @@
             input.addEventListener("input", function () { S.drafts[k] = input.value.trim(); mark(input); updateCount(); });
             mark(input);
             var eid = row.round ? null : examId(row.book.id, s.id);
+            var adjT = sent !== undefined ? adjText(row.book, s) : "";
+            var adjMark = adjT ? (addText(anyAdj, adjT), h("span", {class: "sg-adj", title: adjT, text: "調整"})) : null;
             var solve = eid ? h("a", {class: "sg-solve", href: solveHref(eid), title: row.label + " " + s.name + "を解く", text: "解く"}) : null;
-            td.append(h("div", {class: "sg-cell"}, input, tag, solve, S.avgOn && sent !== undefined ? h("div", {class: "sg-avg", "data-avg": k}) : null));
+            td.append(h("div", {class: "sg-cell"}, input, tag, adjMark, solve, S.avgOn && sent !== undefined ? h("div", {class: "sg-avg", "data-avg": k}) : null));
           }
           tr.append(td);
         });
@@ -469,6 +487,7 @@
         body.append(tr);
       });
       ui.scroll.append(h("table", {class: "sg-table" + (S.tint ? " is-tint" : "")}, h("thead", null, head), body));
+      adjNoteEls(anyAdj).forEach(function (el) { ui.scroll.append(el); });
       if (!embedded && S.tint) {
         var lg = h("div", {class: "sg-legend", "aria-label": "全国偏差値の色"}, h("span", {class: "sg-lg-t", text: "全国偏差値"}));
         ["〜45", "45〜", "50〜", "55〜", "60〜"].forEach(function (t, i) {
@@ -479,7 +498,7 @@
       ui.scroll.scrollLeft = left; ui.scroll.scrollTop = top;
       fillAvg(); updateCount();
     }
-    // ---- いまの実力（全体のマス目だけ）：進み具合の円グラフと、本番予想得点
+    // ---- いまの実力（全体のマス目だけ）：進み具合の円グラフと、本番予想点数
     function donut(done, total) {
       var NS = "http://www.w3.org/2000/svg", R = 52, C = 2 * Math.PI * R;
       function se(tag, a) { var x = document.createElementNS(NS, tag); for (var k in a) x.setAttribute(k, a[k]); return x; }
@@ -504,9 +523,11 @@
       return null;
     }
     function predictFor(s, entries) {
-      var ns = window.NATIONAL_STATS || {}, att = [];
+      var ns = window.NATIONAL_STATS || {}, att = [], adjUsed = [];
       entries.forEach(function (r) {
         var n = ns[r.book] && ns[r.book][s.name];
+        var bk = S.cfg.books.find(function (b) { return b.name === r.book; });
+        if (r.subject === s.name && bk) addText(adjUsed, adjText(bk, s));
         if (r.subject !== s.name || !n || typeof n.mean !== "number" || !(n.sd > 0) || typeof r.score !== "number" || isNaN(r.score)) return;
         att.push({dev: 50 + 10 * (r.score - n.mean) / n.sd, at: String(r.at || "")});
       });
@@ -518,7 +539,7 @@
       var dev = sum / w, ref = natRef(s);
       if (!ref) return null;
       var pred = Math.round(ref.mean + ref.sd * (dev - 50) / 10);
-      return {dev: dev, n: att.length, ref: ref, score: Math.max(0, Math.min(s.max, pred))};
+      return {dev: dev, adj: adjUsed, n: att.length, ref: ref, score: Math.max(0, Math.min(s.max, pred))};
     }
     // 次に解く1回：予想偏差値がいちばん低い科目（まだ解いていない科目があればそちら）の、未提出の本試験でいちばん新しい年
     function nextPick(subs, preds, mine) {
@@ -571,11 +592,13 @@
           h("span", {class: "sg-pw-v" + (x.p ? "" : " is-none"), text: x.p ? "予想 " + x.p.score + "点" : "—"}),
           h("span", {class: "sg-pw-d", text: detail})));
       });
-      var pred = h("div", {class: "sg-pw-pred"}, h("p", {class: "sg-pw-t2", text: "本番予想得点"}), pl);
+      var pred = h("div", {class: "sg-pw-pred"}, h("p", {class: "sg-pw-t2", text: "本番予想点数（目安）"}), pl);
       if (any.length) {
         var tot = any.reduce(function (a, x) { return a + x.p.score; }, 0), mx = any.reduce(function (a, x) { return a + x.s.max; }, 0);
         pred.append(h("p", {class: "sg-pw-sum", text: "合計 " + tot + "点 ／ " + mx + "点満点（" + any.length + "科目）"}),
           h("p", {class: "sg-note", text: "過去問（本試験）の全国偏差値から、2026年の本試験と同じ平均点・散らばりだった場合の点数を出しています。"}));
+        var predAdj = []; any.forEach(function (x) { x.p.adj.forEach(function (t) { addText(predAdj, t); }); });
+        adjNoteEls(predAdj).forEach(function (el) { pred.append(el); });
       } else {
         pred.append(h("p", {class: "sg-note", text: "過去問の点数を入れると、ここに予想が出ます。"}));
       }
@@ -583,7 +606,7 @@
       box.append(h("h3", {class: "sg-pw-t", text: "いまの実力"}), h("div", {class: "sg-pw-body"}, prog, pred),
         nx ? h("p", {class: "sg-pw-next"}, h("span", {class: "sg-k", text: "次に解くなら："}),
           h("strong", {text: nx.s.name + " " + nx.b.name}), "（まだ解いていない年のうち最新）",
-          nx.eid ? h("a", {class: "sg-solve", href: solveHref(nx.eid), text: "解く"}) : null) : null);
+          nx.eid ? h("a", {class: "sg-solve", href: solveHref(nx.eid), text: "解く"}) : null) : "");
     }
     function mark(input) {
       var c = input._cell, v = input.value.trim();
@@ -597,7 +620,7 @@
       for (var q = 0; q < 5; q++) input.classList.toggle("sg-dv" + q, st === q);
       var mxc = maxOf(c.subject, c.row.book);
       input.classList.toggle("is-goal", sent && c.goal > 0 && mxc > 0 && 100 * (+v) / mxc >= c.goal);
-      if (dev !== null) input.title = "送った点数・全国偏差値 " + dev.toFixed(1);
+      if (dev !== null) input.title = "送った点数・全国偏差値 " + dev.toFixed(1) + (isAdj(c.row.book, c.subject) ? "（目安）" : "");
       input.classList.remove("is-bad");
     }
     function fillAvg() {
@@ -657,7 +680,7 @@
       if (!ui.consent.checked) { ui.prof.open = true; return void problem("送るには、匿名で集計して動画で使うことへの同意が必要です。「送る人の情報」にチェックを入れてください", ui.consent); }
       if (!ui.band.value) { ui.prof.open = true; return void problem("学力帯（直近の模試の偏差値）を選んでください", ui.band); }
       var nick = ui.nick.value.trim();
-      if (!nick && (cfg.nickname.required || ui.rank.checked)) { ui.prof.open = true; return void problem("ニックネームを入力してください", ui.nick); }
+      if (!nick && (cfg.nickname.required || ui.rank.checked)) { ui.prof.open = true; return void problem(ui.rank.checked ? "ランキングに載せるには、ニックネームを入れてください" : "ニックネームを入れてください", ui.nick); }
       var base = {mode: "practice", code: ui.code, band: ui.band.value, ranking: ui.rank.checked, website: ui.hp.value};
       if (nick) base.nickname = nick;
       if (cfg.passphraseRequired) base.passphrase = ui.pass.value;
@@ -718,8 +741,9 @@
       var r = ui.result;
       r.hidden = false; r.textContent = "";
       var minN = (S.stats && S.stats.minN) || S.cfg.minN || 3;
-      var tbody = h("tbody"), best = null;
+      var tbody = h("tbody"), best = null, anyAdjR = [];
       sent.forEach(function (c) {
+        addText(anyAdjR, adjText(c.book, c.subject));
         var dev = natDev(c, c.score);
         if (dev !== null && dev >= GREAT && (!best || dev > best.dev)) best = {c: c, dev: dev};
         var site = stats === null ? "…" : stats === false ? "読み込めませんでした" : (function () {
@@ -745,6 +769,7 @@
       r.append(h("p", {class: "sg-done", text: sent.length + "件を送りました。"}), h("div", {class: "sg-scroll"}, table),
         h("p", {class: "sg-note"}, "サイト内の平均は、" + minN + "人以上の点数がたまると出ます。全国平均は本試験だけです。",
           h("a", {href: RESULTS_URL, text: "自分の順位と分布を見る →"})));
+      adjNoteEls(anyAdjR).forEach(function (el) { r.append(el); });
     }
 
     function refreshOthers() { instances.forEach(function (x) { if (x.el !== el) x.refresh(); }); }

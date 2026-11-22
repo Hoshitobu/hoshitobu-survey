@@ -6,19 +6,19 @@
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)">
 <meta name="referrer" content="no-referrer">
-<title>共通テスト 過去問演習（時間を計って解く・点数を入れる） — 星飛ぶの勉強部屋</title>
+<title>共通テスト 過去問演習 — 星飛ぶの勉強部屋</title>
 <meta name="description" content="共通テスト（2021〜2026）とセンター試験の過去問・予想問題集の点数をマス目に入れて、サイト内の平均点と全国平均点を見られます。時間を計って解く過去問演習、問題・正解のPDFもあります。">
 <link rel="canonical" href="https://hoshitobu.github.io/hoshitobu-survey/kakomon.html">
-<meta property="og:title" content="過去問演習・点数集計 — 星飛ぶの勉強部屋">
+<meta property="og:title" content="共通テスト 過去問演習 — 星飛ぶの勉強部屋">
 <meta property="og:description" content="共通テスト（2021〜2026）とセンター試験の過去問・予想問題集の点数をマス目に入れて、サイト内の平均点と全国平均点を見られます。時間を計って解く過去問演習、問題・正解のPDFもあります。">
 <meta property="og:url" content="https://hoshitobu.github.io/hoshitobu-survey/kakomon.html">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
-<link rel="stylesheet" href="style.css?v=20261122n">
-<link rel="stylesheet" href="kakomon/kakomon.css?v=20261122i">
-<link rel="stylesheet" href="score-grid.css?v=20261122i">
+<link rel="stylesheet" href="style.css?v=20261123a">
+<link rel="stylesheet" href="kakomon/kakomon.css?v=20261123a">
+<link rel="stylesheet" href="score-grid.css?v=20261123a">
 <style>
   /* お知らせ・題字も「左に見出し・右に中身」の2段 */
   .kk-row { display: grid; grid-template-columns: var(--label) minmax(0, 1fr); column-gap: var(--gap); align-items: baseline; }
@@ -27,9 +27,9 @@
   .kk-news-body { color: var(--ink); }
   .kk-news small { color: var(--faint); font-size: 14px; margin-left: 12px; }
   .kk-title { padding: 56px 0 32px; }
-  .kk-title h2 { font-weight: 700; font-size: 22px; line-height: 1.5; margin: 0; }
+  .kk-title h1 { font-weight: 700; font-size: 22px; line-height: 1.5; margin: 0; }
   .kk-title p { margin: 0; color: var(--sub); font-size: 18px; max-width: 40em; }
-  /* 2つの使い方：時間をはかって解く／点数だけ入れる（右の列にそろえた下線のタブ） */
+  /* 2つの使い方：時間を計って解く／点数だけ入れる（右の列にそろえた下線のタブ） */
   .kk-viewtabs { display: flex; gap: 32px; margin: 0 0 0 calc(var(--label) + var(--gap)); }
   .kk-viewtabs button { display: flex; flex-direction: column; align-items: flex-start; text-align: left; border: 0; border-bottom: 1px solid transparent;
                         margin: 0 0 -1px; background: none; padding: 0 0 10px; font: inherit; font-size: 16px; font-weight: 700; color: var(--faint);
@@ -38,6 +38,10 @@
   .kk-viewtabs button:hover { color: var(--ink); }
   .kk-viewtabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--ink); }
   .kk-tabline { border-bottom: 1px solid var(--line); }
+  /* 点数を入れるときは、お知らせをたたんで、マス目を上のほうに出す */
+  body.is-quick .kk-news { display: none; }
+  body.is-quick .kk-title { padding: 32px 0 16px; }
+  body.is-quick .kk-title p { font-size: 16px; }
   #quickPanel > .note:first-child { margin: 32px 0 0 calc(var(--label) + var(--gap)); max-width: 44em; }
   #quickPanel .card:first-of-type { margin-top: 32px; }
   /* 大問ごとの点数（任意） */
@@ -62,6 +66,12 @@
     .kk-viewtabs { gap: 20px; margin-left: 0; }
     .kk-viewtabs button { flex: 1 1 0; min-width: 0; }
     #quickPanel > .note:first-child { margin-left: 0; }
+    /* 点数を入れるとき（狭い画面）：目次をたたみ、「いまの実力」はマス目のあとに回して、マス目を上に出す */
+    body.is-quick nav.toc { display: none; }
+    body.is-quick .sg { display: flex; flex-direction: column; }
+    body.is-quick .sg > .sg-power { order: 5; }
+    body.is-quick .sg > .sg-prof { order: 4; }
+    body.is-quick .sg > .sg-result { order: 3; }
   }
 </style>
 <meta property="og:image" content="https://hoshitobu.github.io/hoshitobu-survey/img/og.jpg">
@@ -71,8 +81,8 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<script src="sitemap-nav.js?v=20261122a" defer></script>
-<script src="kyotsu/toc.js?v=20261122n" defer></script>
+<script src="sitemap-nav.js?v=20261123a" defer></script>
+<script src="kyotsu/toc.js?v=20261123a" defer></script>
 </head>
 <body class="page-kakomon">
 <header>
@@ -89,20 +99,19 @@
 </header>
 <main class="kk-page">
   <div class="kk-news kk-row" role="note"><span class="kk-news-label">お知らせ</span>
-    <span class="kk-news-body">共通テスト 2026〜2021 の解説動画（数学IIB・IIBC）を出しました！ 次は数学IA!!<small>YouTube で、年度ごとに大問1つずつ見られます。</small></span>
+    <span class="kk-news-body">解説動画：数学IA（2022〜2026）、数学IIB・IIBC（2021〜2026）、化学・物理・生物（2024〜2026）。年ごとの通しで、大問ごとのチャプターつきです。<small><a href="videos.html">一覧を見る</a></small></span>
   </div>
   <div class="kk-title kk-row">
-    <h2>過去問演習</h2>
-    <p>時間をはかって解き、自己採点すると、偏差値・順位と、どこで落としたかが出ます。過去問は全国と、予想問題集はこのサイトの利用者と比べます。</p>
+    <h1 id="kkHead">過去問演習</h1>
+    <p id="kkLead">時間を計って解き、自己採点すると、偏差値・順位と、どこで落としたかが出ます。過去問は全国（2021年以降の本試験）と、予想問題集はこのサイトの利用者と比べます。</p>
   </div>
   <div class="kk-tabline"><div class="kk-viewtabs" role="tablist" id="viewTabs">
-    <button type="button" role="tab" data-view="solve" aria-selected="true">時間をはかって解く<small>（○×で採点）</small></button>
-    <button type="button" role="tab" data-view="quick" aria-selected="false">点数だけ入れる<small>（まとめて送る・センター試験・本番の自己採点）</small></button>
+    <button type="button" role="tab" data-view="solve" aria-selected="true">時間を計って解く<small>（○×で採点）</small></button>
+    <button type="button" role="tab" data-view="quick" aria-selected="false">点数を入れる<small>（まとめて送る・センター試験・本番の自己採点）</small></button>
   </div></div>
   <div id="kakomon"></div>
   <section id="quickPanel" hidden>
-    <p class="note">解き終わった点数を、マス目に入れてまとめて送ります。送ったマスは色がつき、サイト内の平均点と全国平均点を見られます。</p>
-    <div class="qk-grid"><div data-score-grid></div></div>
+        <div class="qk-grid"><div data-score-grid></div></div>
     <div class="qk-more"><button type="button" class="link" id="detailToggle" aria-expanded="false" aria-controls="detailBox">大問ごと・所要時間も入れる</button>
       <span class="qk-more-note">「その他」の問題集や、本番の自己採点（2027年1月18日から）もこちらです。</span></div>
     <div id="detailBox" hidden>
@@ -115,7 +124,7 @@
   <h2>はじめに</h2>
   <label class="consent">
     <input type="checkbox" id="consent">
-    <span>回答は匿名で集計し、YouTube『星飛ぶ』の動画で使用します。<b>名前・学校名などの個人情報は入力しないでください。</b>ニックネームを入力してください。（同意する）</span>
+    <span>回答は匿名で集計し、YouTube『星飛ぶ』の動画で使用します。<b>名前・学校名などの個人情報は入力しないでください。</b>（同意する）</span>
   </label>
   <div class="note" style="margin-top:10px">名前・メールアドレス・IPアドレスは記録しません。ニックネームは「ランキングに載せる」にチェックしたときだけ、点数と一緒に集計ページのランキングと動画で公開されます。</div>
 </div>
@@ -211,15 +220,16 @@
     <div class="err" data-err></div>
   </div>
 </template>
-<script src="app-config.js?v=20261122f"></script>
-<script src="national-stats.js?v=20261122g"></script>
-<script src="kakomon/kakomon-data.js?v=20261122j"></script>
-<script src="kakomon/kakomon-series.js?v=20261122f"></script>
-<script src="kakomon/kakomon-pdf.js?v=20261122j"></script>
-<script src="kakomon/hoshitobu-link.js?v=20261122f"></script>
-<script src="score-grid.js?v=20261122i"></script>
-<script src="quick-entry.js?v=20261122i"></script>
-<script src="kakomon/kakomon-core.js?v=20261122j"></script>
+<script src="app-config.js?v=20261123a"></script>
+<script src="national-stats.js?v=20261123a"></script>
+<script src="kakomon/kakomon-data.js?v=20261123a"></script>
+<script src="kakomon/kakomon-series.js?v=20261123a"></script>
+<script src="kakomon/kakomon-pdf.js?v=20261123a"></script>
+<script src="kakomon/hoshitobu-link.js?v=20261123a"></script>
+<script src="kakomon/kakomon-adjust.js?v=20261123a"></script>
+<script src="score-grid.js?v=20261123a"></script>
+<script src="quick-entry.js?v=20261123a"></script>
+<script src="kakomon/kakomon-core.js?v=20261123a"></script>
 <script>
 // 公開サイト用の host：記録はこの端末のブラウザに保存、仲間の偏差値と予想問題集の比べる相手は「点数集計」から
 (function () {
@@ -259,9 +269,9 @@
 
   const host = {
     kind: "public",
-    peerLabel: "サイト内の偏差値",
+    peerLabel: "サイト内の偏差値（目安）",
     store: ls,
-    // この端末に保存した記録を全部（過去問も予想問題集も。得点の推移に使う）
+    // この端末に保存した記録を全部（過去問も予想問題集も。点数の推移に使う）
     loadHistory() {
       const out = Object.fromEntries((window.KAKOMON_EXAMS || []).map(e => [e.id, read(e.id)]));
       try {
@@ -305,7 +315,7 @@
     },
     async deleteRecord(exam, at) { write(exam.id, read(exam.id).filter(r => r.at !== at)); return {history: read(exam.id)}; },
     async peers(exam) {
-      const label = "サイト内の偏差値";
+      const label = "サイト内の偏差値（目安）";
       if (!exam.survey) return {label, scores: null, empty: "この年度は集計の対象外です"};
       const r = await LINK.stats();
       const cell = (r.practice || []).find(c => c.subject === exam.survey.subject && c.book === exam.survey.book);
@@ -338,17 +348,25 @@
       const where = exam.survey ? `点数集計の「${esc(exam.survey.subject)}・${esc(exam.survey.book)}${exam.survey.round ? `・第${exam.survey.round}回` : ""}」` : "点数集計";
       const local = "記録は、この端末のブラウザに保存されます。";
       if (exam.kind === "workbook") return `予想問題集は、${where}の点数（このサイトの利用者）と比べます。本番換算は、同じ人たちが過去問の本試を解いたときの位置から出しています。` + local;
-      if (exam.dist) return `「サイト内の偏差値」は、${where}から出しています。` + local;
-      return `順位・このサイトの中での偏差値${(exam.items || []).some(it => it[3] === null) ? "・みんなの正答率" : ""}は、${where}から出しています。` +
+      if (exam.dist) return `「サイト内の偏差値（目安）」は、${where}から出しています。` + local;
+      return `順位・このサイトの中での偏差値（目安）${(exam.items || []).some(it => it[3] === null) ? "・みんなの正答率" : ""}は、${where}から出しています。` +
         (exam.mean !== null && exam.mean !== undefined ? "全国偏差値は、センター公表の平均点・標準偏差から出しています。" : "全国平均は公表されていないので、偏差値は本番換算です。") + local;
     },
   };
   // ---- 2つの使い方の切りかえ
+  const LEAD_SOLVE = document.getElementById("kkLead").textContent;
   function showView(v) {
     const quick = v === "quick";
     document.getElementById("kakomon").hidden = quick;
     document.getElementById("quickPanel").hidden = !quick;
     document.body.classList.toggle("is-quick", quick);
+    // 「点数を入れる」から来たときは、題と説明も点数を入れる言い方にする（マス目が上のほうに出る）
+    document.getElementById("kkHead").textContent = quick ? "点数を入れる" : "過去問演習";
+    document.getElementById("kkLead").textContent = quick
+      ? "解き終わった点数をマス目に入れて送ると、サイト内の平均点と、全国平均点・全国偏差値（2021年以降の本試験）が出ます。"
+      : LEAD_SOLVE;
+    document.title = "共通テスト " + (quick ? "点数を入れる" : "過去問演習") + " — 星飛ぶの勉強部屋";
+    const ogt = document.querySelector('meta[property="og:title"]'); if (ogt) ogt.setAttribute("content", document.title);
     document.querySelectorAll("#viewTabs [data-view]").forEach(b => b.setAttribute("aria-selected", String((b.dataset.view === "quick") === quick)));
     const u = new URL(location.href);
     if (quick) u.searchParams.set("view", "quick"); else u.searchParams.delete("view");

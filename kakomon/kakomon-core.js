@@ -22,6 +22,8 @@
   const REACH_MS = 60000;
   const GOOD_RATE = 0.8;   // 想定時間は、その大問で8割以上取れた回の時間から作る
   const esc = s => String(s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+  // 得点調整のあった試験か（kakomon-adjust.js の bookId・subjectId で、点数集計の本・科目と突き合わせる）
+  const adjOf = e => { const A = window.KAKOMON_ADJUST || {}, sv = e && e.survey; return sv ? Object.keys(A).map(k => A[k]).find(a => a.bookId === sv.bookId && a.subjectId === sv.subjectId) || null : null; };
   const fmt = ms => { const t = Math.floor(ms / 1000); return String(Math.floor(t / 60)).padStart(2, "0") + ":" + String(t % 60).padStart(2, "0"); };
   // 大問の時間の表示：1分に満たなければ「たどり着けなかった？」（はかっていないときは —）
   const qTime = (ms, anyTime) => ms >= 60000 ? fmt(ms) : anyTime ? '<span class="kk-faint" title="1分に満たない大問は、目安や平均に使いません">1分未満</span>' : "—";
@@ -159,7 +161,7 @@
     <section class="kk-card">
       <div class="kk-eyebrow"><h3>いまの点数</h3><span class="kk-aside" id="kk-minirest"></span></div>
       <div class="kk-mini">
-        <div class="kk-wide"><div><div class="kk-k">得点</div><div class="kk-v" id="kk-miniscore">—<small> / 100</small></div></div><div class="kk-faint" id="kk-miniavg"></div></div>
+        <div class="kk-wide"><div><div class="kk-k">点数</div><div class="kk-v" id="kk-miniscore">—<small> / 100</small></div></div><div class="kk-faint" id="kk-miniavg"></div></div>
         <div><div class="kk-k" id="kk-minidevlabel">全国偏差値</div><div class="kk-v" id="kk-minidev">—</div></div>
         <div><div class="kk-k" id="kk-minitoplabel">全国の上位</div><div class="kk-v" id="kk-minitop">—</div></div>
       </div>
@@ -170,11 +172,12 @@
 <section class="kk-card" id="kk-report">
   <div class="kk-eyebrow"><span class="kk-step" data-n="report"></span><h3>成績表</h3><span class="kk-aside" id="kk-repnote"></span></div>
   <div class="kk-kpis">
-    <div class="kk-kpi is-main"><div class="kk-k">得点</div><div class="kk-v" id="kk-score">—</div><div class="kk-s" id="kk-scoresub"></div></div>
+    <div class="kk-kpi is-main"><div class="kk-k">点数</div><div class="kk-v" id="kk-score">—</div><div class="kk-s" id="kk-scoresub"></div></div>
     <div class="kk-kpi"><div class="kk-k" id="kk-devlabel">全国の中での偏差値</div><div class="kk-v" id="kk-dev">—</div><div class="kk-s" id="kk-devsub"></div></div>
     <div class="kk-kpi"><div class="kk-k" id="kk-ranklabel">全国の順位</div><div class="kk-v" id="kk-rank">—</div><div class="kk-s" id="kk-ranksub"></div></div>
     <div class="kk-kpi"><div class="kk-k" id="kk-peerlabel">仲間の中での偏差値</div><div class="kk-v" id="kk-peer">—</div><div class="kk-s" id="kk-peersub"></div></div>
   </div>
+  <p class="kk-faint" id="kk-adjnote" hidden></p>
   <div class="kk-prev" id="kk-prev" hidden></div>
 
   <div class="kk-sec">
@@ -207,7 +210,7 @@
 
   <div class="kk-sec">
     <h4 id="kk-misstitle">落とした所</h4>
-    <p class="kk-muted" id="kk-missnote">全国の正答率が 70％以上なのに × だった所が、いちばん取り返しやすい所です。</p>
+    <p class="kk-muted" id="kk-missnote">全国の正答率（2023年以降の本試験）が 70％以上なのに × だった所が、いちばん取り返しやすい所です。</p>
     <ul class="kk-miss" id="kk-miss"></ul>
   </div>
 
@@ -230,7 +233,7 @@
 </section>
 
 <section class="kk-card" id="kk-trendcard">
-  <div class="kk-eyebrow"><h3>得点の推移</h3><span class="kk-aside" id="kk-trendnote"></span></div>
+  <div class="kk-eyebrow"><h3>点数の推移</h3><span class="kk-aside" id="kk-trendnote"></span></div>
   <div class="kk-trendtabs" role="group" aria-label="グラフの物差し">
     <button type="button" class="kk-chip is-on" data-trend="dev">偏差値</button>
     <button type="button" class="kk-chip" data-trend="pct">得点率</button>
@@ -246,7 +249,7 @@
   <p class="kk-muted" id="kk-histempty">まだ記録はありません。</p>
 </section>
 
-<p class="kk-foot">出典：大学入試センター「実施結果の概要」「科目別成績分布」「設問別得点率及び正答率」「正解（配点）」。平均点・標準偏差は、センターの公表値を kyotsu.org がまとめたものも使っています。偏差値＝(得点 − 平均点) ÷ 標準偏差 × 10 ＋ 50。全国の順位は、科目別成績分布（1点ごとの人数）がある 2023〜2026年の本試験だけで数えています。「みんなの正答率」は、このサイトで解いて点数集計に送った人の ○× から出しています。</p>
+<p class="kk-foot">出典：大学入試センター「実施結果の概要」「科目別成績分布」「設問別得点率及び正答率」「正解（配点）」。平均点・標準偏差は、センターの公表値を kyotsu.org がまとめたものも使っています。偏差値＝(点数 − 平均点) ÷ 標準偏差 × 10 ＋ 50。全国の順位は、科目別成績分布（1点ごとの人数）がある 2023〜2026年の本試験だけで数えています。「みんなの正答率」は、このサイトで解いて点数集計に送った人の ○× から出しています。</p>
 
 <div class="kk-dock" id="kk-dock"><div class="kk-clock" id="kk-dockclock">00:00</div><div class="kk-dock-now" id="kk-docknow"></div><button type="button" class="kk-btn kk-btn-primary" id="kk-dockbtn">開始</button></div>`;
 
@@ -348,9 +351,9 @@
         ? "問題と正解のボタンは、大学入試センターのサイトの PDF を開きます。"
         : "問題と正解は、大学入試センターの「過去問題」のページから開いてください。";
       q("#kk-oxnote").textContent = SEC
-        ? (WB ? (unknownMax ? "大問ごとの得点と配点を入れてください（この科目は、配点が問題集ごとに違います）。"
-                            : "大問ごとの得点を入れてください。配点は本番の配点です（違うときは直してください）。")
-              : `大問ごとの得点を入れてください。配点は${E.maxFrom ? `${E.maxFrom}の配点を仮に入れています（違うときは正解表の配点に直してください）` : "わかっている分を入れています"}。`)
+        ? (WB ? (unknownMax ? "大問ごとの点数と配点を入れてください（この科目は、配点が問題集ごとに違います）。"
+                            : "大問ごとの点数を入れてください。配点は本番の配点です（違うときは直してください）。")
+              : `大問ごとの点数を入れてください。配点は${E.maxFrom ? `${E.maxFrom}の配点を仮に入れています（違うときは正解表の配点に直してください）` : "わかっている分を入れています"}。`)
         : "採点の単位ごとに ○ か × を押してください。「ア–ウ」のようにまとめた欄は、全部合っていれば ○ です。配点と正答率は、○× をつけた欄にだけ出ます。" +
           (E.items.some(it => it[3] === null) ? "この年度の正答率は、点数集計に送った人の ○× から出しています（みんなの正答率）。" : "");
       q("#kk-devlabel").textContent = NAT() ? "全国の中での偏差値" : "本番換算の偏差値";
@@ -382,7 +385,7 @@
         if (T) {
           // 人数・今日と今週の回数は点数集計から（回答者コードの数、送り直しは1回）。取れないとき・3人未満のときは、手で書いた人数を出す
           const url = new URL("kakomon.html", (window.HoshitobuLink || {}).siteUrl || location.href).href;
-          const msg = "共通テストの過去問を、時間を測りながら解いて、自己採点・偏差値まで出せるサイトがあったよ。ログイン不要で、2021〜2026年の過去問が解ける。一緒にやろう！\n" + url;
+          const msg = "共通テストの過去問を、時間を計って解いて、自己採点・偏差値まで出せるサイトがあったよ。ログイン不要で、2021〜2026年の過去問が解ける。一緒にやろう！\n" + url;
           const draw = (n, act) => {
             let line = "", tier = "";
             if (act && Number.isInteger(act.today) && Number.isInteger(act.week) && act.week > 0) {
@@ -413,7 +416,7 @@
         q("#kk-examvid").hidden = !one;
         if (one) q("#kk-examvid").innerHTML = `<a class="kk-vcard" href="https://www.youtube.com/watch?v=${esc(one)}" target="_blank" rel="noopener">` +
           `<span class="kk-vthumb"><img src="https://i.ytimg.com/vi/${esc(one)}/mqdefault.jpg" alt="" loading="lazy"></span>` +
-          `<span class="kk-vt"><small>解説動画</small>全問解説（大問ごとにチャプターつき）</span></a>`;
+          `<span class="kk-vt"><small>解説動画</small>${(E.qs || []).length && ids.length >= E.qs.length ? "全問解説" : "解説"}（大問ごとにチャプターつき）</span></a>`;
       }
       {
         // 数学IAには、図形シリーズの動画を並べる。公開時刻（日本時間）前は「Coming soon」
@@ -436,7 +439,7 @@
         }
       }
       q("#kk-hostnote").innerHTML = host.hostNote ? host.hostNote(E) : "";
-      q("#kk-peerlabel").textContent = NATR ? (host.peerLabel || "仲間の中での偏差値") : "このサイトの中での偏差値";
+      q("#kk-peerlabel").textContent = NATR ? (host.peerLabel || "仲間の中での偏差値") : "このサイトの中での偏差値（目安）";
       q("#kk-onlyprev").checked = false;
       q("#kk-flash").hidden = true;
       PEERS = null;
@@ -606,7 +609,7 @@
       }
       const {recs, scope} = myTimes();
       const use = from === "last" ? recs.slice(-1) : recs;
-      if (!use.length) { drawGoalNote("まだ時間をはかった記録がありません。一度はかって記録すると、自分の時間から作れます。"); return; }
+      if (!use.length) { drawGoalNote("まだ時間を計った記録がありません。一度計って記録すると、自分の時間から作れます。"); return; }
       // 1分に満たない大問（たどり着けなかった）は使わない。「自分の平均」は、その大問で8割以上取れた回の時間の平均
       // （8割以上の回がない大問は、たどり着いた回の平均にして、そのことを書く）
       let n = 0;
@@ -669,11 +672,11 @@
       return `<span class="kk-track"><i style="width:${r.v}%"></i></span>${r.v.toFixed(1)}%${r.src === "みんな" ? `<small class="kk-faint">（みんな${r.n ? " " + r.n + "人" : ""}）</small>` : ""}`;
     };
     function drawOX() {
-      if (SEC) {   // 大問ごとに「得点 / 配点」
+      if (SEC) {   // 大問ごとに「点数 / 配点」
         q("#kk-onlyprev-wrap").hidden = true;
         q("#kk-ox").innerHTML = chosen().map(n => `<div class="kk-qcard"><div class="kk-qhead"><h4>第${n}問<span class="kk-qfield">${esc(E.qs[n - 1][1])}</span></h4>` +
           `<span class="kk-qscore" data-qs="${n}"></span></div><div class="kk-wbrow">` +
-          `<label>得点 <input type="number" min="0" step="1" inputmode="numeric" data-wbs="${n}" value="${S.wbScore[n] === undefined ? "" : S.wbScore[n]}" aria-label="第${n}問の得点"></label>` +
+          `<label>点数 <input type="number" min="0" step="1" inputmode="numeric" data-wbs="${n}" value="${S.wbScore[n] === undefined ? "" : S.wbScore[n]}" aria-label="第${n}問の点数"></label>` +
           `<span class="kk-faint">/</span><label>配点 <input type="number" min="1" max="${E.full}" step="1" inputmode="numeric" data-wbm="${n}" value="${QMAX[n] || ""}" placeholder="?" aria-label="第${n}問の配点"></label>` +
           `</div></div>`).join("");
         drawQScores();
@@ -733,7 +736,7 @@
       drawOX(); window.scrollTo(0, keepScroll);
       drawMini(); drawReport();
     });
-    q("#kk-ox").addEventListener("input", e => {   // 大問ごとの得点・配点
+    q("#kk-ox").addEventListener("input", e => {   // 大問ごとの点数・配点
       const n = +(e.target.dataset.wbs || e.target.dataset.wbm || 0); if (!n) return;
       const sv = q(`[data-wbs="${n}"]`).value.trim(), mv = q(`[data-wbm="${n}"]`).value.trim();
       const mx = /^\d+$/.test(mv) && +mv > 0 && +mv <= E.full ? +mv : (QMAX[n] || null);
@@ -752,13 +755,13 @@
         return [
           "共通テスト形式の問題集の自己採点を手伝ってください。",
           `問題：${E.title}`,
-          "添付した「解答用紙（マークシート）の写真」と「問題集の解答・配点」を照らし合わせて、大問ごとの得点を出してください。",
+          "添付した「解答用紙（マークシート）の写真」と「問題集の解答・配点」を照らし合わせて、大問ごとの点数を出してください。",
           "- 解いていない大問（選ばなかった選択問題など）は書かないでください。",
           "- 読み取れないマークがあったら、その大問の行の最後に「（読めない所あり）」と書いてください。",
-          "進め方：まず、読み取ったマークを解答番号ごとに書き出し（私が見て確かめます）、次に解答と照らし合わせ、最後に次の形のコードを書いてください（「KAKOMON」の行から下には、コード以外を書かないでください）。「得点/配点」の形です。",
+          "進め方：まず、読み取ったマークを解答番号ごとに書き出し（私が見て確かめます）、次に解答と照らし合わせ、最後に次の形のコードを書いてください（「KAKOMON」の行から下には、コード以外を書かないでください）。「点数/配点」の形です。",
           "",
           `KAKOMON ${E.id}`,
-          ...E.qs.map(x => `${x[0]}: 得点/配点`),
+          ...E.qs.map(x => `${x[0]}: 点数/配点`),
         ].join("\n");
       }
       const lines = qsOf().map(qn => {
@@ -815,9 +818,9 @@
           if (E.optional.includes(qn) && !S.sel.includes(qn) && S.sel.length < E.pick) S.sel.push(qn);
           n++;
         }
-        if (!n) return "コードから大問ごとの得点を読み取れませんでした。「1: 15/15」のような行があるか確かめてください。";
+        if (!n) return "コードから大問ごとの点数を読み取れませんでした。「1: 15/15」のような行があるか確かめてください。";
         save(); drawAll();
-        return `${n}問分の得点を入れました。`;
+        return `${n}問分の点数を入れました。`;
       }
       const sym = str => [...String(str).replace(/\s+/g, "")].map(ch => OX[ch]).filter(Boolean);
       const qs = qsOf(), byQ = {};
@@ -1006,8 +1009,10 @@
 
     function drawReport() {
       const R = result(), on = R.done > 0;
+      const adj = (adjOf(E) || {}).text || "";
+      q("#kk-adjnote").textContent = adj; q("#kk-adjnote").hidden = !adj;
       const rp = NATR ? null : siteReport(R);
-      q("#kk-repnote").textContent = !on ? (SEC ? "大問ごとの得点を入れると、ここに出ます" : "○× をつけると、ここに出ます")
+      q("#kk-repnote").textContent = !on ? (SEC ? "大問ごとの点数を入れると、ここに出ます" : "○× をつけると、ここに出ます")
         : R.done < R.all ? `未${doneWord()} ${R.all - R.done}${SEC ? "問" : "個"}` : (SEC ? "全部の大問を入れました" : "全部の欄を採点しました");
       q("#kk-score").innerHTML = `${on ? R.total : "—"}<small> / ${E.full}</small>`;
       if (!NATR) {
@@ -1034,8 +1039,8 @@
         drawPeer();
       }
       const natQ = hasNatQ();
-      // 解説動画は数学だけ（国語・英語・社会などは、著作権の都合で解説を出さない）。ほかの科目は「解説」の列ごと出さない
-      const vid = !!E.part;
+      // 解説動画のある試験（数学・理科）だけ「解説」の列を出す。国語・英語・社会などは、著作権の都合で解説を出さない
+      const vid = !!E.part || Object.keys(E.videos || {}).length > 0;
       const refTxt = r => natQ ? (r.avg === null || r.avg === undefined ? "—" : r.avg.toFixed(1)) : (siteRate(rp, r.q) === null ? "—" : siteRate(rp, r.q).toFixed(1) + "%");
 
       // 前回
@@ -1054,7 +1059,7 @@
       }
 
       // 大問ごと
-      q("#kk-qtable").innerHTML = `<thead><tr><th>大問</th><th style="width:34%">得点</th><th class="r"></th><th class="r">${natQ ? "全国平均" : "みんなの得点率"}</th>` +
+      q("#kk-qtable").innerHTML = `<thead><tr><th>大問</th><th style="width:34%">点数</th><th class="r"></th><th class="r">${natQ ? "全国平均" : "みんなの得点率"}</th>` +
         (prev ? `<th class="r">前回</th>` : "") + `<th class="r">時間 / 目安</th>${vid ? "<th>解説</th>" : ""}</tr></thead><tbody>` +
         R.per.map(r => {
           const url = (E.videos || {})[r.q];
@@ -1115,7 +1120,7 @@
         q("#kk-miss").innerHTML = rv.length ? rv.map(r =>
           `<li class="${r.ref >= 60 ? "is-easy" : ""}"><b>第${r.q}問</b><span class="kk-faint">あなた ${r.mine.toFixed(1)}%</span>` +
           `${r.ref >= 60 ? '<span class="kk-tag">みんなが取れている所</span>' : ""}<span class="kk-mrate">${r.refKind || "みんな"} ${r.ref.toFixed(1)}%</span></li>`).join("")
-          : `<li class="kk-muted" style="background:none;border:0;padding:0">${!on ? "大問ごとの得点を入れると出ます。" : rp && rp.cell && rp.cell.sections ? "みんなと比べて大きく落とした大問はありません。" : "点数集計で、この回の大問ごとの点数を送った人が3人以上になると出ます。"}</li>`;
+          : `<li class="kk-muted" style="background:none;border:0;padding:0">${!on ? "大問ごとの点数を入れると出ます。" : rp && rp.cell && rp.cell.sections ? "みんなと比べて大きく落とした大問はありません。" : "点数集計で、この回の大問ごとの点数を送った人が3人以上になると出ます。"}</li>`;
       } else {
         // 落とした所（正答率の高い順）
         const miss = [];
@@ -1140,7 +1145,7 @@
 
     // ------------------------------------------------ 記録
     function flash(msg, warn) { const f = q("#kk-flash"); f.hidden = false; f.classList.toggle("is-warn", !!warn); f.textContent = msg; }
-    const needFirst = () => SEC ? "先に大問ごとの得点を入れてください。" : "先に ○× をつけてください。";
+    const needFirst = () => SEC ? "先に大問ごとの点数を入れてください。" : "先に ○× をつけてください。";
     q("#kk-save").addEventListener("click", async () => {
       commit();
       const R = result();
@@ -1170,7 +1175,7 @@
         flash("記録できませんでした：" + (err && err.message ? err.message : err), true);
       } finally { btn.disabled = false; btn.textContent = "この結果を記録する"; }
     });
-    // ---- 得点の推移（この科目の、全部の年度・試験・予想問題集の記録を、解いた日の順に）
+    // ---- 点数の推移（この科目の、全部の年度・試験・予想問題集の記録を、解いた日の順に）
     let TREND = "dev";
     const trendRows = () => Object.entries(H).flatMap(([id, h]) => {
       const ex = examById(id);
@@ -1192,7 +1197,7 @@
       const y = v => T + (hi - v) * (Hh - T - B) / (hi - lo);
       const ticks = [];
       for (let v = lo; v <= hi; v += TREND === "dev" ? 5 : 20) ticks.push(v);
-      return `<svg class="kk-trendsvg" viewBox="0 0 ${W} ${Hh}" role="img" aria-label="得点の推移">` +
+      return `<svg class="kk-trendsvg" viewBox="0 0 ${W} ${Hh}" role="img" aria-label="点数の推移">` +
         ticks.map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" class="${TREND === "dev" && v === 50 ? "kk-tmid" : "kk-tgrid"}"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" class="kk-tlab">${v}</text>`).join("") +
         `<polyline class="kk-tline" points="${pts.map((p, i) => `${x(i)},${y(p.v)}`).join(" ")}"/>` +
         pts.map((p, i) => `<g><circle cx="${x(i)}" cy="${y(p.v)}" r="5" class="${p.est && TREND === "dev" ? "kk-tdot is-est" : "kk-tdot"}"><title>${esc(md(p.at))} ${esc(disp(p.ex.title))}：${p.total}点・${TREND === "dev" ? "偏差値 " + p.v.toFixed(1) : p.v.toFixed(0) + "%"}</title></circle>` +
@@ -1203,7 +1208,7 @@
       q("#kk-trendnote").textContent = rows.length ? `${subjName(E)}・${rows.length}回` : "";
       q("#kk-trendchart").innerHTML = rows.length ? trendSvg(rows) : `<p class="kk-muted">${esc(subjName(E))}の記録がたまると、ここに推移が出ます。</p>`;
       root.querySelectorAll("[data-trend]").forEach(b => b.classList.toggle("is-on", b.dataset.trend === TREND));
-      q("#kk-trendtable").innerHTML = rows.length ? `<thead><tr><th>解いた日</th><th>試験</th><th class="r">得点</th><th class="r">得点率</th><th class="r">偏差値</th><th class="r">時間</th></tr></thead><tbody>` +
+      q("#kk-trendtable").innerHTML = rows.length ? `<thead><tr><th>解いた日</th><th>試験</th><th class="r">点数</th><th class="r">得点率</th><th class="r">偏差値</th><th class="r">時間</th></tr></thead><tbody>` +
         rows.slice().reverse().map(r => `<tr${r.ex.id === E.id ? ' class="is-now"' : ""}><td>${md(r.at)}</td><td>${esc(disp(r.ex.title))}</td><td class="r"><b>${r.total}</b>${r.complete ? "" : '<span class="kk-faint">（途中）</span>'}</td>` +
           `<td class="r">${r.pct.toFixed(0)}%</td><td class="r">${r.dev === null ? "—" : r.dev.toFixed(1) + (r.est ? '<span class="kk-faint">（推定）</span>' : "")}</td><td class="r">${r.ms ? fmt(r.ms) : "—"}</td></tr>`).join("") + "</tbody>" : "";
     }
@@ -1215,7 +1220,7 @@
       const h = hist();
       q("#kk-histempty").hidden = h.length > 0;
       q("#kk-histnote").textContent = h.length ? `${h.length}回` : "";
-      q("#kk-hist").innerHTML = h.length ? `<thead><tr><th>日時</th><th class="r">得点</th><th class="r">${NAT() ? "全国偏差値" : "本番換算"}</th><th class="r">上位</th><th class="r">時間</th><th>選んだ大問</th><th></th></tr></thead><tbody>` +
+      q("#kk-hist").innerHTML = h.length ? `<thead><tr><th>日時</th><th class="r">点数</th><th class="r">${NAT() ? "全国偏差値" : "本番換算"}</th><th class="r">上位</th><th class="r">時間</th><th>選んだ大問</th><th></th></tr></thead><tbody>` +
         h.map((r, i) => [r, i]).reverse().map(([r]) => {
           const d = new Date(r.at);
           const when = `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
@@ -1240,7 +1245,7 @@
       const k = NATR ? rankOf(R.total) : null;
       const tile = (lab, v, sub, main) => `<div class="t${main ? " main" : ""}"><div class="l">${lab}</div><div class="v">${v}</div><div class="s">${sub || ""}</div></div>`;
       const tiles = [
-        tile("得点", `${R.total}<small> / ${E.full}</small>`, NAT() ? `全国平均 ${E.mean}点` : (rp && rp.ok ? `このサイトの平均 ${rp.siteMean.toFixed(1)}点` : ""), true),
+        tile("点数", `${R.total}<small> / ${E.full}</small>`, NAT() ? `全国平均 ${E.mean}点` : (rp && rp.ok ? `このサイトの平均 ${rp.siteMean.toFixed(1)}点` : ""), true),
         tile(NAT() ? "全国偏差値" : "本番換算の偏差値", dv === null ? "—" : dv.toFixed(1), NAT() ? `平均 ${E.mean}・標準偏差 ${E.sd}` : "このサイトの人の本試の位置から推定"),
         NATR ? tile("全国の順位", "上位 " + topTxt(k.top), `${comma(E.n)}人中 ${comma(k.rank)}位`)
              : tile("このサイトの中", rp && rp.ok ? `${rp.rank}位` : "—", rp && rp.ok ? `${rp.of || rp.n}人中・上位 ${rp.top}%` : "記録が少ないため出せません"),
@@ -1285,12 +1290,12 @@
         <div class="meta">${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}　${E.optional.length ? "選んだ大問：第" + chosen().join("・") + "問" : "全問必答"}${R.done < R.all ? "　（採点の途中）" : ""}</div>
         <div class="tiles">${tiles}</div>
         <h3>大問ごと</h3>
-        <table><thead><tr><th>大問</th><th class="r">得点</th><th style="width:20%"></th><th class="r">${natQ ? "全国平均" : "みんなの得点率"}</th><th class="r">目標点</th><th class="r">時間</th><th class="r">自分の目安</th><th class="r">目標時間</th></tr></thead><tbody>${rows}</tbody></table>
+        <table><thead><tr><th>大問</th><th class="r">点数</th><th style="width:20%"></th><th class="r">${natQ ? "全国平均" : "みんなの得点率"}</th><th class="r">目標点</th><th class="r">時間</th><th class="r">自分の目安</th><th class="r">目標時間</th></tr></thead><tbody>${rows}</tbody></table>
         <div class="f">${t.pick ? `目標点・目標時間：点数集計の${t.pick.band ? "学力帯「" + esc(t.pick.band) + "」" : "全員"}（${t.pick.n}人）の大問ごとの平均。目標時間は8割以上取れた人の平均（＊は全員の平均）。` : "目標点・目標時間：" + esc(t.msg || "")}</div>
         <div class="two"><div><h3>${SEC ? "復習すべき大問" : "落とした所（正答率の高い順）"}</h3><ul>${missHtml}</ul></div>
           <div><h3>落とした理由</h3><ul>${whyHtml || "<li>—</li>"}</ul></div></div>
-        ${tr.length ? `<h3>得点の推移（${esc(subjName(E))}）</h3>${chart}<table><thead><tr><th>解いた日</th><th>試験</th><th class="r">得点</th><th class="r">得点率</th><th class="r">偏差値</th></tr></thead><tbody>${trendTable}</tbody></table>` : ""}
-        <div class="foot">出典：大学入試センター（平均点・標準偏差・成績分布・設問別正答率）。偏差値＝(得点−平均点)÷標準偏差×10＋50。「みんな」「目標」は点数集計（このサイトの利用者）の数字です。</div>
+        ${tr.length ? `<h3>点数の推移（${esc(subjName(E))}）</h3>${chart}<table><thead><tr><th>解いた日</th><th>試験</th><th class="r">点数</th><th class="r">得点率</th><th class="r">偏差値</th></tr></thead><tbody>${trendTable}</tbody></table>` : ""}
+        <div class="foot">出典：大学入試センター（平均点・標準偏差・成績分布・設問別正答率）。偏差値＝(点数−平均点)÷標準偏差×10＋50。「みんな」「目標」は点数集計（このサイトの利用者）の数字です。${adjOf(E) ? "平均点と分布は得点調整後、大問・設問の平均は調整前の点です。偏差値・順位は目安です。" : ""}</div>
       </div></body></html>`;
     }
     q("#kk-print").addEventListener("click", () => {
@@ -1321,9 +1326,9 @@
       const dv = devNow(R, rp);
       const k = NATR ? rankOf(R.total) : null;
       const tiles = NATR
-        ? [["得点", `${R.total}`, `/ ${E.full}点`, true], ["全国偏差値", dev(R.total, E.mean, E.sd).toFixed(1), `平均 ${E.mean}点`, false],
+        ? [["点数", `${R.total}`, `/ ${E.full}点`, true], ["全国偏差値", dev(R.total, E.mean, E.sd).toFixed(1), `平均 ${E.mean}点`, false],
            ["全国の順位", "上位 " + topTxt(k.top), `${comma(E.n)}人中 ${comma(k.rank)}位`, false]]
-        : [["得点", `${R.total}`, `/ ${E.full}点`, true],
+        : [["点数", `${R.total}`, `/ ${E.full}点`, true],
            [NAT() ? "全国偏差値" : "本番換算の偏差値", dv !== null ? dv.toFixed(1) : "—", NAT() ? `平均 ${E.mean}点` : "このサイトの人の本試の位置から推定", false],
            ["このサイトの中", rp && rp.ok ? `${rp.rank}位` : "—", rp && rp.ok ? `${rp.of || rp.n}人中・平均 ${rp.siteMean.toFixed(1)}点` : "記録が少ないため出せません", false]];
       tiles.forEach((t, i) => {

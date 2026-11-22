@@ -259,7 +259,7 @@ async function submit(ev) {
     if (!$("band").value) { msg.textContent = "学力帯（直近の模試の偏差値）を選んでください"; return; }
     body.band = $("band").value;
     if ($("nickname").value.trim()) body.nickname = $("nickname").value.trim();
-    else if (CFG.nickname.required || $("ranking").checked) { msg.textContent = "ニックネームを入力してください"; return; }
+    else if (CFG.nickname.required || $("ranking").checked) { msg.textContent = $("ranking").checked ? "ランキングに載せるには、ニックネームを入れてください" : "ニックネームを入れてください"; return; }
     body.ranking = $("ranking").checked;
   }
   if (CFG.passphraseRequired) body.passphrase = $("passphrase").value;

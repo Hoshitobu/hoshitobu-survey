@@ -1,5 +1,4 @@
 /* 年度・科目ページ用。色・書体・段組みは ../style.css の変数と .card をそのまま使う */
-header .sitename { color: var(--ink); font-weight: 700; font-size: 16px; text-decoration: none; }
 .crumbs { font-size: 14px; color: var(--faint); padding: 20px 0 0; }
 .crumbs a { color: var(--sub); text-decoration: none; }
 .crumbs a:hover { color: var(--ink); }
@@ -38,8 +37,6 @@ details.seitou summary:hover { color: var(--accent-ink); }
 }
 
 /* ---------- 読みやすさ：文字を一段大きく、薄い灰色を濃く、押すところを大きく ---------- */
-:root { --sub: #454a55; --faint: #686d78; }
-@media (prefers-color-scheme: dark) { :root { --sub: #b4b9c4; --faint: #8f94a0; } }
 body { font-size: 18px; line-height: 1.8; }
 main .note { font-size: 17px; color: var(--sub); }
 .note.small, .faint { font-size: 15px; color: var(--faint); }
@@ -99,34 +96,6 @@ main .sg[data-score-grid] .sg-in { height: 48px; font-size: 22px; font-weight: 7
 .dev.is-great .dev-v { color: var(--accent); }
 .dev.is-super .dev-v { color: var(--accent); }
 .dev.is-super .dev-out { padding-left: 14px; border-left: 3px solid var(--accent); }
-
-/* ---------- このページ（目次）。狭い画面：見出しの下に一覧。広い画面：左に固定、線の上の点で今の節 ---------- */
-html { scroll-behavior: smooth; }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-main section.card[id] { scroll-margin-top: 16px; }
-.toc { margin: 0 0 8px; padding: 0 0 24px; }
-.toc-h { margin: 0 0 8px; font-size: 13px; font-weight: 700; letter-spacing: .08em; color: var(--faint); }
-.toc ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-.toc a { text-decoration: none; color: var(--sub); }
-.toc ol a { display: inline-flex; align-items: center; min-height: 36px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 999px; font-size: 14px; }
-.toc a:hover { color: var(--ink); }
-.toc-top { display: none; }
-
-@media (min-width: 1200px) {
-  body.has-toc main { max-width: calc(var(--page) + 32px + 208px); padding-left: 224px; position: relative; }
-  body.has-toc { --label: 176px; --gap: 40px; }
-  .toc { position: fixed; top: 96px; width: 176px; padding: 0;
-         left: calc(max(0px, (100vw - (var(--page) + 32px + 208px)) / 2) + 16px); }
-  .toc ol { display: block; position: relative; padding-left: 20px; border-left: 2px solid var(--line-strong); }
-  .toc ol li { position: relative; }
-  .toc ol a { display: block; min-height: 0; padding: 7px 0; border: 0; border-radius: 0; font-size: 14px; line-height: 1.5; }
-  .toc ol a.is-on { color: var(--accent); font-weight: 700; }
-  .toc ol a.is-on::before { content: ""; position: absolute; left: -27px; top: 50%; width: 12px; height: 12px; margin-top: -6px;
-                            border-radius: 50%; background: var(--accent-fill); box-shadow: 0 0 0 4px var(--accent-soft); }
-  .toc-top { display: inline-block; margin-top: 16px; padding-left: 22px; font-size: 14px; font-weight: 700; color: var(--accent); }
-}
-.dev-in input::placeholder { font-size: 15px; font-weight: 400; }
-@media (min-width: 1200px) { .toc ol { border-left-color: color-mix(in srgb, var(--sub) 45%, transparent); } }
 
 /* ---------- 解説動画：サムネイル ---------- */
 .vthumb { display: inline-flex; flex-direction: column; gap: 4px; max-width: 320px; text-decoration: none; color: var(--ink); }
@@ -188,7 +157,7 @@ main section.card[id] { scroll-margin-top: 16px; }
 .home .vgrid { margin-top: 12px; }
 @media (max-width: 760px) {
   .home .hero { min-height: 0; flex-direction: column; align-items: stretch; }
-  .home .hero-art { position: relative; height: 200px; }
+  .home .hero-art { position: relative; height: 140px; }
   .home .hero-art::after { background: linear-gradient(180deg, rgba(10,12,28,0) 40%, rgba(17,20,42,1) 100%); }
   .home .hero-text { padding: 8px 20px 28px; }
   .home .hero h1 { font-size: 28px; }
@@ -212,12 +181,16 @@ main section.card[id] { scroll-margin-top: 16px; }
 @media (max-width: 360px) { .home .hero-lead { font-size: 15.5px; } .home .hero-note { font-size: 14.5px; } }
 
 /* 平均点の表：得点率で背景色（高い＝緑、低い＝橙。得点を入れる表の藍とは分ける） */
-:root { --r-hi: #d8efe0; --r-mid: #fbead2; --r-lo: #f6d1c4; --r-ink: #15171c; }
-@media (prefers-color-scheme: dark) { :root { --r-hi: #173a2a; --r-mid: #3d2c14; --r-lo: #4a1f17; --r-ink: #f1f2f6; } }
+:root { --r-hi: #c4e8d2; --r-mid: #f9e08a; --r-lo: #f0a090; --r-ink: #15171c; }
+@media (prefers-color-scheme: dark) { :root { --r-hi: #1c4d36; --r-mid: #5c4a10; --r-lo: #7a2a20; --r-ink: #f1f2f6; } }
 .matrix td.r-hi { background: var(--r-hi); }
 .matrix td.r-mid { background: var(--r-mid); }
 .matrix td.r-lo { background: var(--r-lo); }
 .matrix td.r-hi a, .matrix td.r-mid a, .matrix td.r-lo a { color: var(--r-ink); font-weight: 700; }
+.matrix td .m-pct { display: block; font-size: 12px; line-height: 1.3; color: var(--sub); font-weight: 400; }
+.matrix td.r-hi .m-pct, .matrix td.r-mid .m-pct, .matrix td.r-lo .m-pct { color: var(--r-ink); }
+.scroll-hint { display: none; margin: 8px 0 0; font-size: 14px; color: var(--faint); text-align: center; }
+@media (max-width: 760px) { .scroll-hint { display: block; } }
 .matrix td .m-old { display: block; font-size: 11px; line-height: 1.2; color: var(--sub); font-weight: 400; }
 .rate-legend { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 8px 0 0; font-size: 13px; color: var(--sub); }
 .rate-legend .lg { display: inline-block; padding: 2px 10px; border-radius: 6px; border: 1px solid var(--line-strong); color: var(--ink); }
@@ -230,3 +203,15 @@ main section.card[id] { scroll-margin-top: 16px; }
 .vt-soon { display: flex; align-items: center; justify-content: center; width: 208px; aspect-ratio: 16 / 9; border: 1px dashed var(--line-strong);
            border-radius: 8px; background: var(--surface-2); }
 .vt-soon span { font-size: 14px; font-weight: 700; letter-spacing: .06em; color: var(--faint); font-family: var(--sans); }
+
+/* スマホ：「点数を入れる」ボタンを最初の画面に収める（見出しの直後に出す） */
+@media (max-width: 760px) {
+  .home .hero-text { display: flex; flex-direction: column; }
+  .home .hero-kicker { order: -2; }
+  .home .hero h1 { order: -1; margin-bottom: 14px; }
+  .home .hero-cta { margin-bottom: 18px; }
+  .home .hero-lead, .home .hero-note, .home .hero-safe { order: 1; }
+}
+
+/* 表は幅いっぱいを超えたら表の中だけ横に動かす（ページ全体を広げない） */
+.card > .tablewrap, .tablewrap { min-width: 0; max-width: 100%; }

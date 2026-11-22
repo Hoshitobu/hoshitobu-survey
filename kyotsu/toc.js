@@ -55,7 +55,7 @@
       var top = document.createElement("a"); top.className = "toc-top"; top.href = "#"; top.textContent = "トップへ戻る";
       top.addEventListener("click", function (ev) { ev.preventDefault(); window.scrollTo({top: 0, behavior: "smooth"}); history.replaceState(null, "", location.pathname + location.search); });
       nav.append(head, ol, top);
-      var anchor = document.querySelector("main .k-title, main .hero, main .kk-news");
+      var anchor = document.querySelector("main .k-title, main .hero, main .kk-title");
       if (anchor) anchor.after(nav); else document.querySelector("main").prepend(nav);
     }
     nav.hidden = false;
