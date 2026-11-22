@@ -33,6 +33,7 @@
 .sg .sg-ctl { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; }
 .sg .sg-f { display: block; margin: 0; font-size: 14px; color: var(--sg-faint); min-width: 0; }
 .sg .sg-f > span { display: block; margin: 0 0 4px; line-height: 1.5; }
+.sg .sg-slots { flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; }
 .sg .sg-sel { position: relative; }
 .sg .sg-sel::after { content: ""; position: absolute; right: 13px; top: 50%; width: 6px; height: 6px; margin-top: -5px;
   border-right: 1.5px solid var(--sg-faint); border-bottom: 1.5px solid var(--sg-faint); transform: rotate(45deg); pointer-events: none; }
@@ -123,7 +124,7 @@
 @media (max-width: 760px) {
   .sg .sg-ctl > .sg-chk { margin-left: 0; width: 100%; padding-bottom: 0; }
   .sg .sg-f, .sg .sg-sel { width: 100%; }
-  .sg .sg-ctl > .sg-f { flex: 1 1 100%; }
+  .sg .sg-ctl > .sg-f, .sg .sg-slots > .sg-f { flex: 1 1 100%; }
   .sg .sg-table .sg-rh { padding-right: 10px; }
   .sg .sg-cell { width: 58px; }
   .sg .sg-btn { width: 100%; }

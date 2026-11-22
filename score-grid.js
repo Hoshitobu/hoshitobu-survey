@@ -77,25 +77,39 @@
   }
   var PREF = ["kokugo", "eng_r", "eng_l", "math1a", "math2bc", "info1", "phys", "chem", "bio", "earth", "phys_basic", "chem_basic", "bio_basic",
     "earth_basic", "geo", "jhist", "whist", "ethics", "polieco", "chirekikou"].concat(OLD_SOCIAL);
-  // 理系の「社会」列：新課程の科目と、2024年までの旧課程の対応科目を1列にまとめる（行ごとに、その試験にある方を使う）
-  var SOCIAL_COL = "@social";
+  // 「枠」の列（選んだ科目が入る列）：理科・社会・理科基礎の解答科目。列の id は "@" + 枠の id
+  // 社会は新課程の科目と、2024年までの旧課程の対応科目を1列にまとめる（行ごとに、その試験にある方を使う）
   var SOCIALS = [{id: "geo", old: "chiri_b"}, {id: "jhist", old: "nihonshi_b"}, {id: "whist", old: "sekaishi_b"},
     {id: "ethics", old: "rinri"}, {id: "polieco", old: "seikei"}, {id: "chirekikou", old: null}];
+  var SOCIAL_IDS = SOCIALS.map(function (x) { return x.id; });
+  var SCI = ["phys", "chem", "bio", "earth"], BASIC = ["phys_basic", "chem_basic", "bio_basic", "earth_basic"];
+  var SLOTS = {
+    sci1: {label: "理科 第1解答科目", kind: "sci", pair: "sci2", def: "phys", choices: SCI},
+    sci2: {label: "理科 第2解答科目", kind: "sci", pair: "sci1", def: "chem", choices: SCI},
+    soc: {label: "社会", kind: "soc", pair: null, def: "geo", choices: SOCIAL_IDS},
+    soc1: {label: "社会 第1解答科目", kind: "soc", pair: "soc2", def: "geo", choices: SOCIAL_IDS},
+    soc2: {label: "社会 第2解答科目", kind: "soc", pair: "soc1", def: "jhist", choices: SOCIAL_IDS},
+    bas1: {label: "理科基礎 第1", kind: "bas", pair: "bas2", def: "chem_basic", choices: BASIC},
+    bas2: {label: "理科基礎 第2", kind: "bas", pair: "bas1", def: "bio_basic", choices: BASIC},
+  };
   function socialDef(id) { return SOCIALS.find(function (x) { return x.id === id; }) || SOCIALS[0]; }
   // その行の試験で実際に使う科目（列がまとめ列なら、あるものの先頭）。なければ null
   function resolveSub(col, book) {
     if (col.merged) return col.merged.filter(Boolean).find(function (x) { return !excluded(x, book); }) || null;
     return excluded(col, book) ? null : col;
   }
+  var FIXED = ["kokugo", "eng_r", "eng_l", "math1a", "math2bc", "info1"];
   var PRESETS = [
-    {id: "sci", name: "理系（物理・化学）", ids: ["kokugo", "eng_r", "eng_l", "math1a", "math2bc", "chem", "phys", "info1", SOCIAL_COL]},
-    {id: "sci2", name: "理系（化学・生物）", ids: ["kokugo", "eng_r", "eng_l", "math1a", "math2bc", "chem", "bio", "info1", SOCIAL_COL]},
-    {id: "arts", name: "文系", ids: ["kokugo", "eng_r", "eng_l", "math1a", "math2bc", "geo", "jhist", "whist", "ethics", "polieco", "info1"]},
-    {id: "arts2", name: "文系（社会・理科基礎）", ids: ["kokugo", "eng_r", "eng_l", "math1a", "math2bc", "info1", "geo", "jhist", "whist", "ethics", "polieco",
-      "chem_basic", "bio_basic", "phys_basic", "earth_basic"]},
+    {id: "sci", name: "理系", ids: FIXED.concat(["@sci1", "@sci2", "@soc"])},
+    {id: "arts", name: "文系", ids: FIXED.concat(["@soc1", "@soc2", "@bas1", "@bas2"])},
     {id: "old", name: "旧課程の社会（2024年まで）", ids: OLD_SOCIAL},
     {id: "custom", name: "自分で選ぶ"},
   ];
+  // 前の版で保存された組み合わせ → いまの組み合わせ（理系の理科の選びも引き継ぐ）
+  var OLD_PRESETS = {sci2: {preset: "sci", slots: {sci1: "chem", sci2: "bio"}}, arts2: {preset: "arts"}};
+  function slotIds(preset) {
+    return (preset && preset.ids ? preset.ids : []).filter(function (id) { return id.charAt(0) === "@"; }).map(function (id) { return id.slice(1); });
+  }
 
   // ---- DOM の小道具
   function h(tag, attrs) {
@@ -245,7 +259,7 @@
     var embedded = !!(fixedBooks || fixedSubjects);
     var avgDefault = opts.avg !== undefined ? !!opts.avg : ds.avg !== undefined ? ds.avg === "1" : embedded;
     var openedAt = performance.now();
-    var S = {cfg: null, tables: [], table: null, preset: "sci", social: "geo", custom: [], drafts: {}, avgOn: avgDefault, stats: null, busy: false, tint: true};
+    var S = {cfg: null, tables: [], table: null, preset: "sci", slots: {}, custom: [], drafts: {}, avgOn: avgDefault, stats: null, busy: false, tint: true};
     var ui = {};
 
     el.classList.add("sg");
@@ -260,10 +274,27 @@
       S.tint = sget("grid-dev") !== "0";
       var t = sget("grid-table");
       S.table = S.tables.find(function (x) { return x.id === t; }) || S.tables[0];
-      var pr = sget("grid-subjects");
+      var pr = sget("grid-subjects"), saved = {};
+      try { saved = JSON.parse(sget("grid-slots") || "{}") || {}; } catch (e) { saved = {}; }
+      if (typeof saved !== "object" || Array.isArray(saved)) saved = {};
+      var oldP = OLD_PRESETS[pr];
+      if (oldP) {   // 前の版の組み合わせ：理系・文系にまとめ、理科の選びは引き継ぐ
+        pr = oldP.preset; sset("grid-subjects", pr);
+        if (oldP.slots && !saved.sci1 && !saved.sci2) saved = Object.assign({}, saved, oldP.slots);
+      }
       S.preset = PRESETS.some(function (x) { return x.id === pr; }) ? pr : "sci";
-      var sc = sget("grid-social");
-      S.social = SOCIALS.some(function (x) { return x.id === sc; }) ? sc : "geo";
+      var oldSoc = sget("grid-social");
+      if (!saved.soc && oldSoc) saved.soc = oldSoc;
+      Object.keys(SLOTS).forEach(function (k) {
+        var d = SLOTS[k], v = saved[k];
+        S.slots[k] = d.choices.indexOf(v) >= 0 && S.cfg.subjects.some(function (x) { return x.id === v; }) ? v : d.def;
+      });
+      Object.keys(SLOTS).forEach(function (k) {   // 組の2つが同じ科目なら、2つめを既定に戻す（それも同じなら別の科目に）
+        var d = SLOTS[k];
+        if (d.pair && k > d.pair && S.slots[k] === S.slots[d.pair]) {
+          S.slots[k] = d.def !== S.slots[d.pair] ? d.def : d.choices.filter(function (c) { return c !== S.slots[d.pair]; })[0];
+        }
+      });
       try { S.custom = JSON.parse(sget("grid-custom") || "[]"); } catch (e) { S.custom = []; }
       if (!Array.isArray(S.custom)) S.custom = [];
       el.textContent = "";
@@ -280,14 +311,40 @@
       else if (S.preset === "custom") ids = S.custom.slice().sort(function (a, b) { return PREF.indexOf(a) - PREF.indexOf(b); });
       else ids = PRESETS.find(function (p) { return p.id === S.preset; }).ids;
       return ids.map(function (id) {
-        if (id !== SOCIAL_COL) return byId(id);
-        var d = socialDef(S.social), nw = byId(d.id), od = d.old ? byId(d.old) : null;
-        return nw ? Object.assign({}, nw, {id: SOCIAL_COL, short: SHORT[nw.id], merged: [nw, od]}) : null;
+        if (id.charAt(0) !== "@") return byId(id);
+        var k = id.slice(1), d = SLOTS[k], nw = d && byId(S.slots[k]);
+        if (!nw) return null;
+        if (d.kind !== "soc") return nw;   // 理科・理科基礎は、年が変わっても同じ科目の id
+        var sd = socialDef(nw.id), od = sd.old ? byId(sd.old) : null;
+        return Object.assign({}, nw, {id: id, short: SHORT[nw.id], merged: [nw, od]});
       }).filter(Boolean);
     }
-    function presetHasSocial() {
-      var p = PRESETS.find(function (x) { return x.id === S.preset; });
-      return !fixedSubjects && !!(p && p.ids && p.ids.indexOf(SOCIAL_COL) >= 0);
+    function presetSlots() {
+      return fixedSubjects ? [] : slotIds(PRESETS.find(function (x) { return x.id === S.preset; }));
+    }
+    // 選んだ科目の欄（いまの組み合わせにある枠だけ）。組の2つに同じ科目は選べない（選ぶと相手と入れ替わる）
+    function renderSlots() {
+      if (!ui.slots) return;
+      var ids = presetSlots();
+      ui.slots.textContent = ""; ui.slots.hidden = !ids.length; ui.slotSel = {};
+      ids.forEach(function (k) {
+        var d = SLOTS[k], sel = h("select", {"aria-label": d.label, "data-slot": k});
+        d.choices.forEach(function (sid) {
+          var sj = S.cfg.subjects.find(function (x) { return x.id === sid; });
+          if (sj) sel.append(option(sid, sj.name));
+        });
+        sel.value = S.slots[k];
+        sel.addEventListener("change", function () {
+          var v = sel.value;
+          if (d.pair && S.slots[d.pair] === v) S.slots[d.pair] = S.slots[k];
+          S.slots[k] = v;
+          sset("grid-slots", JSON.stringify(S.slots));
+          ids.forEach(function (x) { ui.slotSel[x].value = S.slots[x]; });
+          clearResult(); renderGrid();
+        });
+        ui.slotSel[k] = sel;
+        ui.slots.append(field(d.label, sel));
+      });
     }
     function rowList() { return fixedBooks ? rowsForIds(S.cfg, fixedBooks) : S.table.rows; }
     function cellKey(row, s) { return row.book.id + "|" + (row.round || "") + "|" + s.id; }
@@ -315,25 +372,17 @@
           var prev = PRESETS.find(function (p) { return p.id === S.preset; });
           S.preset = ui.subj.value; sset("grid-subjects", S.preset);
           if (S.preset === "custom" && !S.custom.length && prev && prev.ids) {  // はじめて「自分で選ぶ」にしたときは、直前の組み合わせから始める
-            S.custom = prev.ids.filter(function (id) { return S.cfg.subjects.some(function (x) { return x.id === id; }); });
+            S.custom = prev.ids.map(function (id) { return id.charAt(0) === "@" ? S.slots[id.slice(1)] : id; })
+              .filter(function (id) { return S.cfg.subjects.some(function (x) { return x.id === id; }); });
             sset("grid-custom", JSON.stringify(S.custom));
             [].forEach.call(ui.custom.querySelectorAll("input"), function (x) { x.checked = S.custom.indexOf(x.value) >= 0; });
           }
-          ui.custom.hidden = S.preset !== "custom"; ui.socialF.hidden = !presetHasSocial(); clearResult(); renderGrid();
+          ui.custom.hidden = S.preset !== "custom"; renderSlots(); clearResult(); renderGrid();
         });
         ctl.append(field("科目", ui.subj));
-        ui.social = h("select", {"aria-label": "社会の科目"});
-        SOCIALS.forEach(function (d) {
-          var sj = S.cfg.subjects.find(function (x) { return x.id === d.id; });
-          if (sj) ui.social.append(option(d.id, sj.name));
-        });
-        ui.social.value = S.social;
-        ui.social.addEventListener("change", function () {
-          S.social = ui.social.value; sset("grid-social", S.social); clearResult(); renderGrid();
-        });
-        ui.socialF = field("社会の科目", ui.social);
-        ui.socialF.hidden = !presetHasSocial();
-        ctl.append(ui.socialF);
+        ui.slots = h("div", {class: "sg-slots"});
+        ctl.append(ui.slots);
+        renderSlots();
       }
       ui.avg = h("label", {class: "sg-chk"}, h("input", {type: "checkbox"}), h("span", {text: "平均点を出す"}));
       ui.avg.firstChild.checked = S.avgOn;
