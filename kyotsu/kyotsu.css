@@ -224,3 +224,9 @@ main section.card[id] { scroll-margin-top: 16px; }
 .rate-legend .lg.r-hi { background: var(--r-hi); border-color: transparent; }
 .rate-legend .lg.r-mid { background: var(--r-mid); border-color: transparent; }
 .rate-legend .lg.r-lo { background: var(--r-lo); border-color: transparent; }
+
+/* 解説動画の一覧：まだのマスは「Coming soon」（サムネと同じ大きさの枠） */
+.vtable td.vt-none { vertical-align: top; }
+.vt-soon { display: flex; align-items: center; justify-content: center; width: 208px; aspect-ratio: 16 / 9; border: 1px dashed var(--line-strong);
+           border-radius: 8px; background: var(--surface-2); }
+.vt-soon span { font-size: 14px; font-weight: 700; letter-spacing: .06em; color: var(--faint); font-family: var(--sans); }
