@@ -1,0 +1,455 @@
+/* 無機化学のページ（muki/）だけの見た目。色・書体・段組みは ../style.css と ../kyotsu/kyotsu.css の変数を使う。
+ * 札：酸化還元＝藍青の塗り、酸塩基＝藍青の枠、覚える＝灰色の枠。 */
+
+/* ---------- 化学式 ---------- */
+.muki sub, .muki sup { font-size: .72em; line-height: 0; position: relative; vertical-align: baseline; }
+.muki sub { top: .28em; }
+.muki sup { top: -.5em; }
+.muki .f { white-space: nowrap; }
+.muki .f-w { white-space: normal; }
+
+/* ---------- 札 ---------- */
+.tag { display: inline-block; font-size: 13px; font-weight: 700; line-height: 1; padding: 6px 10px; border-radius: 4px;
+       border: 1.5px solid; white-space: nowrap; letter-spacing: .02em; vertical-align: baseline; }
+.tag-rd { background: var(--accent-fill); border-color: var(--accent-fill); color: var(--on-accent); }
+.tag-ab { background: transparent; border-color: var(--accent); color: var(--accent); }
+.tag-mem { background: transparent; border-color: var(--faint); color: var(--sub); }
+.tag-in { font-size: 12px; padding: 3px 7px; margin: 0 2px; position: relative; top: -1px; }
+
+/* ---------- 反応1つの行：左に札と名前、右に式と説明 ---------- */
+.rx { display: grid; grid-template-columns: 188px minmax(0, 1fr); gap: 0 24px; padding: 22px 0; border-top: 1px solid var(--line); }
+.card > h2 + .rx { border-top: 0; padding-top: 0; }
+.card > .rx { grid-column: 2; }
+.rx-l { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.rx-l .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.rx-name { font-weight: 700; font-size: 16px; line-height: 1.55; }
+.rx-r { min-width: 0; }
+.rx-r > p { margin: 0 0 10px; }
+.rx-r > p:last-child { margin-bottom: 0; }
+
+/* ---------- 式：半反応式は小さめ・灰色、イオン反応式は標準、化学反応式は濃く大きく ---------- */
+.eqs { margin: 6px 0 14px; padding: 10px 16px; background: var(--accent-soft); border-radius: 6px; }
+.eq { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 0 16px; padding: 3px 0; }
+.eqf { min-width: 0; overflow-x: auto; overflow-y: hidden; }
+.eqk { font-size: 12px; color: var(--sub); white-space: nowrap; letter-spacing: .04em; }
+.eq-half .eqf { font-size: 15px; color: var(--sub); }
+.eq-ion .eqf { font-size: 17px; color: var(--ink); }
+.eq-chem .eqf { font-size: 19px; font-weight: 700; color: var(--ink); }
+.eq-chem .eqk { color: var(--sub); }
+.eqs + p, .eqs + .eqs { margin-top: 6px; }
+
+/* ---------- 本文 ---------- */
+.muki .card > ol, .muki .card > ul { margin: 0 0 14px; padding-left: 1.5em; }
+.muki .card li { margin: 4px 0; }
+.muki .card table { white-space: normal; }
+.muki .card td:first-child { font-weight: 400; }
+.muki .card td, .muki .card th { vertical-align: top; }
+.muki .card th { white-space: normal; }
+.muki .card td:first-child, .muki .card th:first-child { padding-left: 0; }
+.muki table.redox td:first-child { font-weight: 700; }
+.pagelist { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 14px 28px; margin: 0; }
+.pagelist dt { font-weight: 700; margin: 0; }
+.pagelist dt a { text-decoration: none; border-bottom: 1px solid var(--line-strong); color: var(--ink); }
+.pagelist dt a:hover { border-bottom-color: var(--ink); }
+.pagelist dd { margin: 0; color: var(--sub); font-size: 16px; line-height: 1.7; }
+
+/* ---------- 写真 ---------- */
+.photos { display: flex; flex-wrap: wrap; gap: 16px; margin: 8px 0 16px; }
+.photo { margin: 0; flex: 1 1 200px; max-width: 320px; min-width: 0; }
+.photo img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 4px; background: var(--surface-2); }
+.photo figcaption { margin-top: 6px; font-size: 14px; line-height: 1.5; color: var(--sub); }
+.credits, .related { padding: 32px 0 8px; border-top: 1px solid var(--line); }
+.credits h2, .related h2 { font-size: 16px; margin: 0 0 8px; }
+.credits ul { margin: 0; padding-left: 1.3em; font-size: 14px; color: var(--sub); line-height: 1.7; }
+.related .chips { margin-top: 8px !important; }
+
+/* ---------- 過去問の表 ---------- */
+.kk-wrap { margin-top: 6px; }
+.kk { font-size: 15px; }
+.kk th { white-space: nowrap; }
+.kk td { vertical-align: top; padding: 11px 10px; font-weight: 400; }
+.kk td:first-child { font-weight: 400; }
+.kk .yr { font-weight: 700; font-size: 17px; margin-right: 8px; }
+.kk .ex { color: var(--sub); }
+.kk .c-year .ex, .kk .c-year .sub { display: block; font-size: 13px; line-height: 1.5; color: var(--faint); margin: 0; }
+.kk .c-q b { display: block; white-space: nowrap; }
+.kk .c-q .nums, .kk .c-q .sel { display: block; font-size: 13px; color: var(--faint); line-height: 1.5; }
+.kk .c-sum { min-width: 14em; line-height: 1.6; }
+.kk .c-tool .tag { margin: 0 4px 4px 0; }
+.kk .c-rate { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.kk .c-pdf a, .kk .c-vid a { display: inline-block; white-space: nowrap; }
+.kk .c-field { font-size: 14px; line-height: 1.6; }
+.kk .c-field a { color: var(--sub); }
+.kk .yr-row th { text-align: left; padding: 22px 0 6px; font-size: 15px; color: var(--ink); border-bottom: 1px solid var(--line-strong); }
+.kk .yr-row .ex { margin-left: 4px; font-weight: 400; }
+.kk tr.yr-row + tr td { padding-top: 14px; }
+
+/* ---------- 狭い画面 ---------- */
+@media (max-width: 760px) {
+  .rx { grid-template-columns: minmax(0, 1fr); gap: 10px 0; padding: 20px 0; }
+  .card > h2 + .rx { padding-top: 4px; }
+  .card > .rx { grid-column: 1; }
+  .rx-l { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+  .eq { grid-template-columns: minmax(0, 1fr); }
+  .eqk { order: -1; font-size: 11px; }
+  .eq-half .eqf { font-size: 14px; }
+  .eq-ion .eqf { font-size: 16px; }
+  .eq-chem .eqf { font-size: 17px; }
+  .pagelist { grid-template-columns: minmax(0, 1fr); gap: 2px 0; }
+  .pagelist dd { margin-bottom: 14px; }
+  .muki .card table { white-space: normal; }
+}
+
+/* 過去問の表：幅が足りないときは1設問を1まとまりに */
+@media (max-width: 720px) {
+  .kk-wrap { overflow: visible; }
+  .kk, .kk tbody, .kk tr, .kk td, .kk th { display: block; }
+  .kk { white-space: normal; }
+  .kk thead { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+  .kk tr:not(.yr-row) { padding: 16px 0; border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 4px 0; }
+  .kk tr:not(.yr-row) > td { flex: 0 0 100%; }
+  .kk tr:not(.yr-row) > td.c-pdf, .kk tr:not(.yr-row) > td.c-vid { flex: 0 0 auto; }
+  .kk td { padding: 0; border: 0; min-width: 0; }
+  .kk td:empty { display: none; }
+  .kk .c-year, .kk .c-q { display: inline; }
+  .kk .c-year { grid-row: 1; font-size: 15px; }
+  .kk .c-year .yr, .kk .c-year .ex, .kk .c-year .sub { display: inline; font-size: 15px; color: var(--ink); margin-right: 6px; }
+  .kk .c-year .ex, .kk .c-year .sub { color: var(--sub); font-weight: 400; }
+  .kk .c-q b { display: inline; font-size: 16px; }
+  .kk .c-q .nums, .kk .c-q .sel { display: inline; margin-left: 8px; }
+  .kk .c-sum { min-width: 0; font-size: 16px; }
+  .kk .c-tool { margin-top: 2px; }
+  .kk .c-rate::before { content: "正答率 "; color: var(--faint); font-size: 13px; }
+  .kk .c-field::before { content: "分野 "; color: var(--faint); font-size: 13px; }
+  .kk .c-pdf, .kk .c-vid { display: inline-block; margin: 4px 16px 0 0; }
+  .kk .c-pdf a, .kk .c-vid a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border: 1px solid var(--line-strong); border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 14px; }
+  .kk .yr-row { display: block; }
+  .kk .yr-row th { display: block; padding: 20px 0 6px; }
+}
+
+/* ---------- 進む向きのリンク・同じ型の反応 ---------- */
+.kata { display: flex; flex-direction: column; gap: 2px; }
+.kata a { font-size: 13px; line-height: 1.5; color: var(--accent); text-decoration: none; border-bottom: 1px dotted var(--accent); align-self: flex-start; }
+.kata a:hover { border-bottom-style: solid; }
+.rx-same { margin: 14px 0 0 !important; padding-top: 10px; border-top: 1px dashed var(--line-strong); font-size: 14px; color: var(--sub); line-height: 1.8; }
+.katalist { list-style: none; margin: 0 0 14px; padding: 0; columns: 2; column-gap: 32px; }
+.katalist li { margin: 0 0 6px; break-inside: avoid; font-size: 16px; line-height: 1.6; }
+.rx:target { box-shadow: -14px 0 0 -11px var(--accent); }
+
+/* ---------- 手順（STEP 1, 2, …） ---------- */
+.steps { margin: 4px 0 18px; }
+.steps-t { font-weight: 700; margin: 0 0 10px !important; }
+.steps-sum { border: 1.5px solid var(--accent); border-radius: 8px; padding: 12px 18px 12px 12px; margin: 0 0 20px; }
+.steps-sum ol { margin: 0; padding-left: 1.8em; }
+.steps-sum li { margin: 3px 0; }
+.step { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 0 18px; position: relative; padding-bottom: 22px; }
+.step:last-child { padding-bottom: 0; }
+.step::before { content: ""; position: absolute; left: 35px; top: 30px; bottom: -2px; width: 2px; background: var(--line-strong); }
+.step:last-child::before { display: none; }
+.step-n { position: relative; z-index: 1; }
+.step-n span { display: inline-flex; align-items: center; justify-content: center; min-width: 72px; height: 28px; border-radius: 999px;
+               background: var(--accent-fill); color: var(--on-accent); font-size: 12px; font-weight: 700; letter-spacing: .04em; }
+.step-h { margin: 2px 0 6px; font-size: 17px; line-height: 1.5; }
+.step-b > p { margin: 0 0 10px; }
+.step-b > :last-child { margin-bottom: 0; }
+
+/* ---------- 疑問 ---------- */
+.faq { margin: 4px 0 14px; }
+.qa { padding: 18px 0; border-top: 1px solid var(--line); }
+.qa:first-child { border-top: 0; padding-top: 4px; }
+.qa-q { display: flex; gap: 12px; align-items: baseline; font-weight: 700; font-size: 17px; line-height: 1.6; }
+.qa-n { flex: none; color: var(--accent); font-size: 15px; min-width: 2em; }
+.qa-a { margin: 8px 0 0 calc(2em + 12px); }
+.qa-a > p { margin: 0 0 10px; }
+
+@media (max-width: 760px) {
+  .katalist { columns: 1; }
+  .step { grid-template-columns: 56px minmax(0, 1fr); gap: 0 12px; }
+  .step::before { left: 27px; }
+  .step-n span { min-width: 56px; }
+  .qa-a { margin-left: 0; }
+}
+
+/* 表の見出しと年度の列は折り返さない */
+.muki .card .kk th { white-space: nowrap; }
+.kk .c-year { white-space: nowrap; }
+@media (max-width: 760px) {
+  .photo { flex: 1 1 calc(50% - 8px); }
+}
+
+/* ---------- 図（SVG・写真）。SVG の色はクラスだけ。原子の色は分子・構造の図だけ ---------- */
+:root { --atom-o: #cf5b45; --atom-h: #6c717c; --atom-cl: #2f9a58; --atom-s: #b8941a; --atom-n: #3c6fcb; --atom-c: #454a55; --atom-ag: #8a909c; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --atom-o: #e8917d; --atom-h: #a3a8b3; --atom-cl: #6cc58b; --atom-s: #dcc25c; --atom-n: #86a8ef; --atom-c: #b4b9c4; --atom-ag: #b4b9c4; }
+}
+.fig { margin: 8px 0 18px; }
+.fig-svg svg { display: block; width: 100%; max-width: 520px; height: auto; }
+.fig img { display: block; width: 100%; max-width: 420px; height: auto; border-radius: 4px; background: var(--surface-2); }
+.fig figcaption { margin-top: 8px; font-size: 14px; line-height: 1.6; color: var(--sub); }
+.fig-svg text { font-family: var(--sans); }
+.f-ink { fill: var(--ink); } .f-mute { fill: var(--sub); } .f-accent { fill: var(--accent); }
+.f-band { fill: var(--accent-soft); } .f-bg { fill: var(--bg); }
+.s-ink { stroke: var(--ink); } .s-mute { stroke: var(--faint); } .s-accent { stroke: var(--accent); }
+.fig-svg-el .f-band.s-accent, .fig-svg-el .f-bg.s-ink, .fig-svg-el .f-bg.s-mute { }
+.a-o-f { fill: var(--atom-o); } .a-n-f { fill: var(--atom-n); opacity: .55; } .a-cl-f { fill: var(--atom-cl); opacity: .28; }
+.a-o-t { fill: var(--atom-o); } .a-h-t { fill: var(--atom-h); } .a-cl-t { fill: var(--atom-cl); }
+.a-s-t { fill: var(--atom-s); } .a-n-t { fill: var(--atom-n); } .a-c-t { fill: var(--atom-c); } .a-ag-t { fill: var(--atom-ag); }
+.fig-svg .a-n-f.s-ink { opacity: 1; fill: color-mix(in srgb, var(--atom-n) 40%, var(--bg)); }
+.fig-svg .a-o-f.s-ink { opacity: 1; }
+
+/* ---------- たたむ部品：疑問・補足 ---------- */
+details.qa, details.more { border-top: 1px solid var(--line); padding: 0; }
+details.qa:first-child { border-top: 0; }
+details.qa > summary, details.more > summary { cursor: pointer; list-style: none; display: flex; gap: 12px; align-items: baseline; padding: 14px 0; font-weight: 700; font-size: 17px; line-height: 1.6; }
+details > summary::-webkit-details-marker { display: none; }
+details.qa > summary::after, details.more > summary::after { content: "＋"; margin-left: auto; color: var(--accent); flex: none; padding-left: 12px; }
+details[open].qa > summary::after, details[open].more > summary::after { content: "－"; }
+details.qa > summary:hover, details.more > summary:hover { color: var(--accent); }
+details.more { border: 1px solid var(--line-strong); border-radius: 8px; margin: 10px 0 14px; }
+details.more > summary { padding: 12px 16px; font-size: 16px; }
+.more-b { padding: 0 16px 14px; }
+.more-b > :last-child { margin-bottom: 0; }
+details.qa .qa-a { margin: 0 0 14px calc(2em + 12px); }
+@media (max-width: 760px) { details.qa .qa-a { margin-left: 0; } }
+
+/* ---------- このページの反応 ---------- */
+.rxl td, .rxl th { vertical-align: top; }
+.rxl .rl-n { font-weight: 700; }
+.rxl .rl-n a { text-decoration: none; border-bottom: 1px solid var(--line-strong); color: var(--ink); }
+.rxl .rl-n a:hover { border-bottom-color: var(--ink); }
+.rxl .rl-t .tag { margin: 0 4px 4px 0; }
+.rxl .rl-k a { display: block; font-size: 14px; line-height: 1.6; margin-bottom: 2px; }
+@media (max-width: 720px) {
+  .rxl, .rxl tbody, .rxl tr, .rxl td { display: block; }
+  .rxl thead { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+  .rxl tr { padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .rxl td { padding: 0; border: 0; }
+  .rxl td:empty { display: none; }
+  .rxl .rl-t { margin-top: 6px; }
+  .rxl .rl-k a { display: inline-block; margin-right: 12px; }
+}
+
+/* ---------- 反応名のあとの札・進む向き ---------- */
+.rx-l { gap: 6px; }
+.rx-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+.rx-meta .tag-in { margin: 0; top: 0; }
+.rx-meta .kt { font-size: 13px; line-height: 1.5; color: var(--accent); text-decoration: none; border-bottom: 1px dotted var(--accent); }
+.rx-meta .kt:hover { border-bottom-style: solid; }
+.tool-note { margin: 0 0 14px !important; font-size: 15px; color: var(--sub); }
+.tool-note .tag-in { top: -1px; }
+
+/* ---------- ページ上部の目次（節と、その節の反応） ---------- */
+.toc2 { margin: 0 0 8px; padding: 0 0 20px; }
+.toc2-h { margin: 0 0 8px; font-size: 13px; font-weight: 700; letter-spacing: .08em; color: var(--faint); }
+.toc2 ul { list-style: none; margin: 0; padding: 0; }
+.toc2 li { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 0 20px; padding: 7px 0; border-top: 1px solid var(--line); align-items: baseline; }
+.toc2 li:first-child { border-top: 0; }
+.toc2-s { font-weight: 700; font-size: 16px; line-height: 1.6; }
+.toc2-s a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line-strong); }
+.toc2-s a:hover { border-bottom-color: var(--ink); }
+.toc2-r { font-size: 14px; line-height: 1.75; color: var(--faint); }
+.toc2-r a { color: var(--sub); text-decoration: none; }
+.toc2-r a:hover { color: var(--accent); text-decoration: underline; }
+.toc2-o .toc2-s { color: var(--faint); font-weight: 400; font-size: 14px; }
+.toc2-note { margin: 8px 0 0; font-size: 15px; color: var(--sub); }
+@media (max-width: 760px) {
+  .toc2 li { grid-template-columns: minmax(0, 1fr); padding: 8px 0; }
+}
+/* 広い画面は左の固定の目次、それ以外は上の目次だけにする（js の丸い目次は隠す） */
+@media (max-width: 1199px) { body.has-toc .toc { display: none; } }
+
+/* ---------- 導き方のたたみ ---------- */
+details.fold { margin: 6px 0 12px; }
+details.fold > summary { cursor: pointer; font-size: 14px; color: var(--accent); padding: 4px 0; list-style: none; }
+details.fold > summary::before { content: "＋ "; }
+details.fold[open] > summary::before { content: "－ "; }
+details.fold > summary::-webkit-details-marker { display: none; }
+details.fold .eqs { margin-top: 4px; }
+
+/* ---------- 学ぶ順番（道すじ） ---------- */
+.roadmap { margin: 8px 0 14px; }
+.rm-stage { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 0 16px; align-items: start; }
+.rm-t { margin: 8px 0 0 !important; font-size: 13px; font-weight: 700; letter-spacing: .04em; color: var(--faint); line-height: 1.5; }
+.rm-nodes { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.rm-node { flex: 1 1 240px; min-width: 0; border: 1px solid var(--line-strong); border-radius: 6px; padding: 8px 12px 9px; }
+.rm-a { font-weight: 700; font-size: 16px; line-height: 1.5; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line-strong); }
+.rm-a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.rm-c { margin: 4px 0 0 !important; font-size: 14px; line-height: 1.65; color: var(--sub); }
+.rm-k { color: var(--accent); font-weight: 700; }
+.rm-small { flex: 0 0 auto; padding: 5px 12px; }
+.rm-small .rm-a { font-size: 15px; border-bottom: 0; }
+.rm-down { position: relative; height: 22px; margin-left: 56px; }
+.rm-down::before { content: ""; position: absolute; left: 0; top: 2px; bottom: 7px; width: 2px; background: var(--line-strong); }
+.rm-down::after { content: ""; position: absolute; left: -4px; bottom: 2px; border: 5px solid transparent; border-top: 7px solid var(--line-strong); border-bottom: 0; }
+@media (max-width: 760px) {
+  .rm-stage { grid-template-columns: minmax(0, 1fr); }
+  .rm-t { margin: 0 0 6px !important; }
+  .rm-node { flex-basis: 100%; }
+  .rm-small { flex-basis: auto; }
+  .rm-down { margin-left: 12px; }
+}
+
+/* ======== 見せ方の整理（2026-11-23）======== */
+/* 札は節の見出しの横に1回 */
+.h2-tags { display: flex; flex-wrap: wrap; gap: 4px 6px; margin-top: 8px; }
+.h2-tags .tag { font-size: 12px; padding: 4px 8px; }
+.card > h2 .h2-tags { font-weight: 400; }
+
+/* 地図の下の1行・先に要るもの・次に読むページ */
+.toc1-box { margin: 0 0 4px; padding: 14px 0 18px; border-top: 1px solid var(--line); }
+.toc1 { margin: 0 0 6px; font-size: 15px; line-height: 1.9; color: var(--faint); }
+.toc1 a { color: var(--sub); text-decoration: none; border-bottom: 1px solid var(--line-strong); }
+.toc1 a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.pre, .next { margin: 0; font-size: 15px; line-height: 1.8; color: var(--sub); }
+.next { margin-top: 8px; padding: 12px 0 0; border-top: 1px solid var(--line); }
+.pre a, .next a { color: var(--accent); }
+
+/* 式の出し方（たたむ） */
+details.how { margin: 8px 0 4px; border-top: 1px dashed var(--line-strong); }
+details.how > summary { cursor: pointer; list-style: none; font-size: 14px; color: var(--accent); padding: 8px 0 4px; }
+details.how > summary::-webkit-details-marker { display: none; }
+details.how > summary::before { content: "＋ "; }
+details.how[open] > summary::before { content: "－ "; }
+.how-b { padding-top: 4px; }
+.how-b > :last-child { margin-bottom: 0; }
+
+/* 過去問：古い年度はたたむ */
+details.kk-old { margin-top: 14px; border-top: 1px solid var(--line); }
+details.kk-old > summary { cursor: pointer; list-style: none; padding: 12px 0 4px; font-size: 15px; font-weight: 700; color: var(--accent); }
+details.kk-old > summary::-webkit-details-marker { display: none; }
+details.kk-old > summary::before { content: "＋ "; }
+details.kk-old[open] > summary::before { content: "－ "; }
+
+/* 表のセルの小さい写真 */
+.thumb { display: inline-block; line-height: 0; }
+.thumb img { width: 84px; height: 64px; object-fit: cover; border-radius: 4px; background: var(--surface-2); display: block; }
+.thumb:hover img { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* 学ぶ順番：左に段の名前、右に「問い → 答えられなければ、このページ」 */
+.roadmap { margin: 8px 0 12px; }
+.rm-stage { display: grid; grid-template-columns: 108px minmax(0, 1fr); gap: 0 16px; align-items: start; padding: 4px 0; }
+.rm-t { margin: 3px 0 0 !important; font-size: 13px; font-weight: 700; letter-spacing: .04em; color: var(--faint); line-height: 1.5; }
+.rm-b > p, .rm-b > details { margin: 0 0 8px; }
+.rm-q { font-size: 16px; line-height: 1.7; }
+.rm-k { display: inline-block; margin-right: 10px; font-size: 12px; font-weight: 700; letter-spacing: .04em; color: var(--accent); white-space: nowrap; }
+details.rm-ans > summary { cursor: pointer; list-style: none; font-size: 14px; color: var(--accent); }
+details.rm-ans > summary::-webkit-details-marker { display: none; }
+details.rm-ans > summary::before { content: "＋ "; }
+details.rm-ans[open] > summary::before { content: "－ "; }
+.rm-ans-b { padding: 6px 0 2px 16px; border-left: 2px solid var(--line-strong); margin-top: 6px; font-size: 15px; }
+.rm-ans-b .eqs { margin: 4px 0; }
+.rm-go { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
+.rm-go .rm-a { display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border: 1px solid var(--line-strong); border-radius: 6px; font-size: 15px; font-weight: 700; color: var(--ink); text-decoration: none; }
+.rm-go .rm-a:hover { border-color: var(--accent); color: var(--accent); }
+.rm-down { height: 24px; margin-left: 54px; position: relative; }
+.ptable { list-style: none; margin: 0 0 8px; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0; border: 1px solid var(--line-strong); border-radius: 6px; overflow: hidden; }
+.ptable li { border-left: 1px solid var(--line-strong); }
+.ptable li:first-child { border-left: 0; }
+.ptable a { display: flex; flex-direction: column; gap: 2px; padding: 8px 8px 9px; text-decoration: none; color: var(--ink); height: 100%; }
+.ptable a:hover { background: var(--accent-soft); }
+.pt-g { font-size: 12px; color: var(--faint); font-weight: 700; line-height: 1.4; }
+.pt-n { font-size: 14px; font-weight: 700; line-height: 1.4; }
+@media (max-width: 760px) {
+  .rm-stage { grid-template-columns: minmax(0, 1fr); }
+  .rm-t { margin: 0 0 6px !important; }
+  .rm-down { margin-left: 10px; }
+  .ptable { grid-template-columns: minmax(0, 1fr); }
+  .ptable li { border-left: 0; border-top: 1px solid var(--line-strong); }
+  .ptable li:first-child { border-top: 0; }
+  .ptable a { flex-direction: row; gap: 10px; align-items: baseline; padding: 9px 12px; }
+  .pt-g { min-width: 6.5em; }
+}
+
+.fig-svg .lbl { paint-order: stroke; stroke: var(--bg); stroke-width: 5px; stroke-linejoin: round; }
+.fig-svg a { cursor: pointer; }
+.fig-svg a:hover line, .fig-svg a:hover polyline { opacity: .7; }
+
+.fig-svg:has(svg[aria-label*="酸化数"]) .fig-n svg, .fig-svg:not(.has-wide):has(svg[aria-label*="酸化数"]) svg { max-width: 440px; }
+
+.f-band2 { fill: var(--accent-soft); opacity: .55; }
+.fig .fig-w { display: none; }
+@media (min-width: 900px) {
+  .has-wide .fig-n { display: none; }
+  .has-wide .fig-w { display: block; }
+  .has-wide .fig-w svg { max-width: 780px; }
+}
+
+/* ---------- 気体の表（rxtable）：行を開くと式と説明が出る ---------- */
+.card > .rxt { grid-column: 2; }
+.rxt { margin: 6px 0 14px; border-top: 1px solid var(--line-strong); }
+.rxt-head, .rxt-row > summary { display: grid; grid-template-columns: 4.6em minmax(0, 1fr) 3.4em 3.4em 1.6em; gap: 0 10px; align-items: baseline; }
+.rxt-head { padding: 8px 0; font-size: 16px; color: var(--sub); border-bottom: 1px solid var(--line-strong); }
+.rxt-head .rxt-c { font-size: .875em; }
+.rxt-head::after { content: ""; }
+.rxt-row { border-bottom: 1px solid var(--line); }
+.rxt-row > summary { cursor: pointer; list-style: none; padding: 12px 0; font-size: 16px; line-height: 1.6; }
+.rxt-row > summary::-webkit-details-marker { display: none; }
+.rxt-row > summary::after { content: "＋"; color: var(--accent); text-align: right; }
+.rxt-row[open] > summary::after { content: "－"; }
+.rxt-row > summary:hover .rxt-gas { color: var(--accent); }
+.rxt-gas { font-weight: 700; }
+.rxt-c { min-width: 0; overflow-wrap: anywhere; }
+.rxt-heat, .rxt-collect { white-space: nowrap; }
+.rxt-body { padding: 4px 0 16px 0; }
+.rxt-body > p { margin: 0 0 10px; }
+.rxt-name { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-weight: 700; margin: 0 0 8px; }
+.rxt-row:target { box-shadow: -14px 0 0 -11px var(--accent); }
+@media (max-width: 760px) {
+  .card > .rxt { grid-column: 1; }
+  .rxt-head, .rxt-row > summary { grid-template-columns: 3.6em minmax(0, 1fr) 2.6em 2.6em 1.2em; gap: 0 6px; }
+  .rxt-head, .rxt-row > summary { font-size: 15px; }
+  .rxt-row > summary { padding: 12px 0; }
+}
+
+/* ---------- 理論とのつながりのリンク（灰色の細い枠＋下線） ---------- */
+.rl { display: inline-block; font-size: 13px; line-height: 1.5; color: var(--sub); text-decoration: underline; text-underline-offset: 2px; border: 1px solid var(--line-strong); border-radius: 6px; padding: 1px 7px; }
+.rl:hover { color: var(--accent); border-color: var(--accent); }
+.h2-riron { display: inline-flex; flex-wrap: wrap; gap: 4px 6px; margin: 8px 0 0 10px; font-weight: 400; vertical-align: middle; }
+.card > h2 .h2-tags + .h2-riron { margin-left: 6px; }
+
+/* ---------- 地図の点・矢印は押せる／飛んだ先を示す ---------- */
+.fig-svg a { cursor: pointer; outline: none; }
+.fig-svg a:hover rect, .fig-svg a:focus-visible rect { stroke: var(--accent); stroke-width: 4; }
+.fig-svg a:focus-visible line, .fig-svg a:focus-visible polyline { opacity: .7; }
+.rx, section[id], [id^="rx-"] { scroll-margin-top: 80px; }
+.rx:target { background: var(--accent-soft); }
+@media (prefers-reduced-motion: no-preference) {
+  .rx:target { animation: rx-target 3.5s ease-out forwards; }
+  @keyframes rx-target { from { background: var(--accent-soft); } 70% { background: var(--accent-soft); } to { background: transparent; } }
+}
+.maplinks { font-size: 14px; line-height: 1.8; color: var(--sub); margin: -6px 0 18px; }
+.maplinks a { color: var(--accent); }
+
+/* h2 の外に出した札・理論リンク（目次に字が混ざらないように） */
+.h2-meta { grid-column: 1; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin: -6px 0 12px; font-weight: 400; }
+.h2-meta .h2-tags, .h2-meta .h2-riron { margin: 0; display: inline-flex; flex-wrap: wrap; gap: 4px 6px; }
+.card > h2 + .h2-meta + .rx { border-top: 0; padding-top: 0; }
+@media (max-width: 760px) { .card > h2 + .h2-meta + .rx { padding-top: 4px; } }
+
+@media (min-width: 1200px) { body.has-toc .toc1 { display: none; } }
+
+/* 過去問の表の「分野」は問うたことの下に小さく */
+.kk .c-sum .c-field { display: block; margin-top: 4px; font-size: 13px; color: var(--faint); line-height: 1.5; }
+.kk .c-sum .c-field a { color: var(--sub); }
+@media (max-width: 720px) { .kk .c-field::before { content: none; } }
+
+/* スマホで表の短い列が1字ずつ折れない：見出しは折らず、各列に2字ぶんの幅を保つ */
+@media (min-width: 561px) and (max-width: 720px) {
+  .muki .card table th { white-space: nowrap; }
+  .muki .card table th, .muki .card table td { min-width: 2.4em; }
+}
+@media (min-width: 561px) and (max-width: 720px) { .muki .card table td { word-break: keep-all; overflow-wrap: break-word; } }
+
+/* スマホ（560px 以下）：ふつうの表は「1行＝1まとまり」。各セルの前に列の見出しを小さく出す */
+@media (max-width: 560px) {
+  .tablewrap { overflow: visible; }
+  .tablewrap table:not(.kk) { display: block; width: 100%; white-space: normal; }
+  .tablewrap table:not(.kk) thead { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+  .tablewrap table:not(.kk) tbody, .tablewrap table:not(.kk) tr, .tablewrap table:not(.kk) td, .tablewrap table:not(.kk) th { display: block; width: auto; min-width: 0; }
+  .tablewrap table:not(.kk) tr { padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .tablewrap table:not(.kk) td { padding: 2px 0; border: 0; text-align: left; }
+  .tablewrap table:not(.kk) td:first-child { font-weight: 700; font-size: 17px; }
+  .tablewrap table:not(.kk) td[data-label]::before { content: attr(data-label) "　"; font-size: 13px; color: var(--faint); font-weight: 400; }
+  .tablewrap table:not(.kk) td:empty { display: none; }
+  .tablewrap table:not(.kk) img, .tablewrap table:not(.kk) .thumb img { max-width: 140px; height: auto; }
+}
