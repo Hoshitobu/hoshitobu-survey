@@ -39,7 +39,7 @@ a { color: var(--accent); text-underline-offset: 3px; text-decoration-thickness:
 a:hover { color: var(--accent-ink); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-/* ---------- ヘッダー（全ページ共通。夜空の窓の帯。上に出し続ける。Home だけ header.hd-home：窓辺の絵＋夜色の行） ---------- */
+/* ---------- ヘッダー（全ページ共通。夜空の窓の帯。上に出し続ける。Home だけ header.hd-home：絵の上では透明・下へ送ると夜色） ---------- */
 /* 帯の上の色は、ライトでもダークでも同じ（帯はいつも夜）。nav の文字 #e9ecf8・サイト名 #fff は、帯の絵の上でも 4.5:1 以上 */
 :root { --band-ink: #ffffff; --band-sub: #e9ecf8; --band-line: rgba(233,236,248,.42); --band-night: #14163a;
         --hdr-h: 56px; }   /* --hdr-h：スクロール後に上に残るヘッダーの高さ。目次・ページ内リンクの着地をこのぶんずらす */
@@ -55,11 +55,10 @@ body > header nav { margin-left: auto; display: flex; flex-wrap: wrap; align-ite
 body > header nav a { color: var(--band-sub); font-size: 16px; line-height: 1.5; text-decoration: none; padding: 2px 0; border-bottom: 1px solid transparent; }
 body > header nav a:hover { color: var(--band-ink); }
 body > header nav a[aria-current="page"] { color: var(--band-ink); font-weight: 700; border-bottom-color: var(--band-ink); }
-/* Home：上に窓辺の絵、その下に無地の夜色の行。下へ送ると絵だけ流れて、夜色の行が残る */
-body > header.hd-home { --pic: 64px; top: calc(var(--pic) * -1); padding-top: var(--pic); min-height: calc(var(--pic) + 52px);
-         background: var(--band-night); border-bottom: 1px solid #2a2c58; }
-body > header.hd-home::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: var(--pic);
-         background: #0f1030 url(img/band-sill.webp) 100% 100% / cover no-repeat; }
+/* Home：いちばん上（絵の上）では透明、下へ送ると夜色の帯（class on-pic は Home の小さな script が付け外しする。script がなければ夜色のまま） */
+body > header.hd-home { background: var(--band-night); border-bottom: 1px solid #2a2c58; transition: background-color .2s, border-color .2s; }
+body > header.hd-home.on-pic { background: transparent; border-bottom-color: transparent; }
+@media (prefers-reduced-motion: reduce) { body > header.hd-home { transition: none; } }
 
 main { max-width: calc(var(--page) + 32px); margin: 0 auto; padding: 0 16px 96px; }
 
@@ -145,8 +144,7 @@ button.link:hover { color: var(--accent-ink); }
   body > header { --brand-h: 40px; top: calc(var(--brand-h) * -1); padding: 0 16px; min-height: 0; display: block; }
   body > header .brand { height: var(--brand-h); }
   body > header nav { margin-left: 0; padding: 4px 0 8px; }
-  body > header.hd-home { --pic: 44px; --brand-h: 44px; top: calc(var(--pic) * -1); padding-top: 0; min-height: 0; }
-  body > header.hd-home .brand { position: relative; }
+  body > header.hd-home { --brand-h: 44px; }
   .card { grid-template-columns: minmax(0, 1fr); padding: 32px 0; }
   .card > *, .card > h2 { grid-column: 1; grid-row: auto; }
   .inline { flex-direction: column; gap: 0; }
@@ -197,17 +195,20 @@ main section.card[id] { scroll-margin-top: calc(var(--hdr-h) + 16px); }
 .toc ol a { display: inline-flex; align-items: center; min-height: 36px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 999px; font-size: 14px; }
 .toc a:hover { color: var(--ink); }
 .toc-top { display: none; }
-
 @media (min-width: 1200px) {
   body.has-toc main { max-width: calc(var(--page) + 32px + 208px); padding-left: 224px; position: relative; }
   body.has-toc { --label: 176px; --gap: 40px; }
-  .toc { position: fixed; top: calc(var(--hdr-h) + 40px); width: 176px; padding: 0;
-         left: calc(max(0px, (100vw - (var(--page) + 32px + 208px)) / 2) + 16px); }
+  /* 項目が多いページ（集計を見る など）でも、目次が画面の下にはみ出さないよう高さを画面までにし、はみ出す分は目次の中だけで送る。
+     読んでいる項目の点（左に 10px はみ出す）が切れないよう、左に 10px の余白を持たせて位置を 10px 戻す */
+  .toc { position: fixed; top: calc(var(--hdr-h) + 40px); width: 186px; padding: 0 0 0 10px;
+         left: calc(max(0px, (100vw - (var(--page) + 32px + 208px)) / 2) + 6px);
+         max-height: calc(100vh - var(--hdr-h) - 64px); overflow-y: auto; overscroll-behavior: contain;
+         scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
+  .toc ol { margin-bottom: 0; }
   .toc ol { display: block; position: relative; padding-left: 20px; border-left: 2px solid var(--line-strong); }
   .toc ol li { position: relative; }
   .toc ol a { display: block; min-height: 0; padding: 7px 0; border: 0; border-radius: 0; font-size: 14px; line-height: 1.5; }
-  .toc ol a.is-on { color: var(--accent); font-weight: 700; }
-  .toc ol a.is-on::before { content: ""; position: absolute; left: -27px; top: 50%; width: 12px; height: 12px; margin-top: -6px;
+  .toc ol a.is-on { color: var(--accent); font-weight: 700; }  .toc ol a.is-on::before { content: ""; position: absolute; left: -27px; top: 50%; width: 12px; height: 12px; margin-top: -6px;
                             border-radius: 50%; background: var(--accent-fill); box-shadow: 0 0 0 4px var(--accent-soft); }
   .toc-top { display: inline-block; margin-top: 16px; padding-left: 22px; font-size: 14px; font-weight: 700; color: var(--accent); }
 }

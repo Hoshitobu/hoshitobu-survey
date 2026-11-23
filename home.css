@@ -1,0 +1,117 @@
+/* トップ（index.html）の先頭：夜の汽水湖の絵を画面に固定し、下へ送ると、スタンド→窓台→机が上がってくる。
+ * 正本の見本：_横断/サイト_入口ページ/home_mock/（2.html・mock.css・README.md）。生成は _横断/サイト_過去問演習/work/build_pages.py の build_top()。
+ * ヘッダー（絵の上では透明・下へ送ると夜色）は style.css の header.hd-home。
+ * 構造：.bg（固定の絵）／.hero（小見出し・見出し・ボタン）／.desk（机の絵 .desk-pic と、机の左の文 .more、湖面の文 .low）／.sheet（無地の面。ここから先が今の中身） */
+body.home { --hpad: max(16px, calc((100% - var(--page)) / 2)); --minh: 620px; --vh: 100vh; }
+@supports (height: 100svh) { body.home { --vh: 100svh; } }
+
+.home .bg { position: fixed; z-index: -1; left: 0; right: 0; top: 0; height: max(var(--vh), var(--minh));
+            background: #040615 url(img/home-lake.webp) 30% 30% / cover no-repeat; }
+
+/* ---------- 見出しのかたまり ---------- */
+.home .hero { --hdr: 57px; --peek: 0px; color: #fff; display: flex; flex-direction: column; justify-content: flex-start;
+              min-height: calc(max(var(--vh), var(--minh)) - var(--hdr) - var(--peek)); }
+.home .hero-in { max-width: calc(var(--page) + 32px); margin: 0 auto; padding: 0 16px; }
+.home .hero-top { padding: 20px 0 0; }
+.home .hero-kicker { margin: 0 0 10px; font-size: 14px; line-height: 1.7; letter-spacing: .08em; color: #dfe2f6; }
+.home .hero h1 { max-width: 640px; margin: 0 0 16px; font-size: clamp(22px, 7vw, 40px); line-height: 1.35; font-weight: 700; color: #fff; }
+.home .hero h1 .nw { display: inline-block; white-space: nowrap; }
+.home .hero-cta { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; }
+.home .btn { display: inline-flex; align-items: center; min-height: 46px; padding: 0 20px; border-radius: 10px; font-weight: 700; text-decoration: none;
+             white-space: nowrap; border: 1px solid rgba(255,255,255,.5); color: #fff; background: rgba(9,10,30,.5); }
+.home .btn:hover { background: rgba(255,255,255,.14); color: #fff; }
+.home .btn-primary { background: #5a62e8; border-color: #5a62e8; }
+.home .btn-primary:hover { background: #6c74f0; }
+.home .hero, .home .desk { font-size: 16px; line-height: 1.75; }   /* kyotsu.css は body を 18px にしているので、見本（16px）にそろえる */
+/* 句の切れ目（.c）でだけ折る。添え書きは1文ずつ行を分ける。机の左の文は、そのまま自然に折り返す（見本どおり） */
+.home .hero-cap .ln { display: block; }
+.home .hero-cap .c { display: inline-block; }
+
+/* 広い画面：見出しのかたまり（小見出し・見出し・ボタン）は、ヘッダーの下から 150px に置く。
+   背の低い画面でだけ詰める：ボタンの下の端が、絵の y=440（山並みの線の少し上）より下へ行かないところまで。
+   --ty＝絵の y=440 の画面上の高さ（背景の cover・縦 30% と同じ式）。206px＝かたまりの高さ */
+@media (min-width: 761px) {
+  body.home { --hb: max(var(--vh), var(--minh)); --ih: max(50vw, var(--hb)); --oy: calc((var(--hb) - var(--ih)) * .3);
+              --ty: calc(var(--oy) + var(--ih) * .4583); }
+  .home .hero-top { padding-top: clamp(16px, calc(var(--ty) - var(--hdr) - 206px), 150px); }
+}
+
+/* ---------- 手前の湖面の文：説明文の1つ目（.hero-lead）と、絵の添え書き（.hero-cap）。広い画面では絵と一緒に固定 ---------- */
+.home .low { position: fixed; z-index: 0; left: var(--hpad); right: var(--hpad);
+             bottom: calc(26px + min(0px, 100vh - var(--minh))); bottom: calc(26px + min(0px, var(--vh) - var(--minh)));
+             display: flex; align-items: flex-end; justify-content: space-between; gap: 12px 40px; pointer-events: none;
+             transition: opacity .25s, visibility .25s; }
+.home .hero-lead { margin: 0; font-size: 17px; line-height: 1.8; color: #eef0fa; max-width: 640px; }
+@media (min-width: 761px) { .home .hero-lead .ln { display: block; white-space: nowrap; } .home .hero-lead .c { display: inline-block; } }
+/* 絵の添え書き：小さく静かに。広い画面では右下 */
+.home .hero-cap { margin: 0 0 0 auto; min-width: 0; max-width: 31em; font-size: 13px; line-height: 1.9; letter-spacing: .06em; color: #c9cde3; }
+.home .hero-cap .ln + .ln { margin-top: .5em; }
+/* 下へ送りはじめたら、湖面の文は静かに消える（上がってくるスタンドと重ならない） */
+@media (min-width: 761px) { .home.scrolled .low { opacity: 0; visibility: hidden; } }
+/* 761〜1100px：説明文と横に並べると窮屈なので、説明文の下に置く */
+@media (min-width: 761px) and (max-width: 1100px) {
+  .home .low { display: block; }
+  .home .hero-cap { margin: 10px 0 0; max-width: none; }
+}
+
+/* ---------- 机：湖（固定）の下から、スタンド→窓台→机の天板の順に上がってくる ---------- */
+.home .desk, .home .sheet { position: relative; z-index: 1; }
+.home .desk { --dw: max(100vw, 1280px); --dimg: url(img/home-desk.webp); --dx: 30%; --prot: .12708; --deskh: .19583; --arth: .32292;
+              margin-top: calc(var(--dw) * var(--prot)); }
+.home .desk-pic { position: relative; height: calc(var(--dw) * var(--deskh)); pointer-events: none; }
+.home .desk-pic::before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--dw) * var(--arth));
+                          background: var(--dimg) var(--dx) 100% / var(--dw) auto no-repeat; }
+.home .desk-text { position: absolute; left: 0; right: 0; bottom: 0; top: calc(var(--dw) * .02); display: flex; align-items: center; color: #fff; }
+.home .desk-text .hero-in { width: 100%; }
+.home .more { max-width: 520px; }
+.home .more p { margin: 0 0 8px; color: #e4e6f2; font-size: 15px; line-height: 1.8; }
+.home .more p.safe { margin: 0; font-size: 13px; line-height: 1.7; color: #d6d9ee; }
+.home .sheet { background: var(--bg); }
+
+/* 机の下の無地の面：ここから先は今までのトップの中身 */
+.home .sheet .home-sec:first-of-type { border-top: 0; margin-top: 0; }
+.home .home-sec[id] { scroll-margin-top: calc(var(--hdr-h) + 16px); }
+
+/* 狭い画面では、目次（toc.js が main の先頭に入れる）を上の文から少し離す */
+@media (max-width: 1199px) { .home .sheet main { padding-top: 28px; } }
+
+/* 目次（toc.js）：広い画面では左に固定で出るので、湖と机の上には出さない。無地の面に入ったら出す（.in-sheet は Home の script が付ける）。
+   狭い画面の目次は無地の面（main）の先頭に出るので、そのまま */
+@media (min-width: 1200px) {
+  .home .toc { transition: opacity .2s, visibility .2s; }
+  .home:not(.in-sheet) .toc { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+@media (prefers-reduced-motion: reduce) { .home .low, .home .hero-cap, .home .toc { transition: none; } }
+
+/* ---------- スマホ ---------- */
+@media (max-width: 760px) {
+  body.home { --minh: 560px; }
+  .home .bg { background-image: url(img/home-lake-m.webp); background-position: 50% 30%; }
+  .home .hero { --hdr: 113px; }
+  .home .hero h1 { margin-bottom: 14px; }
+  .home .hero-top { padding: 8px 0 0; }
+  /* 机の絵はスタンド・冊子・マークシートのところ。説明文は机の下の無地に置く */
+  .home .desk { --dw: 100vw; --dimg: url(img/home-desk-m.webp); --dx: 0px; --prot: .31282; --deskh: .48205; --arth: .79487; }
+  .home .desk-text { position: static; display: block; background: var(--bg); padding: 28px 0 0; color: var(--ink); }
+  .home .low { position: static; display: flex; flex-direction: column; align-items: stretch; gap: 0; pointer-events: auto; transition: none; }
+  .home .hero-lead { font-size: 16px; color: var(--ink); max-width: none; margin-bottom: 14px; }
+  .home .more { max-width: none; }
+  .home .more p { color: var(--sub); margin-bottom: 10px; }
+  .home .more p.safe { color: var(--faint); }
+  /* 絵の添え書きは、手前の湖面に左寄せで固定 */
+  .home .hero-cap { position: fixed; left: 16px; right: 16px; max-width: none; margin: 0; pointer-events: none;
+                    bottom: calc(18px + min(0px, 100vh - var(--minh))); bottom: calc(18px + min(0px, var(--vh) - var(--minh)));
+                    font-size: 12px; line-height: 1.7; letter-spacing: .04em; transition: opacity .25s, visibility .25s; }
+  .home .hero-cap .ln + .ln { margin-top: .4em; }
+}
+@media (max-width: 760px) and (min-height: 621px) { .home.scrolled .hero-cap { opacity: 0; visibility: hidden; } }
+@media (max-width: 760px) and (prefers-reduced-motion: reduce) { .home .hero-cap { transition: none; } }
+/* 背の低いスマホ（高さ 620px 以下）：湖面に入りきらないので、机の下の無地のいちばん上に置く */
+@media (max-width: 760px) and (max-height: 620px) {
+  .home .hero-cap { position: static; order: -1; color: var(--faint); margin-bottom: 18px; pointer-events: auto; }
+}
+@media (max-width: 760px) and (max-width: 360px) { .home .hero-cap { bottom: calc(14px + min(0px, 100vh - var(--minh))); bottom: calc(14px + min(0px, var(--vh) - var(--minh))); } }
+@media (max-width: 360px) {
+  .home .btn { padding: 0 13px; font-size: 15px; }
+  .home .hero-cta { gap: 8px; }
+}

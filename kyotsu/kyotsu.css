@@ -124,21 +124,6 @@ main .sg[data-score-grid] .sg-in { height: 48px; font-size: 22px; font-weight: 7
 #matrix-old > .tablewrap { grid-column: 1 / -1; margin-top: 8px; }
 
 /* ---------- トップ ---------- */
-.home .hero { position: relative; margin: 20px 0 8px; border-radius: 16px; overflow: hidden; min-height: 420px; display: flex; align-items: center;
-              background: #11142a; color: #f2f3f8; }
-.home .hero-art { position: absolute; inset: 0; }
-.home .hero-ill { width: 100%; height: 100%; object-fit: cover; display: block; }
-.home .hero-art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10,12,28,.78) 0%, rgba(10,12,28,.45) 45%, rgba(10,12,28,0) 75%); }
-.home .hero-text { position: relative; z-index: 1; padding: 48px 44px; max-width: 560px; }
-.home .hero-kicker { margin: 0 0 10px; font-size: 14px; letter-spacing: .08em; color: #c9cdf5; }
-.home .hero h1 { margin: 0 0 16px; font-size: 40px; line-height: 1.35; font-weight: 700; color: #fff; }
-.home .hero-lead { margin: 0 0 24px; font-size: 17px; line-height: 1.8; color: #e4e6f2; }
-.home .hero-cta { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; }
-.home .btn { display: inline-flex; align-items: center; min-height: 46px; padding: 0 20px; border-radius: 10px; font-weight: 700; text-decoration: none;
-             border: 1px solid rgba(255,255,255,.35); color: #fff; background: rgba(255,255,255,.06); }
-.home .btn:hover { background: rgba(255,255,255,.14); color: #fff; }
-.home .btn-primary { background: #5a62e8; border-color: #5a62e8; }
-.home .btn-primary:hover { background: #6c74f0; }
 .home-sec { padding: 40px 0 8px; border-top: 1px solid var(--line); margin-top: 32px; }
 .home-sec > h2 { font-size: 22px; margin: 0 0 8px; }
 .pick-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 12px; }
@@ -155,30 +140,7 @@ main .sg[data-score-grid] .sg-in { height: 48px; font-size: 22px; font-weight: 7
 .feat:hover .feat-t, .feat:hover .feat-go { color: var(--accent); }
 .feat:hover .feat-ill { outline: 2px solid var(--accent); outline-offset: 2px; }
 .home .vgrid { margin-top: 12px; }
-@media (max-width: 760px) {
-  .home .hero { min-height: 0; flex-direction: column; align-items: stretch; }
-  .home .hero-art { position: relative; height: 140px; }
-  .home .hero-art::after { background: linear-gradient(180deg, rgba(10,12,28,0) 40%, rgba(17,20,42,1) 100%); }
-  .home .hero-text { padding: 8px 20px 28px; }
-  .home .hero h1 { font-size: 28px; }
-  .home .hero-lead { font-size: 16px; }
-}
-
-/* トップの見出し：意味の切れ目でだけ折る。幅に合わせて文字を小さく */
-.home .hero h1 { font-size: clamp(22px, 7vw, 40px); }
-.home .hero h1 .nw { display: inline-block; white-space: nowrap; }
-@media (max-width: 760px) { .home .hero-art { order: -1; } .home .hero-text { padding-top: 4px; } }
-/* 説明文は1文ずつ行を分ける（文の途中で折れないように、広い画面では1文1行） */
-.home .hero-lead .ln { display: block; }
-@media (min-width: 761px) { .home .hero-text { max-width: 640px; } .home .hero-lead .ln { white-space: nowrap; } }
-/* 説明文・呼びかけ・安心の一言：句の切れ目（.c）でだけ折る */
-.home .hero .c { display: inline-block; }
-.home .hero-lead { margin-bottom: 12px; }
-.home .hero-note { margin: 0 0 8px; font-size: 15px; line-height: 1.8; color: #d6d9ee; }
-.home .hero-note .ln { display: block; }
-.home .hero-safe { margin: 0 0 22px; font-size: 13px; line-height: 1.7; color: #aeb2cf; }
-@media (min-width: 761px) { .home .hero-note .ln { white-space: nowrap; } }
-@media (max-width: 360px) { .home .hero-lead { font-size: 15.5px; } .home .hero-note { font-size: 14.5px; } }
+/* トップの先頭（絵・見出し・ボタン・机）は home.css */
 
 /* 平均点の表：得点率で背景色（高い＝緑、低い＝橙。得点を入れる表の藍とは分ける） */
 :root { --r-hi: #c4e8d2; --r-mid: #f9e08a; --r-lo: #f0a090; --r-ink: #15171c; }
@@ -203,15 +165,6 @@ main .sg[data-score-grid] .sg-in { height: 48px; font-size: 22px; font-weight: 7
 .vt-soon { display: flex; align-items: center; justify-content: center; width: 208px; aspect-ratio: 16 / 9; border: 1px dashed var(--line-strong);
            border-radius: 8px; background: var(--surface-2); }
 .vt-soon span { font-size: 14px; font-weight: 700; letter-spacing: .06em; color: var(--faint); font-family: var(--sans); }
-
-/* スマホ：「点数を入れる」ボタンを最初の画面に収める（見出しの直後に出す） */
-@media (max-width: 760px) {
-  .home .hero-text { display: flex; flex-direction: column; }
-  .home .hero-kicker { order: -2; }
-  .home .hero h1 { order: -1; margin-bottom: 14px; }
-  .home .hero-cta { margin-bottom: 18px; }
-  .home .hero-lead, .home .hero-note, .home .hero-safe { order: 1; }
-}
 
 /* 表は幅いっぱいを超えたら表の中だけ横に動かす（ページ全体を広げない） */
 .card > .tablewrap, .tablewrap { min-width: 0; max-width: 100%; }

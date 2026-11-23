@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
-<link rel="stylesheet" href="style.css?v=20261124b">
+<link rel="stylesheet" href="style.css?v=20261124e">
 <meta property="og:image" content="https://hoshitobu.github.io/hoshitobu-survey/img/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -26,8 +26,8 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<script src="sitemap-nav.js?v=20261124b" defer></script>
-<script src="kyotsu/toc.js?v=20261123a" defer></script>
+<script src="sitemap-nav.js?v=20261124e" defer></script>
+<script src="kyotsu/toc.js?v=20261124d" defer></script>
 </head>
 <body>
 <header>
@@ -553,6 +553,25 @@ function card(title, sub, content) {
   return c;
 }
 
+// 科目名から教科を決める（目次のまとまり用）
+function kyoka(s) {
+  let name = "社会";
+  if (/^数学/.test(s)) name = "数学";
+  else if (/^英語/.test(s)) name = "英語";
+  else if (/^国語/.test(s)) name = "国語";
+  else if (/^情報/.test(s)) name = "情報";
+  else if (/^(物理|化学|生物|地学)/.test(s)) name = "理科";
+  return {name};
+}
+// 社会の並び：新しい課程の科目 → その前身の古い課程の科目（B → A）。ここにない科目はこのあとに元の順で
+const normSub = s => s.replace(/[（(].*$/, "").replace(/[\s・、,，]/g, "");
+const SOC_ORDER = ["地理総合・地理探究", "地理B", "地理A",
+                   "歴史総合・日本史探究", "日本史B", "日本史A",
+                   "歴史総合・世界史探究", "世界史B", "世界史A",
+                   "公共・倫理", "倫理",
+                   "公共・政治経済", "政治・経済", "倫理、政治・経済", "現代社会"].map(normSub);
+function grouped(name, el) { el.dataset.tocGroup = name; return el; }
+
 function renderList() {
   const filter = $("subjectFilter").value;
   const view = $("view").value;
@@ -571,15 +590,26 @@ function renderList() {
     STATS.practice.filter(r => r.subject === s).forEach(r => { const l = dispSub(s, r.book); if (!byLabel.has(l)) byLabel.set(l, []); byLabel.get(l).push(r); });
     byLabel.forEach((rows, label) => groups.push([label, rows]));
   }
+  // 並びは元のまま。ただし社会だけは、新しい課程の科目のすぐ下に、それにつながる古い課程の科目を続ける
+  // （歴史総合・世界史探究 → 世界史B → 世界史A のように）。目次は教科（数学・英語・理科・社会・国語・情報）で出す（data-toc-group）
+  const socials = groups.filter(g => kyoka(g[0]).name === "社会");
+  if (socials.length) {
+    const rank = s => { const i = SOC_ORDER.indexOf(normSub(s)); return i < 0 ? SOC_ORDER.length : i; };
+    const sorted = socials.map((g, i) => [g, i]).sort((a, b) => rank(a[0][0]) - rank(b[0][0]) || a[1] - b[1]).map(x => x[0]);
+    const at = groups.indexOf(socials[0]);
+    const rest = groups.filter(g => kyoka(g[0]).name !== "社会");
+    groups.length = 0;
+    groups.push(...rest.slice(0, at), ...sorted, ...rest.slice(at));
+  }
   for (const [s, rows] of groups) {
     // センター英語（筆記200・リスニング50）のように満点の違う年度が混ざるときは行ごとに満点を出す
     const maxes = new Set(rows.map(r => r.max));
     const common = maxes.size === 1 ? rows[0].max : null;
-    $("practice").append(card(common ? `${s}（${common}点満点）` : s, (view === "bands" ? "学力帯別の平均点" : "") + (adjTextsOf(rows.map(r => [r.book, r.subject])).length ? (view === "bands" ? "。" : "") + adjTextsOf(rows.map(r => [r.book, r.subject])).join("") : ""),
+    $("practice").append(grouped(kyoka(s).name, card(common ? `${s}（${common}点満点）` : s,(view === "bands" ? "学力帯別の平均点" : "") + (adjTextsOf(rows.map(r => [r.book, r.subject])).length ? (view === "bands" ? "。" : "") + adjTextsOf(rows.map(r => [r.book, r.subject])).join("") : ""),
       table(rows, [
         {label: "問題集", get: r => common ? r.book : `${r.book}（${r.max}点満点）`},
         {label: "回", get: r => r.round === null ? "" : `第${r.round}回`},
-      ], view)));
+      ], view))));
   }
   if (!honban.length && !subjects.length) {
     const p = document.createElement("div");

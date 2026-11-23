@@ -8,7 +8,8 @@
   function labelOf(s) {
     if (s.dataset && s.dataset.tocLabel) return s.dataset.tocLabel;
     var h = s.matches("h2, h3") ? s : s.querySelector(":scope > h2");
-    return h ? h.textContent.trim() : "";
+    // 目次では「（100点満点）」などの満点の注記を外して短くする（本文の見出しには残る）
+    return h ? h.textContent.trim().replace(/\s*[（(]\s*\d+\s*点満点\s*[）)]\s*$/, "") : "";
   }
   function visible(s) { return !s.closest("[hidden]") && s.offsetParent !== null; }
 
@@ -42,7 +43,7 @@
 
   function build() {
     var found = targets();
-    var k = found.map(labelOf).join("|");
+    var k = found.map(function (s) { return (s.dataset.tocGroup || "") + ":" + labelOf(s); }).join("|");
     if (k === key) return;
     key = k;
     secs = found;
@@ -61,11 +62,17 @@
     nav.hidden = false;
     document.body.classList.add("has-toc");
     ol.textContent = "";
+    // data-toc-group のある節（集計を見るの科目など）は、科目ごとに並べず、教科ごとに1つの項目にまとめる。
+    // 項目は、その教科がページに初めて出る節へ飛ぶ。読んでいる節の教科の項目に点が付く
+    var groupLink = {};
     links = secs.map(function (s, i) {
       if (!s.id) s.id = "sec-" + (i + 1);
+      var g = s.dataset.tocGroup || "";
+      if (g && groupLink[g]) return groupLink[g];
       var li = document.createElement("li"), a = document.createElement("a");
-      a.href = "#" + s.id; a.textContent = labelOf(s);
+      a.href = "#" + s.id; a.textContent = g || labelOf(s);
       li.append(a); ol.append(li);
+      if (g) groupLink[g] = a;
       return a;
     });
     update();
@@ -78,7 +85,21 @@
     var line = window.innerHeight / 3, cur = 0;
     secs.forEach(function (s, i) { if (s.getBoundingClientRect().top <= line) cur = i; });
     if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) cur = secs.length - 1;
-    links.forEach(function (a, i) { a.classList.toggle("is-on", i === cur); if (i === cur) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current"); });
+    var on = links[cur];   // 教科でまとめたときは、同じ a が何度も入っている
+    links.forEach(function (a) { a.classList.toggle("is-on", a === on); if (a === on) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current"); });
+    follow(links[cur]);
+  }
+
+  // 目次が画面より長く、目次の中で送れるとき：読んでいる項目が目次の中で見える位置に来るよう寄せる（ページ自体は動かさない）
+  var lastCur = null;
+  function follow(a) {
+    if (!a || a === lastCur || !nav || nav.scrollHeight <= nav.clientHeight + 1) { lastCur = a; return; }
+    lastCur = a;
+    var nr = nav.getBoundingClientRect(), ar = a.getBoundingClientRect(), pad = 48;
+    if (ar.top < nr.top + pad || ar.bottom > nr.bottom - pad) {
+      var to = nav.scrollTop + (ar.top - nr.top) - nav.clientHeight / 3;
+      nav.scrollTo({top: Math.max(0, to), behavior: "smooth"});
+    }
   }
 
   function start() {

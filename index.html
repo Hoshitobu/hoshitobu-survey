@@ -25,16 +25,19 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
-<link rel="stylesheet" href="style.css?v=20261124b">
-<link rel="stylesheet" href="kyotsu/kyotsu.css?v=20261123a">
-
-<script src="sitemap-nav.js?v=20261124b" defer></script>
-<script src="kyotsu/toc.js?v=20261123a" defer></script>
+<link rel="stylesheet" href="style.css?v=20261124e">
+<link rel="stylesheet" href="kyotsu/kyotsu.css?v=20261124e">
+<link rel="stylesheet" href="home.css?v=20261124e">
+<link rel="preload" as="image" href="img/home-lake.webp" media="(min-width: 761px)">
+<link rel="preload" as="image" href="img/home-lake-m.webp" media="(max-width: 760px)">
+<script src="sitemap-nav.js?v=20261124e" defer></script>
+<script src="kyotsu/toc.js?v=20261124e" defer></script>
 <meta name="google-site-verification" content="FhTG6UnXGEFf9rV8DYRvQ5E9GSjMbBuQYl2MiEfjOA4">
 <!-- 昔のリンク（動画の概要欄など。#つき）から来た人を、点数を入れるページへ送る -->
 <script>if (location.hash && location.hash.length > 1) { location.replace("kakomon.html?view=quick" + location.hash); }</script>
 </head>
 <body class="home">
+<div class="bg" aria-hidden="true"></div>
 <header class="hd-home">
   <div class="brand">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.1 7.4 7.4 2.1-7.4 2.1L12 21.5l-2.1-7.4L2.5 12l7.4-2.1z" fill="currentColor"/></svg>
@@ -49,19 +52,28 @@
     <a href="results.html">集計を見る</a>
   </nav>
 </header>
-<main>
+<script>document.querySelector("header").classList.toggle("on-pic", (window.scrollY || 0) < 24);</script>
 <section class="hero">
-  <div class="hero-text">
+  <div class="hero-top"><div class="hero-in">
     <p class="hero-kicker">共通テスト 2021〜2026</p>
     <h1><span class="nw">共通テストの過去問を、</span><span class="nw">解いて、比べる。</span></h1>
-    <p class="hero-lead"><span class="ln"><span class="c">主な科目の平均点と偏差値、</span><span class="c">設問ごとの正答率</span><span class="c">（2023年以降）。</span></span><span class="ln"><span class="c">点数を入れると、</span><span class="c">全国での位置が</span><span class="c">すぐに分かります。</span></span></p>
-    <p class="hero-note"><span class="ln"><span class="c">あなたが作るサイトです。</span><span class="c">点数を入れる人が増えるほど、</span></span><span class="ln"><span class="c">同じ試験を解いた</span><span class="c">人たちの中での</span><span class="c">分布が、</span><span class="c">はっきり見えてきます。</span></span></p>
-    <p class="hero-safe"><span class="c">名前やメールアドレスは聞きません。</span><span class="c">送るのは、解いた試験</span><span class="c">（問題集・回・科目）と点数、</span><span class="c">学力帯、</span><span class="c">ランダムな回答者コード、</span><span class="c">ランキングに載せるかどうか。</span><span class="c">任意で、</span><span class="c">所要時間・</span><span class="c">解いた月・</span><span class="c">大問ごとの点数・</span><span class="c">ニックネームです。</span><span class="c">過去問演習から送ると</span><span class="c">○×も、</span><span class="c">時間を計ったときは</span><span class="c">大問ごとにかけた時間も</span><span class="c">送られます。</span></p>
     <p class="hero-cta"><a class="btn btn-primary" href="kakomon.html?view=quick">点数を入れる</a><a class="btn" href="#pick">年度・科目を選ぶ</a></p>
-  </div>
-  <div class="hero-art"><img class="hero-ill" src="img/hero_small.jpg" srcset="img/hero_small.jpg 960w, img/hero.jpg 1920w" sizes="(min-width: 900px) 1080px, 100vw" alt="" width="1920" height="960" fetchpriority="high"></div>
+  </div></div>
 </section>
-
+<div class="desk">
+  <div class="desk-pic" aria-hidden="true"></div>
+  <div class="desk-text"><div class="hero-in">
+    <div class="low">
+      <p class="hero-lead"><span class="ln"><span class="c">主な科目の平均点と偏差値、</span><span class="c">設問ごとの正答率</span><span class="c">（2023年以降）。</span></span><span class="ln"><span class="c">点数を入れると、</span><span class="c">全国での位置が</span><span class="c">すぐに分かります。</span></span></p>
+      <p class="hero-cap"><span class="ln"><span class="c">高校生の頃は車の窓から、</span><span class="c">大学生になってからは</span><span class="c">帰省のバスの窓から見ていた、</span><span class="c">夜の汽水湖です。</span><span class="c">町の明かりが水に映って、</span><span class="c">きれいでした。</span></span><span class="ln"><span class="c">ただ、</span><span class="c">その町の予備校は、</span><span class="c">今も、</span><span class="c">小さな教室があるのみです。</span></span><span class="ln"><span class="c">夜には星明かりしかない場所で、</span><span class="c">そばに仲間がいなくても、</span><span class="c">それでも勉強を続けているあなたへ。</span></span></p>
+    </div>
+    <div class="more">
+      <p class="note2"><span class="ln"><span class="c">あなたが作るサイトです。</span><span class="c">点数を入れる人が増えるほど、</span></span><span class="ln"><span class="c">同じ試験を解いた</span><span class="c">人たちの中での</span><span class="c">分布が、</span><span class="c">はっきり見えてきます。</span></span></p>
+      <p class="safe"><span class="c">名前やメールアドレスは聞きません。</span><span class="c">送るのは、解いた試験</span><span class="c">（問題集・回・科目）と点数、</span><span class="c">学力帯、</span><span class="c">ランダムな回答者コード、</span><span class="c">ランキングに載せるかどうか。</span><span class="c">任意で、</span><span class="c">所要時間・</span><span class="c">解いた月・</span><span class="c">大問ごとの点数・</span><span class="c">ニックネームです。</span><span class="c">過去問演習から送ると</span><span class="c">○×も、</span><span class="c">時間を計ったときは</span><span class="c">大問ごとにかけた時間も</span><span class="c">送られます。</span></p>
+    </div>
+  </div></div>
+</div>
+<div class="sheet"><main>
 <section class="home-sec" id="pick">
   <h2>年度と科目を選ぶ</h2>
   <p class="note">選ぶと、その年の平均点と偏差値の計算、問題・正解のPDFのページに進みます。</p>
@@ -104,15 +116,14 @@
 </svg></span>
     <div>
       <h2>無機化学</h2>
-      <p class="note">無機化学の反応式は、丸暗記するものではない。酸塩基（H⁺ のやりとり）と酸化還元（e⁻ のやりとり）の2つから組み立てられる。色・沈殿・錯イオンのように覚えるしかないことは、別にまとめた。</p>
+      <p class="note">無機化学の反応式の多くは、酸塩基（H⁺ のやりとり）と酸化還元（e⁻ のやりとり）の2つから組み立てられる。色・沈殿・錯イオンのように覚えるしかないことは、別にまとめた。</p>
       <a class="gem-go" href="muki/index.html">無機化学へ →</a>
-      <span class="gem-sub"><a href="seiri/index.html">知識の総整理</a>の中のページです</span>
     </div>
   </div>
 </section>
 
 <footer class="src"><p class="note small">平均点・正答率などの数値の出典：大学入試センター『実施結果の概要』『科目別成績分布』『設問別得点率及び正答率』（<a href="https://www.dnc.ac.jp/" rel="noopener">大学入試センター</a>）。</p></footer>
-</main>
+</main></div>
 <script>
 document.querySelectorAll(".pick-tabs .yr").forEach(function (b) {
   b.addEventListener("click", function () {
@@ -120,6 +131,16 @@ document.querySelectorAll(".pick-tabs .yr").forEach(function (b) {
     document.querySelectorAll(".pick-list").forEach(function (l) { l.hidden = l.dataset.y !== b.dataset.y; });
   });
 });
+// 下へ送りはじめたら、ヘッダーを夜色にし、湖面の文を消す。無地の面に入ったら、広い画面の目次（toc.js）を出す
+(function () {
+  var hd = document.querySelector("header"), b = document.body, sh = document.querySelector(".sheet");
+  function f() {
+    var t = (window.scrollY || document.documentElement.scrollTop) < 24;
+    hd.classList.toggle("on-pic", t); b.classList.toggle("scrolled", !t);
+    b.classList.toggle("in-sheet", sh.getBoundingClientRect().top <= 100);
+  }
+  f(); addEventListener("scroll", f, {passive: true}); addEventListener("resize", f);
+})();
 </script>
 </body>
 </html>

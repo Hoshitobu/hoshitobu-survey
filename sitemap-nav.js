@@ -7,7 +7,7 @@
   var q = location.search;
 
   // 類題演習のページを公開したら true にする（true なら「類題演習」の箱が押せるようになる）
-  var RUIDAI_PUBLISHED = false;
+  var RUIDAI_PUBLISHED = true;
 
   // いまいるところ
   var here = "top";
