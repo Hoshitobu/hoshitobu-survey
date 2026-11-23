@@ -1170,6 +1170,10 @@
         S.savedAt = at; save(); if (E.survey) { WBS = null; WB_FRESH = true; loadWB(); } if (NATR) loadPeers();
         flash(`記録しました（${R.total}点）。` + (prev ? `前回より ${R.total - prev.total >= 0 ? "+" : ""}${R.total - prev.total}点。` : "") +
           (res.message || ""));
+        if (res.ruidai) {   // 点数集計に送れた年は、類題演習の案内を1行（host が文と行き先を持つ）
+          const a = document.createElement("a"); a.href = res.ruidai.href; a.textContent = res.ruidai.link;
+          const f = q("#kk-flash"); f.append(document.createElement("br"), res.ruidai.before, a, res.ruidai.after || "");
+        }
         drawAll();
       } catch (err) {
         flash("記録できませんでした：" + (err && err.message ? err.message : err), true);

@@ -16,9 +16,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
-<link rel="stylesheet" href="style.css?v=20261123a">
-<link rel="stylesheet" href="kakomon/kakomon.css?v=20261123d">
-<link rel="stylesheet" href="score-grid.css?v=20261123d">
+<link rel="stylesheet" href="style.css?v=20261124b">
+<link rel="stylesheet" href="kakomon/kakomon.css?v=20261124b">
+<link rel="stylesheet" href="score-grid.css?v=20261124b">
 <style>
   /* お知らせ・題字も「左に見出し・右に中身」の2段 */
   .kk-row { display: grid; grid-template-columns: var(--label) minmax(0, 1fr); column-gap: var(--gap); align-items: baseline; }
@@ -56,9 +56,12 @@
   .secsum { margin-top: 8px; font-size: 16px; color: var(--sub); }
   .secsum.bad { color: var(--warn); }
   /* 解いている最中は、ページの上の部分をほとんど見えなくする（マウスを乗せると戻る） */
-  header, .kk-news, .kk-title, .kk-tabline { transition: opacity .4s ease; }
-  html.kk-running body:not(.is-quick) :is(header, .kk-news, .kk-title, .kk-tabline) { opacity: .08; }
-  html.kk-running body:not(.is-quick) :is(header, .kk-tabline):hover { opacity: 1; }
+  .kk-news, .kk-title, .kk-tabline { transition: opacity .4s ease; }
+  html.kk-running body:not(.is-quick) :is(.kk-news, .kk-title, .kk-tabline) { opacity: .08; }
+  html.kk-running body:not(.is-quick) .kk-tabline:hover { opacity: 1; }
+  /* 時間を計って解いている最中は、サイトのヘッダーを出さない（「一時停止」で戻ると、ヘッダーも戻る） */
+  html.kk-running body:not(.is-quick) > header { display: none; }
+  html.kk-running { --hdr-h: 0px; }
   @media (max-width: 760px) {
     .kk-row { grid-template-columns: minmax(0, 1fr); row-gap: 4px; }
     .kk-news small { display: block; margin-left: 0; }
@@ -81,7 +84,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<script src="sitemap-nav.js?v=20261123a" defer></script>
+<script src="sitemap-nav.js?v=20261124b" defer></script>
 <script src="kyotsu/toc.js?v=20261123a" defer></script>
 </head>
 <body class="page-kakomon">
@@ -91,7 +94,9 @@
     <div><a class="sitename" href="index.html">星飛ぶの勉強部屋</a></div>
   </div>
   <nav>
-    <a href="kakomon.html" aria-current="page">過去問演習</a>
+    <a href="enshu/index.html" aria-current="page">実践演習</a>
+    <a href="seiri/index.html">知識の総整理</a>
+    <a href="muki/index.html">無機化学</a>
     <a href="kyotsu/index.html">過去問の平均点</a>
     <a href="videos.html">解説動画</a>
     <a href="results.html">集計を見る</a>
@@ -227,9 +232,9 @@
 <script src="kakomon/kakomon-pdf.js?v=20261123a"></script>
 <script src="kakomon/hoshitobu-link.js?v=20261123a"></script>
 <script src="kakomon/kakomon-adjust.js?v=20261123a"></script>
-<script src="score-grid.js?v=20261123d"></script>
-<script src="quick-entry.js?v=20261123d"></script>
-<script src="kakomon/kakomon-core.js?v=20261123a"></script>
+<script src="score-grid.js?v=20261124b"></script>
+<script src="quick-entry.js?v=20261124b"></script>
+<script src="kakomon/kakomon-core.js?v=20261124b"></script>
 <script>
 // 公開サイト用の host：記録はこの端末のブラウザに保存、仲間の偏差値と予想問題集の比べる相手は「点数集計」から
 (function () {
@@ -267,6 +272,8 @@
   }
   const SCHED_KEY = "sendScheduler";
 
+  // 類題演習のページを公開したら true にする（false の間は、点数を送ったあとの案内を「準備中」の文にする）
+  const RUIDAI_PUBLISHED = false;
   const host = {
     kind: "public",
     peerLabel: "サイト内の偏差値（目安）",
@@ -291,7 +298,7 @@
       const h = read(exam.id).filter(r => r.at !== rec.replaces);   // 同じ回を記録し直したときは上書き
       const {replaces, ...clean} = rec;
       h.push(clean); write(exam.id, h);
-      let message = "";
+      let message = "", ruidai = null;
       if (extras.toSurvey) {
         try {
           if (!extras.consent) throw new Error("同意にチェックを入れてください");
@@ -303,6 +310,9 @@
           const rows = await LINK.fitRows(rowsOf(exam, rec));
           await LINK.send(rows);
           message = `点数集計にも送りました（回答者コード ${LINK.profile().code}）。`;
+          if (/^20(2[1-6])-honshi-/.test(exam.id)) ruidai = RUIDAI_PUBLISHED
+            ? {before: "この年の共通テストの設問が、類題演習で開きました → ", link: "実践演習へ", href: "enshu/index.html#ruidai"}
+            : {before: "類題演習（準備中）は", link: "実践演習のページ", after: "から", href: "enshu/index.html#ruidai"};
           if (window.KAKOMON && window.KAKOMON.refreshWB) setTimeout(() => window.KAKOMON.refreshWB(), 300);
         } catch (err) {
           message = "点数集計には送れませんでした：" + (err && err.message ? err.message : err) + "。記録はこの端末に保存しました。";
@@ -311,7 +321,7 @@
       if (extras.toScheduler && LINK.schedulerUrl) {
         message += " 受験スケジューラを新しいタブで開きました。そちらで確認すると記録されます（タブが開かないときは、このサイトのポップアップを許可してください）。";
       }
-      return {history: read(exam.id), message};
+      return {history: read(exam.id), message, ruidai};
     },
     async deleteRecord(exam, at) { write(exam.id, read(exam.id).filter(r => r.at !== at)); return {history: read(exam.id)}; },
     async peers(exam) {

@@ -39,18 +39,27 @@ a { color: var(--accent); text-underline-offset: 3px; text-decoration-thickness:
 a:hover { color: var(--accent-ink); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-/* ---------- ヘッダー ---------- */
-header { padding: 18px max(16px, calc((100% - var(--page)) / 2)); display: flex; align-items: center; gap: 8px 24px; flex-wrap: wrap;
-         border-bottom: 1px solid var(--line); }
-header .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
-header .brand svg { flex: none; width: 14px; height: 14px; color: var(--ink); }
-header h1 { font-weight: 700; font-size: 16px; line-height: 1.4; margin: 0; }
-header .community { color: var(--faint); font-size: 14px; line-height: 1.4; }
-header .brand > div { display: flex; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; }
-header nav { margin-left: auto; display: flex; flex-wrap: wrap; gap: 4px 20px; }
-header nav a { color: var(--sub); font-size: 16px; text-decoration: none; padding: 2px 0; border-bottom: 1px solid transparent; }
-header nav a:hover { color: var(--ink); }
-header nav a[aria-current="page"] { color: var(--ink); font-weight: 700; border-bottom-color: var(--ink); }
+/* ---------- ヘッダー（全ページ共通。夜空の窓の帯。上に出し続ける。Home だけ header.hd-home：窓辺の絵＋夜色の行） ---------- */
+/* 帯の上の色は、ライトでもダークでも同じ（帯はいつも夜）。nav の文字 #e9ecf8・サイト名 #fff は、帯の絵の上でも 4.5:1 以上 */
+:root { --band-ink: #ffffff; --band-sub: #e9ecf8; --band-line: rgba(233,236,248,.42); --band-night: #14163a;
+        --hdr-h: 56px; }   /* --hdr-h：スクロール後に上に残るヘッダーの高さ。目次・ページ内リンクの着地をこのぶんずらす */
+body > header { --pad: max(16px, calc((100% - var(--page)) / 2));
+         position: sticky; top: 0; z-index: 40; padding: 0 var(--pad); min-height: 56px;
+         display: flex; align-items: center; gap: 0 24px; flex-wrap: wrap;
+         background: #0f1030 url(img/band-sky.webp) 62% 50% / cover no-repeat; border-bottom: 2px solid #2a2c58; color: var(--band-sub); }
+body > header :focus-visible { outline-color: #fff; }
+body > header .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+body > header .brand svg { flex: none; width: 14px; height: 14px; color: var(--band-ink); }
+body > header .sitename { color: var(--band-ink); font-weight: 700; font-size: 16px; text-decoration: none; }
+body > header nav { margin-left: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; }
+body > header nav a { color: var(--band-sub); font-size: 16px; line-height: 1.5; text-decoration: none; padding: 2px 0; border-bottom: 1px solid transparent; }
+body > header nav a:hover { color: var(--band-ink); }
+body > header nav a[aria-current="page"] { color: var(--band-ink); font-weight: 700; border-bottom-color: var(--band-ink); }
+/* Home：上に窓辺の絵、その下に無地の夜色の行。下へ送ると絵だけ流れて、夜色の行が残る */
+body > header.hd-home { --pic: 64px; top: calc(var(--pic) * -1); padding-top: var(--pic); min-height: calc(var(--pic) + 52px);
+         background: var(--band-night); border-bottom: 1px solid #2a2c58; }
+body > header.hd-home::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: var(--pic);
+         background: #0f1030 url(img/band-sill.webp) 100% 100% / cover no-repeat; }
 
 main { max-width: calc(var(--page) + 32px); margin: 0 auto; padding: 0 16px 96px; }
 
@@ -131,8 +140,13 @@ button.link:hover { color: var(--accent-ink); }
 [hidden] { display: none !important; }
 
 @media (max-width: 760px) {
-  header { padding: 14px 16px; }
-  header nav { margin-left: 0; width: 100%; }
+  :root { --hdr-h: 72px; }
+  /* 上の行（サイト名）は流れていき、nav の行だけが上に残る（JS なし。高さが変わらないのでがたつかない） */
+  body > header { --brand-h: 40px; top: calc(var(--brand-h) * -1); padding: 0 16px; min-height: 0; display: block; }
+  body > header .brand { height: var(--brand-h); }
+  body > header nav { margin-left: 0; padding: 4px 0 8px; }
+  body > header.hd-home { --pic: 44px; --brand-h: 44px; top: calc(var(--pic) * -1); padding-top: 0; min-height: 0; }
+  body > header.hd-home .brand { position: relative; }
   .card { grid-template-columns: minmax(0, 1fr); padding: 32px 0; }
   .card > *, .card > h2 { grid-column: 1; grid-row: auto; }
   .inline { flex-direction: column; gap: 0; }
@@ -142,16 +156,18 @@ button.link:hover { color: var(--accent-ink); }
   table { white-space: nowrap; }
 }
 @media print {
-  header nav { display: none; }
+  body > header { position: static; background: none; border: 0; min-height: 0; color: #000; }
+  body > header .sitename, body > header .brand svg { color: #000; }
+  body > header nav { display: none; }
   body { background: #fff; }
 }
 
 /* ---------- 右上の「地図」（sitemap-nav.js） ---------- */
-.sm-btn { display: inline-flex; align-items: center; gap: 6px; margin-left: 8px; padding: 4px 10px; border: 1px solid var(--line-strong);
-          border-radius: 999px; background: transparent; color: var(--sub); font: inherit; font-size: 14px; cursor: pointer; }
+.sm-btn { display: inline-flex; align-items: center; gap: 6px; margin-left: 8px; padding: 4px 10px; border: 1px solid var(--band-line);
+          border-radius: 999px; background: rgba(9,10,30,.5); color: var(--band-sub); font: inherit; font-size: 14px; line-height: 1.4; cursor: pointer; }
 .sm-btn svg { width: 16px; height: 16px; }
-.sm-btn:hover, .sm-btn[aria-expanded="true"] { color: var(--ink); border-color: var(--ink); }
-.sm-pop { position: absolute; z-index: 50; width: min(500px, calc(100vw - 16px)); padding: 14px 14px 10px; background: var(--bg);
+.sm-btn:hover, .sm-btn[aria-expanded="true"] { color: var(--band-ink); border-color: var(--band-ink); }
+.sm-pop { position: fixed; z-index: 50; max-height: calc(100vh - 16px); overflow-y: auto; width: min(620px, calc(100vw - 16px)); padding: 14px 14px 10px; background: var(--bg);
           border: 1px solid var(--line-strong); border-radius: 12px; box-shadow: 0 12px 32px rgba(0,0,0,.25); }
 .sm-h { margin: 0 0 6px; font-size: 15px; font-weight: 700; color: var(--ink); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
 .sm-h span { font-size: 12px; font-weight: 400; color: var(--faint); }
@@ -173,7 +189,7 @@ button.link:hover { color: var(--accent-ink); }
 /* ---------- このページ（目次）。狭い画面：見出しの下に一覧。広い画面：左に固定、線の上の点で今の節 ---------- */
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-main section.card[id] { scroll-margin-top: 16px; }
+main section.card[id] { scroll-margin-top: calc(var(--hdr-h) + 16px); }
 .toc { margin: 0 0 8px; padding: 0 0 24px; }
 .toc-h { margin: 0 0 8px; font-size: 13px; font-weight: 700; letter-spacing: .08em; color: var(--faint); }
 .toc ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
@@ -185,7 +201,7 @@ main section.card[id] { scroll-margin-top: 16px; }
 @media (min-width: 1200px) {
   body.has-toc main { max-width: calc(var(--page) + 32px + 208px); padding-left: 224px; position: relative; }
   body.has-toc { --label: 176px; --gap: 40px; }
-  .toc { position: fixed; top: 96px; width: 176px; padding: 0;
+  .toc { position: fixed; top: calc(var(--hdr-h) + 40px); width: 176px; padding: 0;
          left: calc(max(0px, (100vw - (var(--page) + 32px + 208px)) / 2) + 16px); }
   .toc ol { display: block; position: relative; padding-left: 20px; border-left: 2px solid var(--line-strong); }
   .toc ol li { position: relative; }
@@ -197,7 +213,62 @@ main section.card[id] { scroll-margin-top: 16px; }
 }
 .dev-in input::placeholder { font-size: 15px; font-weight: 400; }
 @media (min-width: 1200px) { .toc ol { border-left-color: color-mix(in srgb, var(--sub) 45%, transparent); } }
-header .sitename { color: var(--ink); font-weight: 700; font-size: 16px; text-decoration: none; }
 /* 地図：狭い画面は、縮めない縦長の図に切り替わる（文字は実寸で12px以上） */
 .sm-svg.sm-n .sm-t { font-size: 13.5px; }
 .sm-svg.sm-n .sm-here, .sm-svg.sm-n .sm-col { font-size: 14px; }
+
+/* 地図：準備中の箱、狭い縦の図 */
+.sm-svg .sm-b.soon { stroke-dasharray: 2 3; fill: none; }
+.sm-svg .sm-t.soon { fill: var(--faint); }
+.sm-svg.sm-n { max-width: 300px; margin: 0 auto; }
+
+/* ---------- 狭い画面のヘッダー：nav の行が増えないよう、文字と間隔を詰める ---------- */
+@media (max-width: 400px) {
+  body > header nav { gap: 2px 12px; }
+  body > header nav a { font-size: 14px; }
+  .sm-btn { margin-left: 0; padding: 3px 8px; }
+}
+@media (max-width: 340px) {   /* 320px でも nav は2行（6つの文字リンク＋地図）。地図は印だけにして、文字は読み上げ用に残す */
+  body > header nav { gap: 2px 8px; }
+  .sm-btn { gap: 0; }
+  .sm-btn span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
+
+/* ---------- 宝石のキラキラ（インラインの SVG の .sparkle .s1/.s2/.s3 と .sheen を動かす。絵を差し替えてもクラス名が同じなら動く） ---------- */
+.sparkle { transform-box: fill-box; transform-origin: center; transform: scale(0); opacity: 0; animation: gem-tw 2.6s ease-in-out infinite; }
+.sparkle.s2 { animation-delay: .9s; animation-duration: 2.9s; }
+.sparkle.s3 { animation-delay: 1.7s; animation-duration: 2.4s; }
+@keyframes gem-tw { 0%, 100% { transform: scale(0); opacity: 0; } 45% { transform: scale(1); opacity: 1; } }
+/* 光の帯は、絵の中で「テーブルの真ん中」に置いてあるものとして、左 -40 から右 +40 へ横切らせる（太さ・長さが違う絵は --sheen-dist を変える） */
+.sheen { --sheen-dist: 40px; transform: translateX(calc(var(--sheen-dist) * -1)); opacity: 0; animation: gem-sw 5.5s ease-in-out infinite; }
+@keyframes gem-sw { 0% { transform: translateX(calc(var(--sheen-dist) * -1)); opacity: 0; } 8% { opacity: 1; }
+                    30% { transform: translateX(var(--sheen-dist)); opacity: 1; } 36% { opacity: 0; }
+                    100% { transform: translateX(var(--sheen-dist)); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .sparkle, .sheen { animation: none; }
+  .sparkle.s1 { transform: scale(1); opacity: 1; }
+  .sparkle.s2, .sparkle.s3 { opacity: 0; }
+  .sheen { opacity: 0; }
+}
+
+/* ---------- トップの「無機化学」の説明カード ---------- */
+.gem-card { position: relative; display: flex; gap: 20px; align-items: center; padding: 20px; margin: 20px 0 0;
+            border: 1px solid var(--line-strong); border-radius: 12px; background: var(--surface-2); }
+.gem-card:hover { border-color: var(--accent); }
+.gem-card-img { flex: none; width: 112px; height: 112px; display: block; overflow: visible; }
+.gem-card h2 { margin: 0 0 6px; font-size: 20px; }
+.gem-card p { margin: 0 0 10px; }
+.gem-card .gem-go { font-weight: 700; color: var(--accent); text-decoration: none; }
+.gem-card .gem-go::after { content: ""; position: absolute; inset: 0; border-radius: 12px; }
+.gem-card .gem-sub { display: block; margin-top: 6px; font-size: 14px; color: var(--faint); }
+.gem-card .gem-sub a { position: relative; z-index: 1; color: var(--sub); }
+@media (max-width: 560px) { .gem-card { flex-direction: column; align-items: flex-start; } }
+/* 絵画調のラスター画のとき：絵の上に星を重ね、光の帯は絵の形（透明の部分の外）で切り抜く */
+.gem-raster { position: relative; }
+.gem-raster img { width: 100%; height: 100%; object-fit: contain; display: block; border-radius: 8px; }
+.gem-raster .gem-fx { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.gem-raster .gem-sheen { position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+  -webkit-mask: var(--gem-mask) center / contain no-repeat; mask: var(--gem-mask) center / contain no-repeat; }
+.gem-raster .sheen { position: absolute; top: -20%; left: 35%; width: 18%; height: 140%; transform-box: border-box;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent); rotate: 20deg; --sheen-dist: 70px; mix-blend-mode: screen; }
+@media (max-width: 400px) { .sm-pop { padding: 12px 6px 8px; } }

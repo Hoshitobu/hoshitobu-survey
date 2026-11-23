@@ -1,0 +1,31 @@
+/* 「実践演習」「知識の総整理」のページ（build_pages.py が作る） */
+.hub-flow { list-style: none; margin: 0 0 8px; padding: 0; display: flex; gap: 12px; align-items: stretch; }
+.hub-flow li { position: relative; text-wrap: balance; flex: 1 1 0; min-width: 0; padding: 14px 16px; border: 1px solid var(--line-strong); border-radius: 10px;
+               background: var(--surface-2); font-size: 16px; line-height: 1.6; font-weight: 700; text-align: center; display: flex; align-items: center; justify-content: center; }
+.hub-flow li + li::before { content: "→"; position: absolute; left: -12px; top: 50%; transform: translate(-50%, -50%); color: var(--faint); background: var(--bg); line-height: 1; font-weight: 400; }
+.hub-flow li.is-last { border-color: var(--accent); }
+.hub-back { margin: 0 0 8px; padding: 6px 0 0 16px; border-left: 2px solid var(--line-strong); font-size: 16px; color: var(--sub); }
+@media (max-width: 640px) {
+  .hub-flow { flex-direction: column; gap: 14px; }
+  .hub-flow li + li::before { content: "↓"; left: 50%; top: -14px; }
+}
+.hub-lead { margin: 0 0 12px; }
+.hub-btns { display: flex; flex-wrap: wrap; gap: 10px; margin: 8px 0 0; }
+.hub-btns a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1px solid var(--line-strong); border-radius: 8px;
+              text-decoration: none; font-weight: 700; color: var(--accent); background: var(--surface-2); }
+.hub-btns a:hover { border-color: var(--accent); }
+.hub-btns a.is-main { background: var(--accent-fill); border-color: var(--accent-fill); color: var(--on-accent); }
+.hub-table { width: 100%; border-collapse: collapse; margin: 8px 0; white-space: normal; }
+.hub-table th, .hub-table td { text-align: left; padding: 10px 12px 10px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+.hub-soon { color: var(--faint); font-weight: 700; }
+.hub-solved { font-size: 16px; color: var(--ok); margin: 8px 0 0; }
+.hub-more { margin: 8px 0 0; }
+.hub-chips { margin: 8px 0 0 !important; }
+.hub-next { margin: 32px 0 0; padding-top: 16px; border-top: 1px solid var(--line); font-size: 17px; }
+@media (max-width: 640px) {
+  .hub-table, .hub-table tbody, .hub-table tr, .hub-table td { display: block; width: 100%; }
+  .hub-table thead { display: none; }
+  .hub-table tr { margin: 0 0 12px; padding: 12px 14px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--surface-2); }
+  .hub-table td { border: 0; padding: 2px 0; }
+  .hub-table td:first-child { font-size: 14px; color: var(--faint); font-weight: 700; }
+}

@@ -150,7 +150,7 @@
 .kk .kk-layout .kk-eyebrow { margin: 0 0 16px; }
 .kk .kk-layout .kk-eyebrow .kk-aside { flex-basis: auto; margin: 0 0 0 auto; }
 .kk .kk-main { grid-column: 2; grid-row: 1; min-width: 0; }
-.kk .kk-side { grid-column: 1; grid-row: 1; position: sticky; top: 16px; }
+.kk .kk-side { grid-column: 1; grid-row: 1; position: sticky; top: calc(var(--hdr-h, 0px) + 16px); }
 .kk .kk-side .kk-card + .kk-card { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--kk-line); }
 
 /* 時計 */

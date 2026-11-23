@@ -17,6 +17,16 @@
   function near(path) { try { return new URL(path, SRC || location.href).href; } catch (e) { return path; } }
   var INTRO_URL = near("kakomon.html?view=quick");
   var RESULTS_URL = near("results.html#mine");
+  // 類題演習のページを公開したら true にする（false の間は「準備中」の文にする）
+  var RUIDAI_PUBLISHED = false;
+  var ENSHU_URL = near("enshu/index.html#ruidai");
+  function ruidaiLine() {
+    var p = document.createElement("p"); p.className = "sg-note sg-ruidai";
+    var a = document.createElement("a"); a.href = ENSHU_URL;
+    if (RUIDAI_PUBLISHED) { p.append("この年の共通テストの設問が、類題演習で開きました → "); a.textContent = "実践演習へ"; p.append(a); }
+    else { p.append("類題演習（準備中）は"); a.textContent = "実践演習のページ"; p.append(a); p.append("から"); }
+    return p;
+  }
 
   var CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   var CODE_RE = /^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/;
@@ -854,6 +864,7 @@
         h("p", {class: "sg-note"}, "サイト内の平均は、" + minN + "人以上の点数がたまると出ます。全国平均は本試験だけです。",
           h("a", {href: RESULTS_URL, text: "自分の順位と分布を見る →"})));
       adjNoteEls(anyAdjR).forEach(function (el) { r.append(el); });
+      if (sent.some(function (c) { return c.book && /^(honshi202[2-6]|day1_2021)$/.test(c.book.id); })) r.append(ruidaiLine());
     }
 
     function refreshOthers() { instances.forEach(function (x) { if (x.el !== el) x.refresh(); }); }
