@@ -7,7 +7,7 @@
   var q = location.search;
 
   // 類題演習のページを公開したら true にする（true なら「類題演習」の箱が押せるようになる）
-  var RUIDAI_PUBLISHED = true;
+  var RUIDAI_PUBLISHED = false;
 
   // いまいるところ
   var here = "top";
@@ -36,7 +36,7 @@
     results: {x: 124, y: 386, w: 124, h: 34, t: "集計を見る", href: "results.html"},
     quick: {x: 282, y: 20, w: 150, h: 34, t: "点数を入れる", href: "kakomon.html?view=quick"},
     practice: {x: 282, y: 74, w: 150, h: 34, t: "時間を計って解く", href: "kakomon.html"},
-    ruidai: {x: 282, y: 128, w: 150, h: 34, t: RUIDAI_PUBLISHED ? "類題演習" : "類題演習（準備中）", href: RUIDAI_PUBLISHED ? "ruidai/index.html" : null, soon: !RUIDAI_PUBLISHED},
+    ruidai: {x: 282, y: 128, w: 150, h: 34, t: RUIDAI_PUBLISHED ? "類題演習" : "類題演習 Coming soon", href: RUIDAI_PUBLISHED ? "ruidai/index.html" : null, soon: !RUIDAI_PUBLISHED},
     muki: {x: 282, y: 206, w: 150, h: 34, t: "無機化学", href: "muki/index.html"},
     page: {x: 282, y: 266, w: 150, h: 34, t: pageLabel, href: m ? null : "kyotsu/index.html"},
     dnc: {x: 462, y: 266, w: 128, h: 34, t: "問題・正解PDF", href: DNC, ext: true},
@@ -52,7 +52,7 @@
     results: {x: 0, y: 348, w: 56, h: 40, t: "集計を見る", href: "results.html"},
     quick: {x: 176, y: 28, w: 104, h: 40, t: "点数を入れる", href: "kakomon.html?view=quick"},
     practice: {x: 176, y: 84, w: 104, h: 40, t: "時間を計って解く", href: "kakomon.html"},
-    ruidai: {x: 176, y: 140, w: 104, h: 40, t: RUIDAI_PUBLISHED ? "類題演習" : "類題演習|（準備中）", href: RUIDAI_PUBLISHED ? "ruidai/index.html" : null, soon: !RUIDAI_PUBLISHED},
+    ruidai: {x: 176, y: 140, w: 104, h: 40, t: RUIDAI_PUBLISHED ? "類題演習" : "類題演習|Coming soon", href: RUIDAI_PUBLISHED ? "ruidai/index.html" : null, soon: !RUIDAI_PUBLISHED},
     muki: {x: 176, y: 212, w: 104, h: 40, t: "無機化学", href: "muki/index.html"},
     page: {x: 176, y: 282, w: 104, h: 40, t: pageLabel, href: m ? null : "kyotsu/index.html"},
     dnc: {x: 176, y: 348, w: 104, h: 40, t: "問題・正解PDF", href: DNC, ext: true}

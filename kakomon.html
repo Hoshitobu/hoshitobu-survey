@@ -16,9 +16,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
-<link rel="stylesheet" href="style.css?v=20261124e">
-<link rel="stylesheet" href="kakomon/kakomon.css?v=20261124e">
-<link rel="stylesheet" href="score-grid.css?v=20261124e">
+<link rel="stylesheet" href="style.css?v=20261124f">
+<link rel="stylesheet" href="kakomon/kakomon.css?v=20261124f">
+<link rel="stylesheet" href="score-grid.css?v=20261124f">
 <style>
   /* お知らせ・題字も「左に見出し・右に中身」の2段 */
   .kk-row { display: grid; grid-template-columns: var(--label) minmax(0, 1fr); column-gap: var(--gap); align-items: baseline; }
@@ -84,7 +84,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<script src="sitemap-nav.js?v=20261124e" defer></script>
+<script src="sitemap-nav.js?v=20261124f" defer></script>
 <script src="kyotsu/toc.js?v=20261124d" defer></script>
 </head>
 <body class="page-kakomon">
@@ -232,9 +232,9 @@
 <script src="kakomon/kakomon-pdf.js?v=20261123a"></script>
 <script src="kakomon/hoshitobu-link.js?v=20261123a"></script>
 <script src="kakomon/kakomon-adjust.js?v=20261123a"></script>
-<script src="score-grid.js?v=20261124e"></script>
-<script src="quick-entry.js?v=20261124e"></script>
-<script src="kakomon/kakomon-core.js?v=20261124e"></script>
+<script src="score-grid.js?v=20261124f"></script>
+<script src="quick-entry.js?v=20261124f"></script>
+<script src="kakomon/kakomon-core.js?v=20261124f"></script>
 <script>
 // 公開サイト用の host：記録はこの端末のブラウザに保存、仲間の偏差値と予想問題集の比べる相手は「点数集計」から
 (function () {
@@ -273,7 +273,7 @@
   const SCHED_KEY = "sendScheduler";
 
   // 類題演習のページを公開したら true にする（false の間は、点数を送ったあとの案内を「準備中」の文にする）
-  const RUIDAI_PUBLISHED = true;
+  const RUIDAI_PUBLISHED = false;
   const host = {
     kind: "public",
     peerLabel: "サイト内の偏差値（目安）",

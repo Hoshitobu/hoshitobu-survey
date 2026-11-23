@@ -18,7 +18,7 @@
   var INTRO_URL = near("kakomon.html?view=quick");
   var RESULTS_URL = near("results.html#mine");
   // 類題演習のページを公開したら true にする（false の間は「準備中」の文にする）
-  var RUIDAI_PUBLISHED = true;
+  var RUIDAI_PUBLISHED = false;
   var ENSHU_URL = near("enshu/index.html#ruidai");
   function ruidaiLine() {
     var p = document.createElement("p"); p.className = "sg-note sg-ruidai";
