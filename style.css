@@ -55,6 +55,9 @@ body > header nav { margin-left: auto; display: flex; flex-wrap: wrap; align-ite
 body > header nav a { color: var(--band-sub); font-size: 16px; line-height: 1.5; text-decoration: none; padding: 2px 0; border-bottom: 1px solid transparent; }
 body > header nav a:hover { color: var(--band-ink); }
 body > header nav a[aria-current="page"] { color: var(--band-ink); font-weight: 700; border-bottom-color: var(--band-ink); }
+/* スマホ（幅560px以下）だけ短い名前（総整理・平均点・集計）にして、メニューを2行に収める */
+body > header nav .ns { display: none; }
+@media (max-width: 560px) { body > header nav .nl { display: none; } body > header nav .ns { display: inline; } }
 /* Home：いちばん上（絵の上）では透明、下へ送ると夜色の帯（class on-pic は Home の小さな script が付け外しする。script がなければ夜色のまま） */
 body > header.hd-home { background: var(--band-night); border-bottom: 1px solid #2a2c58; transition: background-color .2s, border-color .2s; }
 body > header.hd-home.on-pic { background: transparent; border-bottom-color: transparent; }
