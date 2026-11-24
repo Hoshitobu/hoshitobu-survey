@@ -115,3 +115,44 @@ body.home { --hpad: max(16px, calc((100% - var(--page)) / 2)); --minh: 620px; --
   .home .btn { padding: 0 13px; font-size: 15px; }
   .home .hero-cta { gap: 8px; }
 }
+
+/* ---------- 入口とナビの組み直し（2026-11-24） ---------- */
+/* ================= Home：机の下 ================= */
+.home .sheet .home-sec:first-of-type { padding-top: 36px; }
+.home .more p.safe a { color: #fff; }
+.only-m { display: none; }
+@media (max-width: 760px) {
+  .only-w { display: none !important; }
+  .only-m { display: block; }
+  .home .hd-a ~ .hero { --hdr: 89px; }
+  .home .hd-b ~ .hero { --hdr: 53px; }
+  .home .hd-b ~ .hero .hero-top { padding-top: 16px; }
+  .home .desk-text { padding: 0; }
+  .home .sheet .home-sec:first-of-type { padding-top: 26px; }
+}
+@media (max-width: 760px) and (max-height: 620px) { .home .desk-text { padding: 24px 0 0; } .home .hero-cap { margin-bottom: 0; } }
+.home .hero-cta .btn-primary { padding: 0 24px; }
+.home-sec > .note { margin: 0; }
+.intro-m p { margin: 0 0 10px; font-size: 16px; line-height: 1.75; color: var(--sub); }
+.intro-m p:first-child { color: var(--ink); }
+.intro-m p.safe { font-size: 14px; color: var(--faint); }
+
+/* 「できること」：ナビの4つと同じ名前・同じ順。絵は小さく */
+.does { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 40px; margin: 12px 0 0; padding: 0; list-style: none; }
+.do { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 0 16px; align-items: start; padding: 16px 0; border-top: 1px solid var(--line); }
+.does .do:nth-child(-n+2) { border-top: 0; }
+.do img { width: 76px; height: 76px; object-fit: cover; border-radius: 12px; background: var(--surface-2); }
+.do-t { margin: 0; font-size: 18px; font-weight: 700; line-height: 1.5; }
+.do-t a { text-decoration: none; }
+.do-d { margin: 2px 0 6px; font-size: 15px; line-height: 1.7; color: var(--sub); }
+.do-k { margin: 0; display: flex; flex-wrap: wrap; gap: 2px 16px; font-size: 15px; }
+.do-k a, .do-k span { display: inline-flex; align-items: center; min-height: 32px; }
+.do-k span { color: var(--faint); }
+@media (max-width: 760px) {
+  .does { grid-template-columns: minmax(0, 1fr); }
+  .does .do:nth-child(2) { border-top: 1px solid var(--line); }
+  .do { grid-template-columns: 60px minmax(0, 1fr); gap: 0 14px; padding: 14px 0; }
+  .do img { width: 60px; height: 60px; border-radius: 10px; }
+  .vgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; }
+}
+

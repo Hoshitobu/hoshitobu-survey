@@ -56,8 +56,6 @@ body > header nav a { color: var(--band-sub); font-size: 16px; line-height: 1.5;
 body > header nav a:hover { color: var(--band-ink); }
 body > header nav a[aria-current="page"] { color: var(--band-ink); font-weight: 700; border-bottom-color: var(--band-ink); }
 /* スマホ（幅560px以下）だけ短い名前（総整理・平均点・集計）にして、メニューを2行に収める */
-body > header nav .ns { display: none; }
-@media (max-width: 560px) { body > header nav .nl { display: none; } body > header nav .ns { display: inline; } }
 /* Home：いちばん上（絵の上）では透明、下へ送ると夜色の帯（class on-pic は Home の小さな script が付け外しする。script がなければ夜色のまま） */
 body > header.hd-home { background: var(--band-night); border-bottom: 1px solid #2a2c58; transition: background-color .2s, border-color .2s; }
 body > header.hd-home.on-pic { background: transparent; border-bottom-color: transparent; }
@@ -142,7 +140,7 @@ button.link:hover { color: var(--accent-ink); }
 [hidden] { display: none !important; }
 
 @media (max-width: 760px) {
-  :root { --hdr-h: 72px; }
+  :root { --hdr-h: 53px; }
   /* 上の行（サイト名）は流れていき、nav の行だけが上に残る（JS なし。高さが変わらないのでがたつかない） */
   body > header { --brand-h: 40px; top: calc(var(--brand-h) * -1); padding: 0 16px; min-height: 0; display: block; }
   body > header .brand { height: var(--brand-h); }
@@ -162,29 +160,6 @@ button.link:hover { color: var(--accent-ink); }
   body > header nav { display: none; }
   body { background: #fff; }
 }
-
-/* ---------- 右上の「地図」（sitemap-nav.js） ---------- */
-.sm-btn { display: inline-flex; align-items: center; gap: 6px; margin-left: 8px; padding: 4px 10px; border: 1px solid var(--band-line);
-          border-radius: 999px; background: rgba(9,10,30,.5); color: var(--band-sub); font: inherit; font-size: 14px; line-height: 1.4; cursor: pointer; }
-.sm-btn svg { width: 16px; height: 16px; }
-.sm-btn:hover, .sm-btn[aria-expanded="true"] { color: var(--band-ink); border-color: var(--band-ink); }
-.sm-pop { position: fixed; z-index: 50; max-height: calc(100vh - 16px); overflow-y: auto; width: min(620px, calc(100vw - 16px)); padding: 14px 14px 10px; background: var(--bg);
-          border: 1px solid var(--line-strong); border-radius: 12px; box-shadow: 0 12px 32px rgba(0,0,0,.25); }
-.sm-h { margin: 0 0 6px; font-size: 15px; font-weight: 700; color: var(--ink); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
-.sm-h span { font-size: 12px; font-weight: 400; color: var(--faint); }
-.sm-svg { display: block; width: 100%; height: auto; }
-.sm-svg .sm-b { fill: var(--surface-2); stroke: var(--line-strong); stroke-width: 1.2; }
-.sm-svg .sm-b.ext { fill: none; stroke-dasharray: 4 3; }
-.sm-svg .sm-b.cur { fill: var(--accent-fill); stroke: var(--accent-fill); }
-.sm-svg .sm-t { fill: var(--ink); font-size: 12.5px; font-family: var(--sans); }
-.sm-svg .sm-t.cur { fill: var(--on-accent); font-weight: 700; }
-.sm-svg .sm-here { fill: var(--accent); font-size: 11px; font-weight: 700; font-family: var(--sans); }
-.sm-svg .sm-col { fill: var(--faint); font-size: 11px; font-family: var(--sans); letter-spacing: .06em; }
-.sm-svg .sm-e { fill: none; stroke: var(--line-strong); stroke-width: 1.3; }
-.sm-svg .sm-e.on { stroke: var(--accent); stroke-width: 1.8; }
-.sm-svg .sm-arr { fill: var(--faint); }
-.sm-svg a:hover .sm-b { stroke: var(--accent); }
-.sm-svg a:hover .sm-t { fill: var(--accent); }
 
 /* 目次は kyotsu.css から移した（どのページでも使う） */
 /* ---------- このページ（目次）。狭い画面：見出しの下に一覧。広い画面：左に固定、線の上の点で今の節 ---------- */
@@ -217,27 +192,10 @@ main section.card[id] { scroll-margin-top: calc(var(--hdr-h) + 16px); }
 }
 .dev-in input::placeholder { font-size: 15px; font-weight: 400; }
 @media (min-width: 1200px) { .toc ol { border-left-color: color-mix(in srgb, var(--sub) 45%, transparent); } }
-/* 地図：狭い画面は、縮めない縦長の図に切り替わる（文字は実寸で12px以上） */
-.sm-svg.sm-n .sm-t { font-size: 13.5px; }
-.sm-svg.sm-n .sm-here, .sm-svg.sm-n .sm-col { font-size: 14px; }
-
-/* 地図：準備中の箱、狭い縦の図 */
-.sm-svg .sm-b.soon { stroke-dasharray: 2 3; fill: none; }
-.sm-svg .sm-t.soon { fill: var(--faint); }
-.sm-svg.sm-n { max-width: 300px; margin: 0 auto; }
-
-/* ---------- 狭い画面のヘッダー：nav の行が増えないよう、文字と間隔を詰める ---------- */
-@media (max-width: 400px) {
-  body > header nav { gap: 2px 12px; }
-  body > header nav a { font-size: 14px; }
-  .sm-btn { margin-left: 0; padding: 3px 8px; }
-}
-@media (max-width: 340px) {   /* 320px でも nav は2行（6つの文字リンク＋地図）。地図は印だけにして、文字は読み上げ用に残す */
-  body > header nav { gap: 2px 8px; }
-  .sm-btn { gap: 0; }
-  .sm-btn span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-}
-
+/* ヘッダーの下に子の行があるページでは、ページの上端で目次の頭（「このページ」）が子の行に隠れないよう、そのぶん下げる */
+@media (min-width: 1200px) { body:has(> .sub) .toc { top: calc(var(--hdr-h) + 64px); max-height: calc(100vh - var(--hdr-h) - 88px); } }
+/* 題の言葉のかたまりを、行の終わりで1字だけ折り返さない（例：「平均点・正答／率」） */
+.k-title h1 .nw { display: inline-block; }
 /* ---------- 宝石のキラキラ（インラインの SVG の .sparkle .s1/.s2/.s3 と .sheen を動かす。絵を差し替えてもクラス名が同じなら動く） ---------- */
 .sparkle { transform-box: fill-box; transform-origin: center; transform: scale(0); opacity: 0; animation: gem-tw 2.6s ease-in-out infinite; }
 .sparkle.s2 { animation-delay: .9s; animation-duration: 2.9s; }
@@ -275,4 +233,235 @@ main section.card[id] { scroll-margin-top: calc(var(--hdr-h) + 16px); }
   -webkit-mask: var(--gem-mask) center / contain no-repeat; mask: var(--gem-mask) center / contain no-repeat; }
 .gem-raster .sheen { position: absolute; top: -20%; left: 35%; width: 18%; height: 140%; transform-box: border-box;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent); rotate: 20deg; --sheen-dist: 70px; mix-blend-mode: screen; }
-@media (max-width: 400px) { .sm-pop { padding: 12px 6px 8px; } }
+
+
+/* ================= 入口とナビの組み直し（2026-11-24）：ヘッダー・子の行・検索と地図の箱・木の地図・フッター・年度と科目を選ぶ所 ================= */
+/* ================= ヘッダー（共通） ================= */
+body > header.hd { flex-wrap: nowrap; gap: 0 20px; }
+body > header.hd .brand { flex: none; }
+body > header.hd nav.hd-nav { margin-left: auto; display: flex; flex-wrap: nowrap; align-items: center; gap: 0 2px; padding: 0; }
+.hd .hd-item { position: relative; }
+body > header.hd nav .hd-item > a { position: relative; display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 11px; border: 0;
+                                    font-size: 16px; line-height: 1.4; white-space: nowrap; color: var(--band-sub); text-decoration: none; }
+body > header.hd nav .hd-item > a:hover { color: var(--band-ink); }
+body > header.hd nav .hd-item > a[aria-current] { color: var(--band-ink); font-weight: 700; }
+body > header.hd nav .hd-item > a[aria-current]::after { content: ""; position: absolute; left: 11px; right: 11px; bottom: 7px; height: 2px; background: var(--band-ink); border-radius: 1px; }
+/* 子がある項目の小さな印（広い画面だけ） */
+.hd .hd-item.has-kids > a .cv { width: 6px; height: 6px; margin-top: -3px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); opacity: .8; }
+body > header.hd nav .hd-item.has-kids > a[aria-current]::after { right: 23px; }
+
+/* 子の一覧（広い画面で、乗せるか Tab で入ると出る） */
+.hd .hd-drop { display: none; position: absolute; z-index: 60; top: 100%; left: -4px; min-width: 250px; padding: 6px; background: var(--bg); color: var(--ink);
+               border: 1px solid var(--line-strong); border-radius: 12px; box-shadow: 0 12px 32px rgba(0,0,0,.25); }
+body > header.hd nav .hd-drop a { display: block; padding: 8px 12px; border: 0; border-radius: 8px; color: var(--ink); font-size: 15px; font-weight: 700; line-height: 1.5; text-decoration: none; white-space: nowrap; }
+body > header.hd nav .hd-drop a small { display: block; font-size: 13px; font-weight: 400; color: var(--faint); }
+body > header.hd nav .hd-drop a:hover { background: var(--surface-2); color: var(--accent); }
+body > header.hd nav .hd-drop a[aria-current] { color: var(--accent); }
+.hd .hd-drop .soon { display: block; padding: 8px 12px; font-size: 15px; font-weight: 700; color: var(--faint); white-space: nowrap; }
+.hd .hd-drop .soon small { display: block; font-size: 13px; font-weight: 400; }
+body > header.hd :focus-visible { outline-color: #fff; }
+.hd .hd-drop :focus-visible { outline-color: var(--accent); }
+@media (hover: hover) and (min-width: 761px) {
+  .hd .hd-item:hover .hd-drop, .hd .hd-item:focus-within .hd-drop { display: block; }
+}
+.hd .hd-item.open .hd-drop { display: block; }
+
+/* 検索と地図を開くボタン */
+.hd .hd-find { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; margin-left: 10px; padding: 0 13px; border: 1px solid var(--band-line); border-radius: 999px;
+               background: rgba(9,10,30,.5); color: var(--band-sub); font: inherit; font-size: 14px; line-height: 1.4; white-space: nowrap; cursor: pointer; }
+.hd .hd-find svg { flex: none; width: 16px; height: 16px; }
+.hd .hd-find:hover, .hd .hd-find[aria-expanded="true"] { color: var(--band-ink); border-color: var(--band-ink); }
+.hd .hd-where { display: none; }
+
+/* ---------- 案A：することの名前4つ＋「検索・地図」 ---------- */
+@media (max-width: 760px) {
+  /* 上の行（サイト名）は流れていき、メニューの1行だけが上に残る（本体と同じしくみ。JS なし） */
+  body > header.hd-a { --brand-h: 44px; top: calc(var(--brand-h) * -1); display: block; padding: 0 16px; }
+  body > header.hd-a nav.hd-nav { margin: 0 -6px; justify-content: space-between; }
+  body > header.hd-a nav .hd-item > a { min-height: 44px; padding: 0 6px; font-size: clamp(13px, 3.9vw, 15px); }
+  body > header.hd-a nav .hd-item > a[aria-current]::after { left: 6px; right: 6px; bottom: 6px; }
+  .hd-a .hd-item.has-kids > a .cv { display: none; }
+  .hd-a .hd-find { margin-left: 2px; width: 36px; min-height: 36px; padding: 0; justify-content: center; }
+  .hd-a .hd-find span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+}
+
+/* ================= 子の行（ヘッダーのすぐ下。下へ送ると流れていく） ================= */
+.sub { border-bottom: 1px solid var(--line); background: var(--bg); }
+.sub-in { max-width: calc(var(--page) + 32px); margin: 0 auto; padding: 0 16px; display: flex; flex-wrap: wrap; gap: 0 22px; }
+.sub a, .sub .soon { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; line-height: 1.4; white-space: nowrap; text-decoration: none; color: var(--sub); }
+.sub a:hover { color: var(--ink); }
+.sub a[aria-current="page"] { color: var(--ink); font-weight: 700; box-shadow: inset 0 -2px 0 var(--accent); }
+.sub .soon { color: var(--faint); }
+.sub .soon small { margin-left: 5px; font-size: 12px; }
+@media (max-width: 760px) { .sub-in { gap: 0 14px; } .sub a, .sub .soon { font-size: clamp(13px, 3.8vw, 15px); } }
+@media (max-width: 359px) { .sub .soon small { display: none; } }
+
+/* ================= 検索と地図の箱 ================= */
+.fd { position: fixed; z-index: 55; right: max(8px, calc((100vw - var(--page)) / 2 - 16px)); width: min(660px, calc(100vw - 16px)); max-height: calc(100vh - 80px); overflow-y: auto;
+      padding: 14px; background: var(--bg); color: var(--ink); border: 1px solid var(--line-strong); border-radius: 14px; box-shadow: 0 12px 32px rgba(0,0,0,.25);
+      font-size: 15px; line-height: 1.6; }
+@media (max-width: 760px) { .fd { left: 8px; right: 8px; width: auto; } }
+.fd-q { display: flex; align-items: center; gap: 8px; margin: 0; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--field); color: var(--faint); }
+.fd-q:focus-within { border-color: var(--accent); outline: 2px solid var(--accent); outline-offset: -1px; }
+.fd-q svg { flex: none; width: 18px; height: 18px; }
+.fd-q input { flex: 1; min-width: 0; height: 46px; padding: 0; border: 0; outline: 0; background: none; font-size: 17px; }
+.fd-q input:focus { outline: 0; }
+.fd-try { margin: 8px 0 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 13px; color: var(--faint); }
+.fd-try button { min-height: 32px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 999px; background: none; color: var(--sub); font-size: 14px; cursor: pointer; }
+.fd-try button:hover { border-color: var(--ink); color: var(--ink); }
+.fd-res { margin: 10px 0 0; }
+.fd-res:empty { display: none; }
+.fd-n { margin: 0 0 4px; font-size: 13px; color: var(--faint); }
+.fd-res a { display: block; padding: 9px 10px; border-radius: 8px; text-decoration: none; color: var(--ink); }
+.fd-res a + a { border-top: 1px solid var(--line); border-radius: 0; }
+.fd-res a:hover { background: var(--surface-2); }
+.fd-res .r-c { display: block; font-size: 12.5px; color: var(--faint); }
+.fd-res .r-t { display: block; font-weight: 700; color: var(--accent); }
+.fd-res .r-h { display: block; font-size: 13.5px; color: var(--sub); }
+.fd-res mark { background: var(--accent-soft); color: inherit; padding: 0 1px; }
+.fd-h { margin: 16px 0 10px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 14px; font-weight: 700; color: var(--ink); }
+.fd .tree { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 761px) { .fd .tree { grid-template-columns: repeat(4, minmax(0, 1fr)); } .fd .tree .t-ext { grid-column: 1 / -1; } .fd .tree .t-ext ul { display: flex; gap: 0 20px; border: 0; padding: 0; } }
+
+/* ================= 木の形の地図（箱の中とフッターで同じもの） ================= */
+.tree { display: grid; gap: 18px 20px; list-style: none; margin: 0; padding: 0; font-size: 14px; line-height: 1.55; }
+.tree > li { min-width: 0; }
+.tree .t-p { font-weight: 700; color: var(--ink); text-decoration: none; }
+.tree a.t-p:hover { color: var(--accent); }
+.tree ul { list-style: none; margin: 6px 0 0; padding: 0 0 0 11px; border-left: 1px solid var(--line-strong); }
+.tree ul ul { margin: 0 0 4px; }
+.tree li li > a, .tree li li > span { display: inline-block; padding: 4px 0; color: var(--sub); text-decoration: none; }
+.tree li li > a:hover { color: var(--accent); }
+.tree .soon { color: var(--faint); }
+.tree .soon small, .tree small { font-size: 12px; color: var(--faint); margin-left: 4px; white-space: nowrap; }
+.tree [aria-current] { color: var(--accent) !important; font-weight: 700; }
+.tree [aria-current]::after { content: "いまここ"; margin-left: 6px; padding: 1px 6px; border-radius: 999px; background: var(--accent-fill); color: var(--on-accent); font-size: 11px; font-weight: 700; white-space: nowrap; }
+
+/* ================= フッター：サイトの地図（小さく）と出典 ================= */
+.ft { border-top: 1px solid var(--line); background: var(--surface-2); font-size: 14px; }
+.ft-in { max-width: calc(var(--page) + 32px); margin: 0 auto; padding: 28px 16px 36px; }
+.ft-h { margin: 0 0 14px; font-size: 14px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+.ft-h svg { width: 16px; height: 16px; color: var(--faint); }
+.ft .tree { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+/* 広い画面のフッター：「外のサイト」は5列のあとに1つだけ落ちるので、検索の箱と同じく下の1行に横に並べる */
+@media (min-width: 761px) { .ft .tree .t-ext { grid-column: 1 / -1; } .ft .tree .t-ext ul { display: flex; flex-wrap: wrap; gap: 0 20px; border: 0; padding: 0; } }
+@media (max-width: 760px) { .ft .tree { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ft .tree li li > a, .ft .tree li li > span { padding: 6px 0; } }
+.ft-src { margin: 24px 0 0; padding-top: 16px; border-top: 1px solid var(--line-strong); font-size: 13px; line-height: 1.7; color: var(--sub); }
+.ft-src a { color: var(--sub); }
+main { padding-bottom: 64px; }
+
+/* ================= 年度と科目を選ぶ所 ================= */
+.pk { margin: 14px 0 0; }
+.pk-years { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; }
+.pk-years button { min-height: 42px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line-strong); background: transparent; color: var(--ink);
+                   font: inherit; font-size: 17px; font-weight: 700; cursor: pointer; font-variant-numeric: tabular-nums; }
+.pk-years button:hover { border-color: var(--ink); }
+.pk-years button[aria-pressed="true"] { background: var(--accent-fill); border-color: var(--accent-fill); color: var(--on-accent); }
+.pk-subj { display: grid; gap: 8px; }
+.pk-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.pk-row .lb { font-size: 13px; color: var(--faint); margin-right: 4px; }
+.pk-subj button { min-height: 42px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--line-strong); background: var(--bg); color: var(--ink);
+                  font: inherit; font-size: 16px; cursor: pointer; white-space: nowrap; }
+.pk-subj button:hover { border-color: var(--ink); }
+.pk-subj button[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-ink); font-weight: 700; box-shadow: inset 0 0 0 1px var(--accent); }
+@media (max-width: 760px) {
+  .pk-years { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 5px; }
+  .pk-years button { padding: 0; font-size: clamp(14px, 4.2vw, 16px); }
+  .pk-subj button { padding: 0 12px; }
+}
+@media (max-width: 359px) { .pk-subj button { padding: 0 10px; font-size: 15px; } }
+.pk-other { margin: 14px 0 0; font-size: 15px; }
+
+/* 4択：選んだ年度と科目で、何をするか */
+.acts-h { margin: 22px 0 10px; font-size: 16px; line-height: 1.5; color: var(--sub); }
+.acts-h b { font-size: 20px; color: var(--ink); margin-right: 8px; font-variant-numeric: tabular-nums; }
+.acts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+@media (max-width: 760px) { .acts { grid-template-columns: minmax(0, 1fr); gap: 8px; } }
+.act { position: relative; display: block; width: 100%; min-height: 66px; padding: 11px 40px 11px 16px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--bg);
+       color: var(--ink); font: inherit; text-align: left; text-decoration: none; cursor: pointer; }
+.act .a-t { display: block; font-size: 17px; font-weight: 700; line-height: 1.5; color: var(--accent); }
+.act .a-d { display: block; font-size: 14px; line-height: 1.5; color: var(--sub); }
+.act::after { content: ""; position: absolute; right: 18px; top: 50%; width: 8px; height: 8px; margin-top: -5px; border-right: 2px solid var(--accent); border-top: 2px solid var(--accent); transform: rotate(45deg); }
+a.act:hover, button.act:hover { border-color: var(--accent); color: var(--ink); }
+.act.is-main { background: var(--accent-fill); border-color: var(--accent-fill); }
+.act.is-main .a-t, .act.is-main .a-d { color: var(--on-accent); }
+.act.is-main::after { border-color: var(--on-accent); }
+.act.is-main:hover { background: var(--accent-fill-hover); }
+.act.is-on { box-shadow: 0 0 0 3px var(--accent-soft), 0 0 0 1px var(--accent-fill); }
+.act.is-none { background: var(--surface-2); border-style: dashed; cursor: default; }
+.act.is-none .a-t { color: var(--faint); }
+.act.is-none::after { display: none; }
+/* まだ選んでいないとき：枠だけ先に出しておく */
+.acts.is-frame .act { border-style: dashed; background: none; cursor: default; pointer-events: none; }
+.acts.is-frame .act .a-t { color: var(--faint); }
+.acts.is-frame .act .a-d { visibility: hidden; }
+.acts.is-frame .act::after { border-color: var(--line-strong); }
+
+/* ================= 過去問演習：1・2・3 ================= */
+.steps { counter-reset: st; }
+.steps .card > h2 { display: flex; align-items: baseline; gap: 12px; font-size: 18px; }
+.steps .card > h2::before { counter-increment: st; content: counter(st); flex: none; font-size: 28px; font-weight: 300; line-height: 1; color: var(--accent); font-variant-numeric: tabular-nums; }
+.steps .card { padding: 28px 0; }
+.steps .card:first-child { border-top: 0; }
+.start { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px 24px; align-items: center; padding: 18px 20px; border: 1px solid var(--line-strong); border-radius: 12px; }
+.start.is-frame { border-style: dashed; display: block; color: var(--faint); font-size: 16px; }
+.start-t { margin: 0; font-size: 20px; font-weight: 700; line-height: 1.5; }
+.start-t small { display: block; font-size: 15px; font-weight: 400; color: var(--sub); }
+.start .go { display: inline-flex; align-items: center; justify-content: center; min-width: 160px; min-height: 52px; padding: 0 28px; border-radius: 10px; background: var(--accent-fill); color: var(--on-accent);
+             font-size: 18px; font-weight: 700; text-decoration: none; }
+.start .go:hover { background: var(--accent-fill-hover); color: var(--on-accent); }
+.start-sub { grid-column: 1 / -1; margin: 0; font-size: 15px; color: var(--sub); }
+.seg { display: inline-flex; margin: 0 0 10px; border: 1px solid var(--line-strong); border-radius: 8px; overflow: hidden; }
+.seg button { min-height: 38px; padding: 0 16px; border: 0; background: none; color: var(--sub); font: inherit; font-size: 15px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line-strong); }
+.seg button[aria-pressed="true"] { background: var(--tint); color: var(--ink); font-weight: 700; }
+@media (max-width: 760px) { .start { grid-template-columns: minmax(0, 1fr); } .start .go { width: 100%; } }
+
+/* たたんである行（開くまで出さない） */
+.folds { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.folds details { border-bottom: 1px solid var(--line); }
+.folds summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; cursor: pointer; font-size: 16px; font-weight: 700; list-style: none; }
+.folds summary::-webkit-details-marker { display: none; }
+.folds summary small { margin-left: 10px; font-size: 14px; font-weight: 400; color: var(--faint); }
+.folds summary::after { content: ""; flex: none; width: 8px; height: 8px; margin: -4px 6px 0 0; border-right: 2px solid var(--faint); border-bottom: 2px solid var(--faint); transform: rotate(45deg); }
+.folds details[open] summary::after { transform: rotate(-135deg); margin-top: 4px; }
+.folds .in { padding: 0 0 18px; }
+.sk { display: block; height: 12px; margin: 10px 0; border-radius: 6px; background: var(--bar-track); }
+.sk.w6 { width: 60%; } .sk.w8 { width: 82%; } .sk.w4 { width: 40%; }
+.sk-table { width: 100%; border-collapse: collapse; }
+.sk-table th { text-align: left; }
+.sk-table td .sk { margin: 4px 0; }
+
+.page-h { padding: 28px 0 8px; }
+.page-h h1 { margin: 0 0 6px; font-size: clamp(24px, 6vw, 30px); line-height: 1.4; }
+.page-h p { margin: 0; color: var(--sub); font-size: 17px; }
+.news1 { margin: 40px 0 0; padding: 14px 0 0; border-top: 1px solid var(--line); font-size: 15px; color: var(--sub); }
+
+/* Home では、選ぶまで4択を出さない（過去問演習では枠だけ先に出す） */
+.pk > .acts.is-frame { display: none; }
+.acts.is-frame .act.is-main { background: none; border-color: var(--line-strong); }
+.card > p.pk-other { margin: 18px 0 0; }
+
+
+/* 科目の札は HTML のリンク（JS で選ぶ。JS がなくても、そのまま年度・科目のページへ進める） */
+.pk-subj a { display: inline-flex; align-items: center; min-height: 42px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--line-strong); background: var(--bg); color: var(--ink);
+             font-size: 16px; text-decoration: none; white-space: nowrap; }
+.pk-subj a:hover { border-color: var(--ink); color: var(--ink); }
+.pk-subj a[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-ink); font-weight: 700; box-shadow: inset 0 0 0 1px var(--accent); }
+@media (max-width: 760px) { .pk-subj a { padding: 0 12px; } }
+@media (max-width: 359px) { .pk-subj a { padding: 0 10px; font-size: 15px; } }
+.act.is-none[aria-disabled] { cursor: default; }
+/* 時間を計って解いている最中は、子の行も出さない */
+html.kk-running body:not(.is-quick) > .sub { display: none; }
+
+/* 320px でも、ナビの文字は 14px 以上：余白と「検索・地図」の印を詰める */
+@media (max-width: 760px) {
+  body > header.hd-a nav .hd-item > a { font-size: clamp(14px, 3.9vw, 15px); }
+}
+@media (max-width: 359px) {
+  body > header.hd-a { padding: 0 8px; }
+  body > header.hd-a nav.hd-nav { margin: 0; }
+  body > header.hd-a nav .hd-item > a { padding: 0 4px; }
+  body > header.hd-a nav .hd-item > a[aria-current]::after { left: 4px; right: 4px; }
+  .hd-a .hd-find { width: 32px; min-height: 32px; }
+}

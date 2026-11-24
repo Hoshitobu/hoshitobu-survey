@@ -6,19 +6,19 @@
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)">
 <meta name="referrer" content="no-referrer">
-<title>共通テスト 点数の集計結果 — 星飛ぶの勉強部屋</title>
+<title>共通テスト サイトの集計 — 星飛ぶの勉強部屋</title>
 <meta name="description" content="共通テストや予想問題集の点数集計の結果です。これまでに集まった点数の分布と平均、大問ごとの点数の傾向を見られます。">
 <link rel="canonical" href="https://hoshitobu.github.io/hoshitobu-survey/results.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="星飛ぶの勉強部屋">
 <meta property="og:locale" content="ja_JP">
-<meta property="og:title" content="共通テスト 点数の集計結果 — 星飛ぶの勉強部屋">
+<meta property="og:title" content="共通テスト サイトの集計 — 星飛ぶの勉強部屋">
 <meta property="og:description" content="共通テストや予想問題集の点数集計の結果です。これまでに集まった点数の分布と平均、大問ごとの点数の傾向を見られます。">
 <meta property="og:url" content="https://hoshitobu.github.io/hoshitobu-survey/results.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
-<link rel="stylesheet" href="style.css?v=20261124g">
+<link rel="stylesheet" href="style.css?v=20261124i">
 <meta property="og:image" content="https://hoshitobu.github.io/hoshitobu-survey/img/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -26,29 +26,27 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<script src="sitemap-nav.js?v=20261124g" defer></script>
+<script src="sitemap-nav.js?v=20261124i" defer></script>
 <script src="kyotsu/toc.js?v=20261124d" defer></script>
 </head>
 <body>
-<header>
+<header class="hd hd-a">
   <div class="brand">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.1 7.4 7.4 2.1-7.4 2.1L12 21.5l-2.1-7.4L2.5 12l7.4-2.1z" fill="currentColor"/></svg>
     <div><a class="sitename" href="index.html">星飛ぶの勉強部屋</a></div>
   </div>
-  <nav>
-    <a href="enshu/index.html">実践演習</a>
-    <a href="kakomon.html">過去問演習</a>
-    <a href="seiri/index.html" aria-label="知識の総整理"><span class="nl">知識の総整理</span><span class="ns" aria-hidden="true">総整理</span></a>
-    <a href="muki/index.html">無機化学</a>
-    <a href="kyotsu/index.html" aria-label="過去問の平均点"><span class="nl">過去問の平均点</span><span class="ns" aria-hidden="true">平均点</span></a>
-    <a href="videos.html">解説動画</a>
-    <a href="results.html" aria-current="page" aria-label="集計を見る"><span class="nl">集計を見る</span><span class="ns" aria-hidden="true">集計</span></a>
+  <nav class="hd-nav" aria-label="サイトのメニュー">
+    <div class="hd-item has-kids"><a href="kakomon.html">解く<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="kakomon.html">過去問演習<small>時間を計って、1年分を解く</small></a><span class="soon">類題演習<small>Coming soon</small></span></div></div>
+    <div class="hd-item has-kids"><a href="kakomon.html?view=quick" aria-current="true">点数と集計<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="kakomon.html?view=quick">点数を入れる<small>偏差値と順位が出る</small></a><a href="kyotsu/index.html">平均点・正答率<small>2021〜2026・年度×科目</small></a><a href="results.html">サイトの集計<small>送られた点数の分布とランキング</small></a></div></div>
+    <div class="hd-item has-kids"><a href="seiri/index.html">知識の整理<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="seiri/index.html#muki">無機化学<small>化学｜カード・辞書</small></a><a href="seiri/index.html#zukei">図形の性質<small>数学ⅠA｜鎖と反射カード・辞書</small></a><a href="seiri/index.html#keiryo">図形と計量<small>数学ⅠA｜カード・辞書</small></a></div></div>
+    <div class="hd-item"><a href="videos.html">解説動画</a></div>
+    <button type="button" class="hd-find" data-focus="1" aria-expanded="false" aria-controls="fd"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12.8 12.8L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>検索・地図</span></button>
   </nav>
 </header>
 <main>
 
 <div class="page-title">
-  <h1>点数の集計結果</h1>
+  <h1>サイトの集計</h1>
   <div class="note" id="summary">読み込み中…</div>
 </div>
 

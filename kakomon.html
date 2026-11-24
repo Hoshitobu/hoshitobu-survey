@@ -16,13 +16,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
-<link rel="stylesheet" href="style.css?v=20261124g">
-<link rel="stylesheet" href="kakomon/kakomon.css?v=20261124g">
-<link rel="stylesheet" href="score-grid.css?v=20261124g">
+<link rel="stylesheet" href="style.css?v=20261124i">
+<link rel="stylesheet" href="kakomon/kakomon.css?v=20261124i">
+<link rel="stylesheet" href="score-grid.css?v=20261124i">
 <style>
   /* お知らせ・題字も「左に見出し・右に中身」の2段 */
   .kk-row { display: grid; grid-template-columns: var(--label) minmax(0, 1fr); column-gap: var(--gap); align-items: baseline; }
-  .kk-news { padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 16px; }
+  /* お知らせは題の下（1画面目は題と1文から）。上に細い線、下は「時間を計って解く／点数を入れる」との間をあける */
+  .kk-news { padding: 12px 0; border-top: 1px solid var(--line); margin: 0 0 28px; font-size: 15px; }
   .kk-news-label { font-size: 14px; color: var(--faint); }
   .kk-news-body { color: var(--ink); }
   .kk-news small { color: var(--faint); font-size: 14px; margin-left: 12px; }
@@ -56,12 +57,23 @@
   .secsum { margin-top: 8px; font-size: 16px; color: var(--sub); }
   .secsum.bad { color: var(--warn); }
   /* 解いている最中は、ページの上の部分をほとんど見えなくする（マウスを乗せると戻る） */
-  .kk-news, .kk-title, .kk-tabline { transition: opacity .4s ease; }
-  html.kk-running body:not(.is-quick) :is(.kk-news, .kk-title, .kk-tabline) { opacity: .08; }
-  html.kk-running body:not(.is-quick) .kk-tabline:hover { opacity: 1; }
+  .kk-news, .kk-title, .kk-tabline, .kk-entry { transition: opacity .4s ease; }
+  html.kk-running body:not(.is-quick) :is(.kk-news, .kk-title, .kk-tabline, .kk-entry) { opacity: .08; }
+  body.is-quick .kk-entry { display: none; }
+  /* この画面の 1・2・3 と重ならないよう、下の解く画面の小さな番号は出さない */
+  .kk .kk-step { display: none; }
+  .kk-entry { margin: 8px 0 0; }
+  .kk-entry .card { grid-template-columns: var(--label) minmax(0, 1fr); }
+  @media (max-width: 760px) { .kk-entry .card { grid-template-columns: minmax(0, 1fr); } }
+  html.kk-running body:not(.is-quick) .kk-tabline:hover, html.kk-running body:not(.is-quick) .kk-entry:hover { opacity: 1; }
   /* 時間を計って解いている最中は、サイトのヘッダーを出さない（「一時停止」で戻ると、ヘッダーも戻る） */
   html.kk-running body:not(.is-quick) > header { display: none; }
   html.kk-running { --hdr-h: 0px; }
+  /* 狭い画面の下の帯（時間と「開始」）は、年度と科目を選ぶ前には出さない。
+     「3 始める」か下の解く画面が見えている間と、時間を計っている間だけ出す（kk-dock-on は下のスクリプトが付ける） */
+  @media (max-width: 920px) {
+    html:not(.kk-running) body:not(.kk-dock-on) .kk .kk-dock { display: none; }
+  }
   @media (max-width: 760px) {
     .kk-row { grid-template-columns: minmax(0, 1fr); row-gap: 4px; }
     .kk-news small { display: block; margin-left: 0; }
@@ -84,37 +96,58 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<script src="sitemap-nav.js?v=20261124g" defer></script>
-<script src="kyotsu/toc.js?v=20261124d" defer></script>
+<script src="sitemap-nav.js?v=20261124i" defer></script>
 </head>
 <body class="page-kakomon">
-<header>
+<header class="hd hd-a">
   <div class="brand">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.1 7.4 7.4 2.1-7.4 2.1L12 21.5l-2.1-7.4L2.5 12l7.4-2.1z" fill="currentColor"/></svg>
     <div><a class="sitename" href="index.html">星飛ぶの勉強部屋</a></div>
   </div>
-  <nav>
-    <a href="enshu/index.html">実践演習</a>
-    <a href="kakomon.html" aria-current="page">過去問演習</a>
-    <a href="seiri/index.html" aria-label="知識の総整理"><span class="nl">知識の総整理</span><span class="ns" aria-hidden="true">総整理</span></a>
-    <a href="muki/index.html">無機化学</a>
-    <a href="kyotsu/index.html" aria-label="過去問の平均点"><span class="nl">過去問の平均点</span><span class="ns" aria-hidden="true">平均点</span></a>
-    <a href="videos.html">解説動画</a>
-    <a href="results.html" aria-label="集計を見る"><span class="nl">集計を見る</span><span class="ns" aria-hidden="true">集計</span></a>
+  <nav class="hd-nav" aria-label="サイトのメニュー">
+    <div class="hd-item has-kids"><a href="kakomon.html" aria-current="true">解く<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="kakomon.html">過去問演習<small>時間を計って、1年分を解く</small></a><span class="soon">類題演習<small>Coming soon</small></span></div></div>
+    <div class="hd-item has-kids"><a href="kakomon.html?view=quick">点数と集計<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="kakomon.html?view=quick">点数を入れる<small>偏差値と順位が出る</small></a><a href="kyotsu/index.html">平均点・正答率<small>2021〜2026・年度×科目</small></a><a href="results.html">サイトの集計<small>送られた点数の分布とランキング</small></a></div></div>
+    <div class="hd-item has-kids"><a href="seiri/index.html">知識の整理<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="seiri/index.html#muki">無機化学<small>化学｜カード・辞書</small></a><a href="seiri/index.html#zukei">図形の性質<small>数学ⅠA｜鎖と反射カード・辞書</small></a><a href="seiri/index.html#keiryo">図形と計量<small>数学ⅠA｜カード・辞書</small></a></div></div>
+    <div class="hd-item"><a href="videos.html">解説動画</a></div>
+    <button type="button" class="hd-find" data-focus="1" aria-expanded="false" aria-controls="fd"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12.8 12.8L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>検索・地図</span></button>
   </nav>
 </header>
 <main class="kk-page">
-  <div class="kk-news kk-row" role="note"><span class="kk-news-label">お知らせ</span>
-    <span class="kk-news-body">解説動画：数学IA（2022〜2026）、数学IIB・IIBC（2021〜2026）、化学・物理・生物（2024〜2026）。年ごとの通しで、大問ごとのチャプターつきです。<small><a href="videos.html">一覧を見る</a></small></span>
-  </div>
   <div class="kk-title kk-row">
     <h1 id="kkHead">過去問演習</h1>
     <p id="kkLead">時間を計って解き、自己採点すると、偏差値・順位と、どこで落としたかが出ます。過去問は全国（2021年以降の本試験）と、予想問題集はこのサイトの利用者と比べます。</p>
+  </div>
+  <div class="kk-news kk-row" role="note"><span class="kk-news-label">お知らせ</span>
+    <span class="kk-news-body">解説動画：数学IA（2022〜2026）、数学IIB・IIBC（2021〜2026）、化学・物理・生物（2024〜2026）。年ごとの通しで、大問ごとのチャプターつきです。<small><a href="videos.html">一覧を見る</a></small></span>
   </div>
   <div class="kk-tabline"><div class="kk-viewtabs" role="tablist" id="viewTabs">
     <button type="button" role="tab" data-view="solve" aria-selected="true">時間を計って解く<small>（○×で採点）</small></button>
     <button type="button" role="tab" data-view="quick" aria-selected="false">点数を入れる<small>（まとめて送る・センター試験・本番の自己採点）</small></button>
   </div></div>
+  <!--kk-entry--><div class="steps kk-entry" id="kkEntry">
+<section class="card" id="pick"><h2>年度と科目を選ぶ</h2>
+<div class="pk" data-root="" data-mode="act" data-acts="#acts2" data-solve="step">
+  <div class="pk-years" role="group" aria-label="年度"><button type="button" data-y="2026" aria-pressed="true">2026</button><button type="button" data-y="2025" aria-pressed="false">2025</button><button type="button" data-y="2024" aria-pressed="false">2024</button><button type="button" data-y="2023" aria-pressed="false">2023</button><button type="button" data-y="2022" aria-pressed="false">2022</button><button type="button" data-y="2021" aria-pressed="false">2021</button></div>
+  <div class="pk-subj" data-y="2026" role="group" aria-label="科目"><div class="pk-row"><a href="kyotsu/2026/kokugo.html" data-s="kokugo" aria-pressed="false">国語</a><a href="kyotsu/2026/math1a.html" data-s="math1a" aria-pressed="false">数学IA</a><a href="kyotsu/2026/math2bc.html" data-s="math2bc" aria-pressed="false">数学IIBC</a><a href="kyotsu/2026/eng_r.html" data-s="eng_r" aria-pressed="false">英語R</a><a href="kyotsu/2026/eng_l.html" data-s="eng_l" aria-pressed="false">英語L</a></div><div class="pk-row"><a href="kyotsu/2026/phys.html" data-s="phys" aria-pressed="false">物理</a><a href="kyotsu/2026/chem.html" data-s="chem" aria-pressed="false">化学</a><a href="kyotsu/2026/bio.html" data-s="bio" aria-pressed="false">生物</a><a href="kyotsu/2026/earth.html" data-s="earth" aria-pressed="false">地学</a></div><div class="pk-row"><a href="kyotsu/2026/phys_basic.html" data-s="phys_basic" aria-pressed="false">物基</a><a href="kyotsu/2026/chem_basic.html" data-s="chem_basic" aria-pressed="false">化基</a><a href="kyotsu/2026/bio_basic.html" data-s="bio_basic" aria-pressed="false">生基</a><a href="kyotsu/2026/earth_basic.html" data-s="earth_basic" aria-pressed="false">地基</a></div><div class="pk-row"><a href="kyotsu/2026/info1.html" data-s="info1" aria-pressed="false">情報I</a><a href="kyotsu/2026/geo.html" data-s="geo" aria-pressed="false">地理</a><a href="kyotsu/2026/jhist.html" data-s="jhist" aria-pressed="false">日本史</a><a href="kyotsu/2026/whist.html" data-s="whist" aria-pressed="false">世界史</a><a href="kyotsu/2026/ethics.html" data-s="ethics" aria-pressed="false">倫理</a><a href="kyotsu/2026/polieco.html" data-s="polieco" aria-pressed="false">政経</a></div></div>
+  <div class="pk-subj" data-y="2025" role="group" aria-label="科目" hidden><div class="pk-row"><a href="kyotsu/2025/kokugo.html" data-s="kokugo" aria-pressed="false">国語</a><a href="kyotsu/2025/math1a.html" data-s="math1a" aria-pressed="false">数学IA</a><a href="kyotsu/2025/math2bc.html" data-s="math2bc" aria-pressed="false">数学IIBC</a><a href="kyotsu/2025/eng_r.html" data-s="eng_r" aria-pressed="false">英語R</a><a href="kyotsu/2025/eng_l.html" data-s="eng_l" aria-pressed="false">英語L</a></div><div class="pk-row"><a href="kyotsu/2025/phys.html" data-s="phys" aria-pressed="false">物理</a><a href="kyotsu/2025/chem.html" data-s="chem" aria-pressed="false">化学</a><a href="kyotsu/2025/bio.html" data-s="bio" aria-pressed="false">生物</a><a href="kyotsu/2025/earth.html" data-s="earth" aria-pressed="false">地学</a></div><div class="pk-row"><a href="kyotsu/2025/phys_basic.html" data-s="phys_basic" aria-pressed="false">物基</a><a href="kyotsu/2025/chem_basic.html" data-s="chem_basic" aria-pressed="false">化基</a><a href="kyotsu/2025/bio_basic.html" data-s="bio_basic" aria-pressed="false">生基</a><a href="kyotsu/2025/earth_basic.html" data-s="earth_basic" aria-pressed="false">地基</a></div><div class="pk-row"><a href="kyotsu/2025/info1.html" data-s="info1" aria-pressed="false">情報I</a><a href="kyotsu/2025/geo.html" data-s="geo" aria-pressed="false">地理</a><a href="kyotsu/2025/jhist.html" data-s="jhist" aria-pressed="false">日本史</a><a href="kyotsu/2025/whist.html" data-s="whist" aria-pressed="false">世界史</a><a href="kyotsu/2025/ethics.html" data-s="ethics" aria-pressed="false">倫理</a><a href="kyotsu/2025/polieco.html" data-s="polieco" aria-pressed="false">政経</a></div></div>
+  <div class="pk-subj" data-y="2024" role="group" aria-label="科目" hidden><div class="pk-row"><a href="kyotsu/2024/kokugo.html" data-s="kokugo" aria-pressed="false">国語</a><a href="kyotsu/2024/math1a.html" data-s="math1a" aria-pressed="false">数学IA</a><a href="kyotsu/2024/math2bc.html" data-s="math2bc" aria-pressed="false">数学IIB</a><a href="kyotsu/2024/eng_r.html" data-s="eng_r" aria-pressed="false">英語R</a><a href="kyotsu/2024/eng_l.html" data-s="eng_l" aria-pressed="false">英語L</a></div><div class="pk-row"><a href="kyotsu/2024/phys.html" data-s="phys" aria-pressed="false">物理</a><a href="kyotsu/2024/chem.html" data-s="chem" aria-pressed="false">化学</a><a href="kyotsu/2024/bio.html" data-s="bio" aria-pressed="false">生物</a><a href="kyotsu/2024/earth.html" data-s="earth" aria-pressed="false">地学</a></div><div class="pk-row"><a href="kyotsu/2024/phys_basic.html" data-s="phys_basic" aria-pressed="false">物基</a><a href="kyotsu/2024/chem_basic.html" data-s="chem_basic" aria-pressed="false">化基</a><a href="kyotsu/2024/bio_basic.html" data-s="bio_basic" aria-pressed="false">生基</a><a href="kyotsu/2024/earth_basic.html" data-s="earth_basic" aria-pressed="false">地基</a></div><div class="pk-row"><span class="lb">旧課程</span><a href="kyotsu/2024/chiri_b.html" data-s="chiri_b" aria-pressed="false">地理B</a><a href="kyotsu/2024/chiri_a.html" data-s="chiri_a" aria-pressed="false">地理A</a><a href="kyotsu/2024/nihonshi_b.html" data-s="nihonshi_b" aria-pressed="false">日本史B</a><a href="kyotsu/2024/nihonshi_a.html" data-s="nihonshi_a" aria-pressed="false">日本史A</a><a href="kyotsu/2024/sekaishi_b.html" data-s="sekaishi_b" aria-pressed="false">世界史B</a><a href="kyotsu/2024/sekaishi_a.html" data-s="sekaishi_a" aria-pressed="false">世界史A</a><a href="kyotsu/2024/gensha.html" data-s="gensha" aria-pressed="false">現社</a><a href="kyotsu/2024/rinri.html" data-s="rinri" aria-pressed="false">倫理</a><a href="kyotsu/2024/seikei.html" data-s="seikei" aria-pressed="false">政経</a><a href="kyotsu/2024/rinsei.html" data-s="rinsei" aria-pressed="false">倫政</a></div></div>
+  <div class="pk-subj" data-y="2023" role="group" aria-label="科目" hidden><div class="pk-row"><a href="kyotsu/2023/kokugo.html" data-s="kokugo" aria-pressed="false">国語</a><a href="kyotsu/2023/math1a.html" data-s="math1a" aria-pressed="false">数学IA</a><a href="kyotsu/2023/math2bc.html" data-s="math2bc" aria-pressed="false">数学IIB</a><a href="kyotsu/2023/eng_r.html" data-s="eng_r" aria-pressed="false">英語R</a><a href="kyotsu/2023/eng_l.html" data-s="eng_l" aria-pressed="false">英語L</a></div><div class="pk-row"><a href="kyotsu/2023/phys.html" data-s="phys" aria-pressed="false">物理</a><a href="kyotsu/2023/chem.html" data-s="chem" aria-pressed="false">化学</a><a href="kyotsu/2023/bio.html" data-s="bio" aria-pressed="false">生物</a><a href="kyotsu/2023/earth.html" data-s="earth" aria-pressed="false">地学</a></div><div class="pk-row"><a href="kyotsu/2023/phys_basic.html" data-s="phys_basic" aria-pressed="false">物基</a><a href="kyotsu/2023/chem_basic.html" data-s="chem_basic" aria-pressed="false">化基</a><a href="kyotsu/2023/bio_basic.html" data-s="bio_basic" aria-pressed="false">生基</a><a href="kyotsu/2023/earth_basic.html" data-s="earth_basic" aria-pressed="false">地基</a></div><div class="pk-row"><span class="lb">旧課程</span><a href="kyotsu/2023/chiri_b.html" data-s="chiri_b" aria-pressed="false">地理B</a><a href="kyotsu/2023/chiri_a.html" data-s="chiri_a" aria-pressed="false">地理A</a><a href="kyotsu/2023/nihonshi_b.html" data-s="nihonshi_b" aria-pressed="false">日本史B</a><a href="kyotsu/2023/nihonshi_a.html" data-s="nihonshi_a" aria-pressed="false">日本史A</a><a href="kyotsu/2023/sekaishi_b.html" data-s="sekaishi_b" aria-pressed="false">世界史B</a><a href="kyotsu/2023/sekaishi_a.html" data-s="sekaishi_a" aria-pressed="false">世界史A</a><a href="kyotsu/2023/gensha.html" data-s="gensha" aria-pressed="false">現社</a><a href="kyotsu/2023/rinri.html" data-s="rinri" aria-pressed="false">倫理</a><a href="kyotsu/2023/seikei.html" data-s="seikei" aria-pressed="false">政経</a><a href="kyotsu/2023/rinsei.html" data-s="rinsei" aria-pressed="false">倫政</a></div></div>
+  <div class="pk-subj" data-y="2022" role="group" aria-label="科目" hidden><div class="pk-row"><a href="kyotsu/2022/kokugo.html" data-s="kokugo" aria-pressed="false">国語</a><a href="kyotsu/2022/math1a.html" data-s="math1a" aria-pressed="false">数学IA</a><a href="kyotsu/2022/math2bc.html" data-s="math2bc" aria-pressed="false">数学IIB</a><a href="kyotsu/2022/eng_r.html" data-s="eng_r" aria-pressed="false">英語R</a><a href="kyotsu/2022/eng_l.html" data-s="eng_l" aria-pressed="false">英語L</a></div><div class="pk-row"><a href="kyotsu/2022/phys.html" data-s="phys" aria-pressed="false">物理</a><a href="kyotsu/2022/chem.html" data-s="chem" aria-pressed="false">化学</a><a href="kyotsu/2022/bio.html" data-s="bio" aria-pressed="false">生物</a><a href="kyotsu/2022/earth.html" data-s="earth" aria-pressed="false">地学</a></div><div class="pk-row"><a href="kyotsu/2022/phys_basic.html" data-s="phys_basic" aria-pressed="false">物基</a><a href="kyotsu/2022/chem_basic.html" data-s="chem_basic" aria-pressed="false">化基</a><a href="kyotsu/2022/bio_basic.html" data-s="bio_basic" aria-pressed="false">生基</a><a href="kyotsu/2022/earth_basic.html" data-s="earth_basic" aria-pressed="false">地基</a></div><div class="pk-row"><span class="lb">旧課程</span><a href="kyotsu/2022/chiri_b.html" data-s="chiri_b" aria-pressed="false">地理B</a><a href="kyotsu/2022/chiri_a.html" data-s="chiri_a" aria-pressed="false">地理A</a><a href="kyotsu/2022/nihonshi_b.html" data-s="nihonshi_b" aria-pressed="false">日本史B</a><a href="kyotsu/2022/nihonshi_a.html" data-s="nihonshi_a" aria-pressed="false">日本史A</a><a href="kyotsu/2022/sekaishi_b.html" data-s="sekaishi_b" aria-pressed="false">世界史B</a><a href="kyotsu/2022/sekaishi_a.html" data-s="sekaishi_a" aria-pressed="false">世界史A</a><a href="kyotsu/2022/gensha.html" data-s="gensha" aria-pressed="false">現社</a><a href="kyotsu/2022/rinri.html" data-s="rinri" aria-pressed="false">倫理</a><a href="kyotsu/2022/seikei.html" data-s="seikei" aria-pressed="false">政経</a><a href="kyotsu/2022/rinsei.html" data-s="rinsei" aria-pressed="false">倫政</a></div></div>
+  <div class="pk-subj" data-y="2021" role="group" aria-label="科目" hidden><div class="pk-row"><a href="kyotsu/2021/kokugo.html" data-s="kokugo" aria-pressed="false">国語</a><a href="kyotsu/2021/math1a.html" data-s="math1a" aria-pressed="false">数学IA</a><a href="kyotsu/2021/math2bc.html" data-s="math2bc" aria-pressed="false">数学IIB</a><a href="kyotsu/2021/eng_r.html" data-s="eng_r" aria-pressed="false">英語R</a><a href="kyotsu/2021/eng_l.html" data-s="eng_l" aria-pressed="false">英語L</a></div><div class="pk-row"><a href="kyotsu/2021/phys.html" data-s="phys" aria-pressed="false">物理</a><a href="kyotsu/2021/chem.html" data-s="chem" aria-pressed="false">化学</a><a href="kyotsu/2021/bio.html" data-s="bio" aria-pressed="false">生物</a><a href="kyotsu/2021/earth.html" data-s="earth" aria-pressed="false">地学</a></div><div class="pk-row"><a href="kyotsu/2021/phys_basic.html" data-s="phys_basic" aria-pressed="false">物基</a><a href="kyotsu/2021/chem_basic.html" data-s="chem_basic" aria-pressed="false">化基</a><a href="kyotsu/2021/bio_basic.html" data-s="bio_basic" aria-pressed="false">生基</a><a href="kyotsu/2021/earth_basic.html" data-s="earth_basic" aria-pressed="false">地基</a></div><div class="pk-row"><span class="lb">旧課程</span><a href="kyotsu/2021/chiri_b.html" data-s="chiri_b" aria-pressed="false">地理B</a><a href="kyotsu/2021/chiri_a.html" data-s="chiri_a" aria-pressed="false">地理A</a><a href="kyotsu/2021/nihonshi_b.html" data-s="nihonshi_b" aria-pressed="false">日本史B</a><a href="kyotsu/2021/nihonshi_a.html" data-s="nihonshi_a" aria-pressed="false">日本史A</a><a href="kyotsu/2021/sekaishi_b.html" data-s="sekaishi_b" aria-pressed="false">世界史B</a><a href="kyotsu/2021/sekaishi_a.html" data-s="sekaishi_a" aria-pressed="false">世界史A</a><a href="kyotsu/2021/gensha.html" data-s="gensha" aria-pressed="false">現社</a><a href="kyotsu/2021/rinri.html" data-s="rinri" aria-pressed="false">倫理</a><a href="kyotsu/2021/seikei.html" data-s="seikei" aria-pressed="false">政経</a><a href="kyotsu/2021/rinsei.html" data-s="rinsei" aria-pressed="false">倫政</a></div></div>
+  
+</div>
+<p class="pk-other"><a href="#kakomon" id="kkOther">予想問題集を解く</a></p></section>
+<section class="card" id="todo"><h2>することを選ぶ</h2>
+<div id="acts2"><p class="acts-h" hidden></p>
+<div class="acts is-frame">
+  <a class="act is-main" data-k="solve"><span class="a-t">時間を計って解く</span><span class="a-d">&nbsp;</span></a>
+  <a class="act" data-k="score"><span class="a-t">点数を入れる</span><span class="a-d">&nbsp;</span></a>
+  <a class="act" data-k="mean"><span class="a-t">平均点・正答率を見る</span><span class="a-d">&nbsp;</span></a>
+  <a class="act" data-k="video"><span class="a-t">解説動画を見る</span><span class="a-d">&nbsp;</span></a>
+</div></div></section>
+<section class="card" id="go"><h2>始める</h2>
+<p class="note">1 で選んだ年度と科目が、下の「解く過去問・問題集」に入っています。確かめて「開始」を押すと、時間を計り始めます。</p></section>
+</div><!--/kk-entry-->
   <div id="kakomon"></div>
   <section id="quickPanel" hidden>
         <div class="qk-grid"><div data-score-grid></div></div>
@@ -233,9 +266,11 @@
 <script src="kakomon/kakomon-pdf.js?v=20261123a"></script>
 <script src="kakomon/hoshitobu-link.js?v=20261123a"></script>
 <script src="kakomon/kakomon-adjust.js?v=20261123a"></script>
-<script src="score-grid.js?v=20261124g"></script>
-<script src="quick-entry.js?v=20261124g"></script>
-<script src="kakomon/kakomon-core.js?v=20261124g"></script>
+<script src="score-grid.js?v=20261124i"></script>
+<script src="quick-entry.js?v=20261124i"></script>
+<script src="kakomon/kakomon-core.js?v=20261124i"></script>
+<script src="pick-data.js?v=20261124i"></script>
+<script src="pick.js?v=20261124i"></script>
 <script>
 // 公開サイト用の host：記録はこの端末のブラウザに保存、仲間の偏差値と予想問題集の比べる相手は「点数集計」から
 (function () {
@@ -389,6 +424,48 @@
   window.KAKOMON = window.Kakomon.mount(document.getElementById("kakomon"), {
     exams: window.KAKOMON_EXAMS, stages: window.KAKOMON_STAGES, host, initialExam: want || null,
   });
+})();
+</script>
+
+<script>
+// 1 年度と科目を選ぶ ⇄ 3 の解く過去問・問題集（kakomon-core.js）をつなぐ。時間を計る・採点・送信の動きには触れない（選ぶ欄の値を入れて change を送るだけ）
+(function () {
+  var root = document.getElementById("kakomon"), pk = document.querySelector("#kkEntry .pk");
+  if (!root || !pk || !window.KAKOMON) return;
+  var EX = window.KAKOMON_EXAMS || [];
+  function cur() { var id = window.KAKOMON.current && window.KAKOMON.current(); return EX.filter(function (x) { return x.id === id; })[0] || null; }
+  function set(sel, v) { var el = root.querySelector(sel); if (!el) return; el.value = String(v); el.dispatchEvent(new Event("change", {bubbles: true})); }
+  document.addEventListener("pk:change", function (ev) {
+    var d = ev.detail; if (!d || !d.info || !d.info.ex) return;
+    var c = cur(), want = EX.filter(function (x) { return x.id === d.info.ex; })[0];
+    if (!want || (c && c.year === want.year && c.sid === want.sid)) return;
+    var past = root.querySelector('#kk-tabs [data-tab="past"]'); if (past && !past.classList.contains("is-on")) past.click();
+    set("#kk-kind", "本試験");
+    setTimeout(function () { set("#kk-year", want.year); setTimeout(function () { set("#kk-subj", want.id); }, 0); }, 0);
+  });
+  function fromCore() {
+    var c = cur(); if (!c || !c.year || !c.sid) return;
+    var yb = pk.querySelector('.pk-years [data-y="' + c.year + '"]'); if (!yb) return;
+    if (yb.getAttribute("aria-pressed") !== "true") yb.click();
+    var a = pk.querySelector('.pk-subj[data-y="' + c.year + '"] a[data-s="' + c.sid + '"]');
+    if (a && a.getAttribute("aria-pressed") !== "true") a.click();
+  }
+  root.addEventListener("change", function () { setTimeout(fromCore, 50); });
+  var other = document.getElementById("kkOther");
+  if (other) other.addEventListener("click", function (ev) { var wb = root.querySelector('#kk-tabs [data-tab="wb"]'); if (wb) { ev.preventDefault(); wb.click(); root.scrollIntoView({block: "start"}); } });
+  setTimeout(fromCore, 0);
+  // 下の帯（狭い画面）：「3 始める」か解く画面が見えている間だけ出す（見た目だけ。時間を計る動きには触れない）
+  var go = document.getElementById("go");
+  if ("IntersectionObserver" in window) {
+    var seen = new Set();
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) seen.add(e.target); else seen.delete(e.target); });
+      document.body.classList.toggle("kk-dock-on", seen.size > 0);
+    });
+    [go, root].forEach(function (el) { if (el) io.observe(el); });
+  } else document.body.classList.add("kk-dock-on");
+  // 年度×科目のページの「時間を計って解く」（?exam=…）から来たときは、1・2 を飛ばして「3 始める」から見せる
+  if (go && new URLSearchParams(location.search).get("exam") && !location.hash) setTimeout(function () { go.scrollIntoView({block: "start"}); }, 120);
 })();
 </script>
 </body>
