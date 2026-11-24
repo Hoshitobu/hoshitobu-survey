@@ -25,12 +25,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
-<link rel="stylesheet" href="../style.css?v=20261124b">
-<link rel="stylesheet" href="../kyotsu/kyotsu.css?v=20261124b">
-<link rel="stylesheet" href="muki.css?v=20261124b">
+<link rel="stylesheet" href="../style.css?v=20261125a">
+<link rel="stylesheet" href="../kyotsu/kyotsu.css?v=20261125a">
+<link rel="stylesheet" href="muki.css?v=20261125a">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "トップ", "item": "https://hoshitobu.github.io/hoshitobu-survey/"}, {"@type": "ListItem", "position": 2, "name": "知識の整理", "item": "https://hoshitobu.github.io/hoshitobu-survey/seiri/index.html"}, {"@type": "ListItem", "position": 3, "name": "無機化学", "item": "https://hoshitobu.github.io/hoshitobu-survey/seiri/index.html#muki"}, {"@type": "ListItem", "position": 4, "name": "辞書", "item": "https://hoshitobu.github.io/hoshitobu-survey/muki/index.html"}]}</script>
-<script src="../sitemap-nav.js?v=20261124b" defer></script>
-<script src="../kyotsu/toc.js?v=20261124b" defer></script>
+<script src="../sitemap-nav.js?v=20261125a" defer></script>
+<script src="../kyotsu/toc.js?v=20261125a" defer></script>
 
 <script>document.addEventListener('DOMContentLoaded',function(){var N=['はじめ','① 離れる','② 移る','③ 新しい粒子'],D=['全体を薄く出している。「次へ」で、離れる → 移る → 新しい粒子の順に濃くなる。','前の粒子から、動くもの（強調色）が離れる。','矢印に沿って、相手のところへ動く。','動いた結果、後の粒子になる。'];document.querySelectorAll('figure.fs').forEach(function(f){var els=f.querySelectorAll('[data-s],[data-e],[data-h],[data-mv]'),k=0;if(!els.length)return;var c=document.createElement('div');c.className='fs-ctl';c.innerHTML='<button type="button" class="fs-next"></button><button type="button" class="fs-back">もどす</button><span class="fs-now" role="status" aria-live="polite"></span>';var cap=f.querySelector('figcaption');cap?f.insertBefore(c,cap):f.appendChild(c);var nx=c.querySelector('.fs-next'),bk=c.querySelector('.fs-back'),nw=c.querySelector('.fs-now');function set(n){k=n;f.classList.add('fs-js');els.forEach(function(el){var s=el.getAttribute('data-s'),e=el.getAttribute('data-e'),h=el.getAttribute('data-h'),t='on';if(h!==null&&k<+h)t='hid';else if(e!==null&&k>+e)t='hid';else if(s!==null&&k<+s)t='dim';el.setAttribute('data-st',t);var m=el.getAttribute('data-mv');if(m){var p=m.split(';')[k].split(',');el.style.transform='translate('+p[0]+'px,'+p[1]+'px)';}});nx.textContent=k<3?'次へ':'最初から';bk.disabled=k==0;f.setAttribute('data-stage',k);nw.innerHTML='<b>'+N[k]+'</b>　'+D[k];}nx.addEventListener('click',function(){set(k<3?k+1:0)});bk.addEventListener('click',function(){if(k>0)set(k-1)});var q=/[?&]fs=([0-3])/.exec(location.search);set(q?+q[1]:0);});});</script>
 </head>
