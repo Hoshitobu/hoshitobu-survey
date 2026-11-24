@@ -479,12 +479,14 @@ var DATA = {"steps": [{"grp": "(1)", "name": "角の二等分線の比", "hint":
       var can = (j !== k && j <= st.maxStep);
       h += '<div class="pq'+(j===k?' cur':'')+(can?' can':'')+'" data-pn="'+j+'"'+(j===k?' id="curq"':'')+'>';
       h += '<p class="an">小問'+(j+1)+(j===k?'　いま解いている小問':'')+'</p>';
-      var pre = T.pre ? T.pre.replace(/^\s*[（(]\d+[）)]\s*/, '') : '';
+      // 前置きの頭の見出し（(1)、(2)(i)、(ii) など）は、見出しの行（T.grp）と重なるときだけ外す。文中の「(1) の結果」は外さない
+      var pre = T.pre || '', lm = /^\s*((?:[（(][0-9ivx]+[）)])+)\s*/.exec(pre);
+      if(lm && (T.grp === lm[1] || T.grp.slice(-lm[1].length) === lm[1])) pre = pre.slice(lm[0].length);
       if(pre) h += '<p class="pre">'+esc(pre)+'</p>';
       h += '<p class="qtext">';
       for(var t = 0; t < T.text.length; t++){
         var sg = T.text[t];
-        if(sg.s !== undefined) h += esc(t === 0 && !pre ? sg.s.replace(/^\s*[（(]\d+[）)]\s*/, '') : sg.s);
+        if(sg.s !== undefined) h += esc(sg.s);
         else h += (j === k) ? blankHTML(k, sg.b, live) : staticBlank(j, sg.b);
       }
       h += '</p>';
