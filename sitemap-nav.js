@@ -46,7 +46,7 @@
     return "";
   }
   function treeHtml() {
-    var here = W[1] || W[0], T = N.tiers;
+    var here = W[1] || W[0], T = N.tiers, B = N.boxes;
     function cur(k) { return k === here ? ' aria-current="page"' : ""; }
     function soon(n) { return '<li><span class="soon">' + n + "<small>Coming soon</small></span></li>"; }
     var lis = ['<li><a class="t-p" href="' + base + 'index.html"' + cur("top") + '>トップ</a><ul><li><a href="' + base + 'index.html#pick">年度と科目を選ぶ</a></li></ul></li>'];
@@ -54,7 +54,9 @@
       var rows = p[3].map(function (k) {
         var extra = "";
         if (k[3] === "kyotsu") extra = "<ul><li><span>各年度・科目のページ</span></li></ul>";
-        if (T[k[3]]) {
+        if (B && B[k[3]]) {        // 知識の整理の分野：練習の箱（早押し・類題演習・流れをつかむ・辞書のうち、中身のあるもの）
+          extra = "<ul>" + B[k[3]].map(function (b) { return '<li><a href="' + base + b[2] + '">' + b[0] + "<small>" + b[1] + "</small></a></li>"; }).join("") + "</ul>";
+        } else if (T && T[k[3]]) {  // 古い形（site-nav.js が古いまま残っているとき）
           var t = T[k[3]];
           extra = "<ul>" + (t[1] ? '<li><a href="' + base + t[1] + '">' + t[0] + "</a></li>" : soon(t[0])) + (t[3] ? '<li><a href="' + base + t[3] + '">' + t[2] + "</a></li>" : soon(t[2])) + "</ul>";
         }
@@ -79,11 +81,14 @@
       .catch(function () { INDEX = []; loading = false; done(); });
   }
   function crumb(u) {
-    if (/^muki\/card/.test(u)) return "知識の整理 › 無機化学 › カード";
+    // 練習の箱の名前（早押し｜類題演習｜流れをつかむ｜辞書、2026-11-25）にそろえる
+    if (/^muki\/card/.test(u)) return "知識の整理 › 無機化学 › 粒で見る";
     if (/^muki\//.test(u)) return "知識の整理 › 無機化学 › 辞書";
     if (/^seiri\/zukei/.test(u)) return "知識の整理 › 図形の性質 › 辞書";
-    if (/^seiri\/(hansha|kusari)/.test(u)) return "知識の整理 › 図形の性質 › 鎖と反射カード";
-    if (/^seiri\/keiryo/.test(u)) return "知識の整理 › 図形と計量 › カード";
+    if (/^seiri\/hansha/.test(u)) return "知識の整理 › 図形の性質 › 早押し";
+    if (/^seiri\/kusari/.test(u)) return "知識の整理 › 図形の性質 › 誘導をたどる";
+    if (/^seiri\/keiryo/.test(u)) return "知識の整理 › 図形と計量 › 早押し";
+    if (/^ruidai\//.test(u)) return "解く › 類題演習";
     if (/^seiri\//.test(u)) return "知識の整理";
     if (/^kyotsu\//.test(u)) return "点数と集計 › 平均点・正答率";
     if (/^kakomon/.test(u)) return "解く › 過去問演習";
