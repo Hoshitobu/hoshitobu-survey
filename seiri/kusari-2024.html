@@ -53,9 +53,12 @@
 .hz .chains a[aria-current="page"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .hz .chains a[aria-current="page"] span{color:var(--on-accent)}
 .hz .layout{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
-@media (min-width:900px){.hz .layout{grid-template-columns:330px minmax(0,1fr);align-items:start}
-.hz .mapcol{position:sticky;top:10px}
-.hz .workcol{min-width:0}}
+.hz .papercol,.hz .sheetcol{min-width:0}
+@media (min-width:760px){.hz .layout{grid-template-columns:minmax(0,1fr) 300px;align-items:start}
+.hz .mapcol{grid-column:1 / -1}
+.hz .sheetcol{position:sticky;top:10px;max-height:calc(100vh - 20px);overflow:auto}}
+@media (min-width:1180px){.hz .layout{grid-template-columns:272px minmax(0,1fr) 320px}
+.hz .mapcol{grid-column:auto;position:sticky;top:10px;max-height:calc(100vh - 20px);overflow:auto}}
 .hz .mapbox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 10px 8px}
 .hz .mapbox h2{font-size:14px;letter-spacing:.06em;color:var(--accent);margin:0 0 6px}
 .hz .maprow{position:relative}
@@ -110,6 +113,26 @@
 .hz .fb.ng{border-color:var(--amb)}
 .hz .fb b{font-weight:700}
 .hz .solve{margin-top:12px;border-top:1px dashed var(--line-strong);padding-top:10px}
+.hz .paper{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.hz .paper .ag{font-weight:700;font-size:16px;margin:10px 4px 2px}
+.hz .paper .ag:first-child{margin-top:2px}
+.hz .paper .pq{padding:6px 10px;border:1px solid transparent;border-radius:8px;margin:0 0 4px}
+.hz .paper .pq.cur{border-color:var(--accent);background:var(--accent-soft)}
+.hz .paper .pq.can{cursor:pointer}
+.hz .paper .pq .an{font-size:12.5px;color:var(--faint);font-weight:700;margin:0}
+.hz .paper .pq.cur .an{color:var(--accent)}
+.hz .paper .pre{margin:0 0 2px}
+.hz .paper .qtext{margin:0 0 4px}
+.hz .paper .grp-opts{margin:2px 0 6px}
+.hz .sheet{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.hz .paper .sheet{margin:4px 0 10px;border-color:var(--accent)}
+.hz .sheet h3{font-size:17px}
+.hz .sheet .opts button{min-height:46px;font-size:15px}
+.hz .sheet .mrow{display:flex;flex-wrap:wrap;gap:6px 4px;margin:4px 0 8px}
+.hz .sheet .mrow .ml{width:100%;font-size:12.5px;color:var(--faint);font-weight:700;letter-spacing:.06em}
+.hz .sheet .pad{grid-template-columns:repeat(4,1fr)}
+.hz .sheet .expl li{font-size:15px}
+.hz .bx.sm{min-width:30px;height:32px;font-size:16px;border-width:1.5px;cursor:default}
 .hz .pre{margin:0 0 6px;color:var(--sub)}
 .hz .qtext{font-size:17px;line-height:2.5;margin:0 0 8px}
 .hz .bx{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;min-width:38px;height:42px;padding:0 4px;margin:0 2px;
@@ -197,6 +220,10 @@
 .hz .qtext{font-size:16px}}
 @media (prefers-reduced-motion: reduce){.hz [data-s],.hz [data-dim]{transition:none}}
 .hz button{font-family:inherit}
+@media (min-width:1180px){ main.kusari-tool{max-width:1380px} }
+@media (min-width:760px){ .hz .sheetcol{top:calc(var(--hdr-h,56px) + 10px);max-height:calc(100vh - var(--hdr-h,56px) - 20px)} }
+@media (min-width:1180px){ .hz .mapcol{max-height:calc(100vh - var(--hdr-h,56px) - 20px)} }
+.hz .paper .pq{scroll-margin-top:calc(var(--hdr-h,56px) + 12px)}
 .hz .stepbox,.hz .cardbox{scroll-margin-top:calc(var(--hdr-h,56px) + 12px)}
 @media (min-width:900px){ .hz .mapcol{top:calc(var(--hdr-h,56px) + 10px)} }
 .hz h1,.hz h2,.hz h3{font-family:inherit}
@@ -227,6 +254,8 @@
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "トップ", "item": "https://hoshitobu.github.io/hoshitobu-survey/"}, {"@type": "ListItem", "position": 2, "name": "知識の整理", "item": "https://hoshitobu.github.io/hoshitobu-survey/seiri/index.html"}, {"@type": "ListItem", "position": 3, "name": "図形の性質", "item": "https://hoshitobu.github.io/hoshitobu-survey/seiri/index.html#zukei"}, {"@type": "ListItem", "position": 4, "name": "誘導の鎖", "item": "https://hoshitobu.github.io/hoshitobu-survey/seiri/kusari.html"}]}</script>
 <script src="../sitemap-nav.js?v=20261125a" defer></script>
+<link rel="stylesheet" href="../score-grid.css?v=20261125a">
+<style>.kz-rec{margin:0 0 14px;padding:12px 16px;border:1px solid var(--line-strong,#3c4252);border-radius:10px}.kz-rec p{margin:0 0 6px}.kz-rec-t{font-weight:700}.kz-rec-l{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:15px}.kz-rec-s{font-size:14.5px;color:var(--sub,#b4b9c4)}</style>
 </head>
 <body>
 <header class="hd hd-a">
@@ -235,21 +264,21 @@
     <div><a class="sitename" href="../index.html">星飛ぶの勉強部屋</a></div>
   </div>
   <nav class="hd-nav" aria-label="サイトのメニュー">
-    <div class="hd-item has-kids"><a href="../kakomon.html">解く<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="../kakomon.html">過去問演習<small>時間を計って、1年分を解く</small></a><span class="soon">類題演習<small>Coming soon</small></span></div></div>
+    <div class="hd-item has-kids"><a href="../kakomon.html">解く<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="../kakomon.html">過去問演習<small>時間を計って、1年分を解く</small></a><a href="../ruidai/index.html">類題演習<small>テーマごとに、同じ型の問題を解く</small></a></div></div>
     <div class="hd-item has-kids"><a href="../kakomon.html?view=quick">点数と集計<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="../kakomon.html?view=quick">点数を入れる<small>偏差値と順位が出る</small></a><a href="../kyotsu/index.html">平均点・正答率<small>2021〜2026・年度×科目</small></a><a href="../results.html">サイトの集計<small>送られた点数の分布とランキング</small></a></div></div>
     <div class="hd-item has-kids"><a href="../seiri/index.html" aria-current="true">知識の整理<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="../seiri/index.html#muki">無機化学<small>化学｜カード・辞書</small></a><a href="../seiri/index.html#zukei">図形の性質<small>数学ⅠA｜鎖と反射カード・辞書</small></a><a href="../seiri/index.html#keiryo">図形と計量<small>数学ⅠA｜カード・辞書</small></a></div></div>
     <div class="hd-item"><a href="../videos.html">解説動画</a></div>
     <button type="button" class="hd-find" data-focus="1" aria-expanded="false" aria-controls="fd"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12.8 12.8L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>検索・地図</span></button>
   </nav>
 </header>
-<main class="zukei-tool">
+<main class="zukei-tool kusari-tool">
 <nav class="crumbs" aria-label="パンくず"><a href="../index.html">トップ</a> › <a href="index.html">知識の整理</a> › <a href="index.html#zukei">図形の性質</a> › <a href="kusari.html">誘導の鎖</a> › <span>2024 第5問の流れ</span></nav>
 <div class="k-title">
   <h1>誘導の鎖：2024 第5問の流れ</h1>
   <p class="note">円が描かれていない場面で、自分で円を描き足して方べきの定理を使い、積の大小で点が円の内か外かを判定します。問題は自作で、2024 第5問と同じ流れになっています。</p>
 </div>
 
-<div class="hz">
+<section class="kz-rec" aria-label="先に本番を解く"><p class="kz-rec-t">このページは、本番の 2024 数学ⅠA（第5問）を一度解いたあとに使うのがおすすめです。</p><p class="kz-rec-l"><a href="../kakomon.html?exam=2024-IA">過去問演習で時間を計って解く</a><a href="../kyotsu/2024/math1a.html">2024 数学ⅠA の平均点・正答率</a></p><p class="kz-rec-s">解いたら、点数の記録にご協力ください（名前やメールアドレスは聞きません）。</p><div data-score-grid data-books="honshi2024" data-subjects="math1a"></div><noscript><p>点数を入れる欄の表示には JavaScript が必要です。<a href="../kakomon.html?view=quick">点数を入れるページ</a>から入力できます。</p></noscript></section><div class="hz">
 <nav class="chains" aria-label="演習の切りかえ"><a href="kusari-2026.html"><b>演習1</b><span>三角錐（2026 第3問と同じ流れ）</span></a><a href="kusari-2024.html" aria-current="page"><b>演習2</b><span>円を描き足す（2024 第5問と同じ流れ）</span></a><a href="kusari-2025.html"><b>演習3</b><span>平面を取りかえる（2025 第3問と同じ流れ）</span></a></nav>
 
 
@@ -266,19 +295,23 @@
   </div>
 </div>
 
-<div class="workcol">
+<div class="papercol">
   <div class="problem"><b>問題（自作）</b><p>平面上に △ABC があり、BC＝18、CA＝12 である。辺 BC 上に点 D、辺 CA 上に点 E があって、BD : DC ＝ 1 : 2、CE : EA ＝ 5 : 1 とする。線分 AD と BE の交点を P とする。以下、比は最も簡単な整数の比で答える。</p></div>
   <div class="figs"><div class="figbox" data-fb="fb1"><h3></h3><svg class="fig fig24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 350" role="img" aria-label="△ABC。D は辺 BC 上、E は辺 CA 上。AD と BE は P で交わる。円は描かれていない。"><polygon points="247.3,88.8 297.3,230.4 72.1,230.4" class="f-soft" data-s="0-1"/><polygon points="409.9,230.4 218.1,112.4 72.1,230.4" class="f-soft" data-s="2-2"/><line x1="247.3" y1="88.8" x2="409.9" y2="230.4" class="s-ink" stroke-width="2.6" stroke-linecap="round"/><line x1="409.9" y1="230.4" x2="72.1" y2="230.4" class="s-ink" stroke-width="2.6" stroke-linecap="round"/><line x1="72.1" y1="230.4" x2="247.3" y2="88.8" class="s-ink" stroke-width="2.6" stroke-linecap="round"/><line x1="247.3" y1="88.8" x2="297.3" y2="230.4" class="s-ink" stroke-width="2.6" stroke-linecap="round"/><line x1="409.9" y1="230.4" x2="218.1" y2="112.4" class="s-ink" stroke-width="2.6" stroke-linecap="round"/><line x1="409.9" y1="230.4" x2="218.1" y2="112.4" class="s-acc" stroke-width="4.6" stroke-linecap="round" data-s="0-1"/><line x1="247.3" y1="88.8" x2="297.3" y2="230.4" class="s-acc" stroke-width="4.6" stroke-linecap="round" data-s="2-2"/><circle cx="184.7" cy="220.4" r="113.1" class="s-grn" fill="none" stroke-width="2.8" data-s="3-3"/><line x1="247.3" y1="88.8" x2="218.1" y2="112.4" class="s-acc" stroke-width="5" stroke-linecap="round" data-s="3-3"/><line x1="218.1" y1="112.4" x2="72.1" y2="230.4" class="s-acc" stroke-width="5" stroke-linecap="round" data-s="3-3"/><line x1="247.3" y1="88.8" x2="266.0" y2="141.9" class="s-acc" stroke-width="5" stroke-linecap="round" data-s="3-3"/><line x1="266.0" y1="141.9" x2="297.3" y2="230.4" class="s-acc" stroke-width="5" stroke-linecap="round" data-s="3-3"/><line x1="409.9" y1="230.4" x2="297.3" y2="230.4" class="s-amb" stroke-width="5" stroke-linecap="round" data-s="3-3"/><line x1="297.3" y1="230.4" x2="72.1" y2="230.4" class="s-amb" stroke-width="5" stroke-linecap="round" data-s="3-3"/><line x1="409.9" y1="230.4" x2="266.0" y2="141.9" class="s-amb" stroke-width="5" stroke-linecap="round" data-s="3-3"/><line x1="266.0" y1="141.9" x2="218.1" y2="112.4" class="s-amb" stroke-width="5" stroke-linecap="round" data-s="3-3"/><circle cx="303.6" cy="188.4" r="114.4" class="s-grn" fill="none" stroke-width="2.8" data-s="4-5"/><line x1="266.0" y1="141.9" x2="297.3" y2="230.4" class="s-amb" stroke-width="5" stroke-linecap="round" data-s="4-5"/><line x1="266.0" y1="141.9" x2="322.3" y2="301.2" class="s-acc" stroke-width="5" stroke-linecap="round" stroke-dasharray="7 5" data-s="5-5"/><line x1="247.3" y1="88.8" x2="266.0" y2="141.9" class="s-faint" stroke-width="2.4" stroke-linecap="round" data-s="4-5"/><line x1="409.9" y1="230.4" x2="266.0" y2="141.9" class="s-ink" stroke-width="4" stroke-linecap="round" data-s="4-5"/><line x1="266.0" y1="141.9" x2="218.1" y2="112.4" class="s-ink" stroke-width="4" stroke-linecap="round" data-s="4-5"/><circle cx="322.3" cy="301.2" r="4.2" class="f-acc" data-s="5-5"/><circle cx="353.6" cy="130.9" r="114.4" class="s-grn" fill="none" stroke-width="2.8" data-s="6-6"/><line x1="266.0" y1="141.9" x2="218.1" y2="112.4" class="s-amb" stroke-width="5" stroke-linecap="round" data-s="6-6"/><line x1="266.0" y1="141.9" x2="239.4" y2="125.5" class="s-acc" stroke-width="5" stroke-linecap="round" stroke-dasharray="7 5" data-s="6-6"/><circle cx="239.4" cy="125.5" r="4.2" class="f-acc" data-s="6-6"/><circle cx="247.3" cy="88.8" r="4.2" class="f-ink"/><circle cx="409.9" cy="230.4" r="4.2" class="f-ink"/><circle cx="72.1" cy="230.4" r="4.2" class="f-ink"/><circle cx="297.3" cy="230.4" r="4.2" class="f-ink"/><circle cx="218.1" cy="112.4" r="4.2" class="f-ink"/><circle cx="266.0" cy="141.9" r="4.2" class="f-ink"/><text x="247.3" y="78.3" class="f-ink lbl" font-size="19" text-anchor="middle">A</text><text x="426.9" y="236.9" class="f-ink lbl" font-size="19" text-anchor="middle">B</text><text x="55.1" y="236.9" class="f-ink lbl" font-size="19" text-anchor="middle">C</text><text x="288.8" y="251.6" class="f-ink lbl" font-size="19" text-anchor="middle">D</text><text x="206.0" y="106.9" class="f-ink lbl" font-size="19" text-anchor="middle">E</text><text x="254.0" y="160.4" class="f-ink lbl" font-size="19" text-anchor="middle">P</text><text x="337.1" y="316.2" class="f-acc lbl" font-size="19" text-anchor="middle" data-s="5-5">X</text><text x="230.9" y="146.7" class="f-acc lbl" font-size="19" text-anchor="middle" data-s="6-6">X′</text><line x1="409.9" y1="234.4" x2="409.9" y2="280.4" class="s-faint" stroke-width="1.1" stroke-linecap="round"/><line x1="409.9" y1="271.4" x2="409.9" y2="281.4" class="s-ink" stroke-width="1.8" stroke-linecap="round"/><line x1="72.1" y1="234.4" x2="72.1" y2="280.4" class="s-faint" stroke-width="1.1" stroke-linecap="round"/><line x1="72.1" y1="271.4" x2="72.1" y2="281.4" class="s-ink" stroke-width="1.8" stroke-linecap="round"/><line x1="409.9" y1="276.4" x2="72.1" y2="276.4" class="s-ink" stroke-width="1.3" stroke-linecap="round"/><text x="241.0" y="281.2" class="f-ink lbl" font-size="14" text-anchor="middle" font-style="normal">BC＝18</text><line x1="69.6" y1="227.3" x2="40.6" y2="191.5" class="s-faint" stroke-width="1.1" stroke-linecap="round"/><line x1="46.3" y1="198.5" x2="40.0" y2="190.7" class="s-ink" stroke-width="1.8" stroke-linecap="round"/><line x1="244.7" y1="85.7" x2="215.8" y2="49.9" class="s-faint" stroke-width="1.1" stroke-linecap="round"/><line x1="221.5" y1="56.9" x2="215.2" y2="49.2" class="s-ink" stroke-width="1.8" stroke-linecap="round"/><line x1="43.2" y1="194.6" x2="218.3" y2="53.0" class="s-ink" stroke-width="1.3" stroke-linecap="round"/><text x="130.8" y="128.6" class="f-ink lbl" font-size="14" text-anchor="middle" font-style="normal">CA＝12</text><circle cx="353.6" cy="247.4" r="11" class="s-ink chipbg" fill="none" stroke-width="2" data-s="0-6"/><text x="353.6" y="252.4" class="f-ink up" font-size="14" text-anchor="middle" font-style="normal" font-weight="700" data-s="0-6">1</text><circle cx="184.7" cy="247.4" r="11" class="s-ink chipbg" fill="none" stroke-width="2" data-s="0-6"/><text x="184.7" y="252.4" class="f-ink up" font-size="14" text-anchor="middle" font-style="normal" font-weight="700" data-s="0-6">2</text><polygon points="134.4,143.2 120.1,168.4 148.6,168.4" class="s-ink chipbg" fill="none" stroke-width="2" stroke-linejoin="round" data-s="0-6"/><text x="134.4" y="163.2" class="f-ink up" font-size="14" text-anchor="middle" font-style="normal" font-weight="700" data-s="0-6">5</text><polygon points="222.0,72.4 207.7,97.6 236.2,97.6" class="s-ink chipbg" fill="none" stroke-width="2" stroke-linejoin="round" data-s="0-6"/><text x="222.0" y="92.4" class="f-ink up" font-size="14" text-anchor="middle" font-style="normal" font-weight="700" data-s="0-6">1</text><text x="269.6" y="117.8" class="f-acc lbl" font-size="16" text-anchor="middle" font-style="normal" data-s="2-6">3</text><text x="295.7" y="197.6" class="f-acc lbl" font-size="16" text-anchor="middle" font-style="normal" data-s="2-6">5</text><text x="340.0" y="177.6" class="f-amb lbl" font-size="16" text-anchor="middle" font-style="normal" data-s="4-6">9</text><text x="230.0" y="128.6" class="f-amb lbl" font-size="16" text-anchor="middle" font-style="normal" data-s="4-6">3</text><line x1="262.3" y1="143.3" x2="237.7" y2="151.9" class="s-faint" stroke-width="1.1" stroke-linecap="round" data-s="5-5"/><line x1="246.2" y1="148.9" x2="236.8" y2="152.3" class="s-ink" stroke-width="1.8" stroke-linecap="round" data-s="5-5"/><line x1="318.6" y1="302.5" x2="294.1" y2="311.2" class="s-faint" stroke-width="1.1" stroke-linecap="round" data-s="5-5"/><line x1="302.5" y1="308.2" x2="293.1" y2="311.5" class="s-ink" stroke-width="1.8" stroke-linecap="round" data-s="5-5"/><line x1="241.5" y1="150.6" x2="297.8" y2="309.9" class="s-ink" stroke-width="1.3" stroke-linecap="round" data-s="5-5"/><text x="269.7" y="235.7" class="f-acc lbl" font-size="16" text-anchor="middle" font-style="normal" data-s="5-5">9</text></svg></div></div>
   <p class="figcap" id="figcap"></p>
-  <div class="stepbox" aria-live="polite" id="stepbox"></div>
-
+  <div class="paper" id="paper"></div>
+</div>
+<div class="sheetcol">
+  <div class="sheet stepbox" aria-live="polite" id="stepbox"></div>
+</div>
+</div>
+<div class="belowcol">
   <div class="rates" id="rates"></div>
   <details class="jukko" id="jukko">
     <summary>行き詰まったときの考え方</summary>
     <div id="jukko-body"></div>
   </details>
   <p class="limit">この流れだけで、すべての図形問題が解けるわけではありません。よく出る誘導の一例です。</p>
-</div>
 </div>
 </div>
 
@@ -335,28 +368,53 @@ var DATA = {"steps": [{"grp": "(1)", "name": "メネラウスの式の枠", "hin
     var pos = {}, base = row.getBoundingClientRect();
     for(var i = 0; i < btns.length; i++){
       var r = btns[i].getBoundingClientRect();
-      pos[btns[i].getAttribute("data-n")] = {y: r.top - base.top + r.height/2};
+      pos[btns[i].getAttribute("data-n")] = {y: r.top - base.top + r.height/2, h: r.height};
     }
     var W = 68, H = row.offsetHeight;
     svg.setAttribute("viewBox","0 0 "+W+" "+H); svg.setAttribute("height",H);
     var active = [];
     for(var e = 0; e < EDGES.length; e++){ if(st.chk[EDGES[e].a]) active.push(EDGES[e]); }
+    // 縦の線の位置（レーン）：長い矢印ほど外側。範囲が重なる矢印は別のレーンへ
     var lanes = [];
     active.sort(function(p,q){ return (Math.abs(q.b-q.a)) - (Math.abs(p.b-p.a)); });
-    var out = "";
     for(var a = 0; a < active.length; a++){
       var E = active[a], lo = Math.min(E.a,E.b), hi = Math.max(E.a,E.b), ln = 0;
       while(true){
         var clash = false;
-        for(var m = 0; m < lanes.length; m++){ if(lanes[m].ln === ln && !(hi <= lanes[m].lo || lo >= lanes[m].hi)) clash = true; }
+        for(var m = 0; m < lanes.length; m++){ if(lanes[m].ln === ln && !(hi < lanes[m].lo || lo > lanes[m].hi)) clash = true; }
         if(!clash) break; ln++;
       }
-      lanes.push({ln:ln, lo:lo, hi:hi});
-      var A = pos[E.a], B = pos[E.b]; if(!A || !B) continue;
-      var xs = 4, xl = 16 + ln*13;
-      var d = "M"+xs+","+A.y.toFixed(1)+" H"+xl+" V"+B.y.toFixed(1)+" H"+(xs+6);
-      out += '<path class="e-'+E.k+'" d="'+d+'" fill="none" stroke-width="2.4" stroke-linejoin="round"'+(st.step===E.a && st.chk[E.a] ? '' : ' opacity=".75"')+'/>';
-      out += '<path class="head-'+E.k+'" d="M'+xs+','+B.y.toFixed(1)+' l8,-5 v10 z"/>';
+      lanes.push({ln:ln, lo:lo, hi:hi}); E._ln = ln;
+    }
+    // 同じ小問に出入りする矢印は、高さを少しずつずらす（重ならないように）。
+    // 相手が上にある矢印ほど上、外側のレーンほど外（上か下）に置くと、線が交わらない。
+    var ends = {};
+    for(var a2 = 0; a2 < active.length; a2++){
+      var E2 = active[a2];
+      (ends[E2.a] = ends[E2.a] || []).push({e:E2, end:"a", other:E2.b});
+      (ends[E2.b] = ends[E2.b] || []).push({e:E2, end:"b", other:E2.a});
+    }
+    Object.keys(ends).forEach(function(n){
+      var L = ends[n], me = +n;
+      L.sort(function(p,q){
+        var pu = p.other < me, qu = q.other < me;
+        if(pu !== qu) return pu ? -1 : 1;                      // 上の相手へ向かう線を上に
+        return pu ? (q.e._ln - p.e._ln) : (p.e._ln - q.e._ln);  // 上側は外のレーンほど上、下側は外のレーンほど下
+      });
+      var P = pos[n]; if(!P) return;
+      var gap = Math.min(9, (P.h - 12) / Math.max(1, L.length - 1));
+      for(var i2 = 0; i2 < L.length; i2++){
+        var off = (L.length === 1) ? 0 : (i2 - (L.length - 1) / 2) * gap;
+        L[i2].e["_y" + L[i2].end] = P.y + off;
+      }
+    });
+    var out = "";
+    for(var a3 = 0; a3 < active.length; a3++){
+      var E3 = active[a3]; if(E3._ya === undefined || E3._yb === undefined) continue;
+      var xs = 4, xl = 18 + E3._ln * 12, ya = E3._ya.toFixed(1), yb = E3._yb.toFixed(1);
+      var d = "M"+xs+","+ya+" H"+xl+" V"+yb+" H"+(xs+6);
+      out += '<path class="e-'+E3.k+'" d="'+d+'" fill="none" stroke-width="2.4" stroke-linejoin="round"'+(st.step===E3.a && st.chk[E3.a] ? '' : ' opacity=".75"')+'/>';
+      out += '<path class="head-'+E3.k+'" d="M'+xs+','+yb+' l8,-5 v10 z"/>';
     }
     svg.innerHTML = out;
   }
@@ -406,29 +464,56 @@ var DATA = {"steps": [{"grp": "(1)", "name": "メネラウスの式の枠", "hin
     var shown = (v === undefined) ? '<span class="lb">'+B.id+'</span>' : (B.kind==="choice" ? MARKS.charAt(+v) : v);
     return '<button type="button" class="'+cls+'" data-bi="'+bi+'" aria-label="'+B.id+(v===undefined?' 未入力':' '+v)+'"'+((st.chk[k]||!live)?' disabled':'')+'>'+shown+res+'</button>';
   }
-  function renderStep(){
-    var k = st.step, S = STEPS[k], box = $("stepbox"), h = "", live = (st.first[k] !== null);
-    h += '<p class="n"><span>'+S.grp+'　小問'+(k+1)+' / '+N+'</span><span class="chip lv'+S.hintlv+'">ヒント：'+esc(S.hint)+'</span></p>';
-    h += '<h3>'+esc(S.name)+'</h3>';
-    // 1. 小問の文を先に読む
-    if(S.pre) h += '<p class="pre">'+esc(S.pre)+'</p>';
-    h += '<p class="qtext">';
-    for(var t = 0; t < S.text.length; t++){
-      var seg = S.text[t];
-      if(seg.s !== undefined) h += esc(seg.s); else h += blankHTML(k, seg.b, live);
-    }
-    h += '</p>';
-    var cbs = [];
-    for(var b = 0; b < S.blanks.length; b++){
-      var B = S.blanks[b];
-      if(B.kind === "choice"){
-        cbs.push(B);
-        h += '<ul class="grp-opts" aria-label="'+B.id+' の解答群"><li class="gl">'+B.id+' の解答群</li>';
-        for(var c = 0; c < B.opts.length; c++) h += '<li>'+MARKS.charAt(c)+' '+esc(B.opts[c])+'</li>';
-        h += '</ul>';
+  function staticBlank(j, bi){
+    var B = STEPS[j].blanks[bi], v = st.val[j][B.id], cls = "bx sm", res = "";
+    if(st.chk[j]){ var ok = (v === B.ans); cls += ok ? " ok" : " ng"; res = '<span class="res">'+(ok?'〇':'×')+'</span>'; }
+    var shown = (v === undefined) ? '<span class="lb">'+B.id+'</span>' : (B.kind==="choice" ? MARKS.charAt(+v) : v);
+    return '<span class="'+cls+'" aria-hidden="true">'+shown+res+'</span>';
+  }
+  /* ---------- 中央：問題文（紙面と同じく、全部の小問を上から並べる。いまの小問に枠） ---------- */
+  function renderPaper(){
+    var k = st.step, live = (st.first[k] !== null), h = "", lastG = "";
+    for(var j = 0; j < N; j++){
+      var T = STEPS[j];
+      if(T.grp !== lastG){ h += '<p class="ag">'+T.grp+'</p>'; lastG = T.grp; }
+      var can = (j !== k && j <= st.maxStep);
+      h += '<div class="pq'+(j===k?' cur':'')+(can?' can':'')+'" data-pn="'+j+'"'+(j===k?' id="curq"':'')+'>';
+      h += '<p class="an">小問'+(j+1)+(j===k?'　いま解いている小問':'')+'</p>';
+      var pre = T.pre ? T.pre.replace(/^\s*[（(]\d+[）)]\s*/, '') : '';
+      if(pre) h += '<p class="pre">'+esc(pre)+'</p>';
+      h += '<p class="qtext">';
+      for(var t = 0; t < T.text.length; t++){
+        var sg = T.text[t];
+        if(sg.s !== undefined) h += esc(t === 0 && !pre ? sg.s.replace(/^\s*[（(]\d+[）)]\s*/, '') : sg.s);
+        else h += (j === k) ? blankHTML(k, sg.b, live) : staticBlank(j, sg.b);
       }
+      h += '</p>';
+      for(var b = 0; b < T.blanks.length; b++){
+        var B = T.blanks[b];
+        if(B.kind === "choice"){
+          h += '<ul class="grp-opts" aria-label="'+B.id+' の解答群"><li class="gl">'+B.id+' の解答群</li>';
+          for(var c = 0; c < B.opts.length; c++) h += '<li>'+MARKS.charAt(c)+' '+esc(B.opts[c])+'</li>';
+          h += '</ul>';
+        }
+      }
+      h += '</div>';
     }
-    // 2. 解く前に「何のため？」を選ぶ（並びは毎回ばらばら。最初に選んだものを結果に出す）
+    $("paper").innerHTML = h;
+  }
+  /* ---------- 右：マークシート（何のための小問か → 空欄の入力 → 答え合わせ → 解き方） ---------- */
+  function placeSheet(){
+    var box = $("stepbox"), cur = $("curq"), sc = document.querySelector(".sheetcol");
+    if(window.innerWidth < 760 && cur){ if(box.previousSibling !== cur) cur.parentNode.insertBefore(box, cur.nextSibling); }
+    else if(box.parentNode !== sc){ sc.appendChild(box); }
+  }
+  function renderStep(){
+    var sc0 = document.querySelector(".sheetcol"), bx0 = $("stepbox");
+    if(bx0.parentNode !== sc0) sc0.appendChild(bx0);          // 紙面を書き直す前に、マークシートを右の列へ戻す
+    renderPaper();
+    var k = st.step, S = STEPS[k], box = $("stepbox"), h = "", live = (st.first[k] !== null);
+    h += '<p class="n"><span>マークシート　'+S.grp+'　小問'+(k+1)+' / '+N+'</span><span class="chip lv'+S.hintlv+'">ヒント：'+esc(S.hint)+'</span></p>';
+    h += '<h3>'+esc(S.name)+'</h3>';
+    // 1. 問題文を先まで読んでから「何のため？」を選ぶ（並びは毎回ばらばら。最初に選んだものを結果に出す）
     h += '<p class="q">'+esc(S.why.q)+(live ? '' : '　（先に選ぶと、空欄に入力できます）')+'</p><div class="opts" id="opts">';
     var pm = permOf(k), pf = st.first[k], pc = st.cur[k];
     for(var i = 0; i < pm.length; i++){
@@ -445,16 +530,19 @@ var DATA = {"steps": [{"grp": "(1)", "name": "メネラウスの式の枠", "hin
       if(pc !== pf) h += '<p class="fb"><b>選び直し</b>　結果に反映されるのは、最初に選んだ答えです。</p>';
     }
     h += '</div>';
-    // 3. 解く
+    // 2. 空欄の入力（中央の四角を押しても、ここを押しても選べる）
     if(live){
       h += '<div class="solve">';
+      h += '<div class="mrow"><span class="ml">この小問の空欄</span>';
+      for(var b = 0; b < S.blanks.length; b++) h += blankHTML(k, b, true);
+      h += '</div>';
       if(!st.chk[k]){
-        var mo = 0; for(var q2 = 0; q2 < cbs.length; q2++) mo = Math.max(mo, cbs[q2].opts.length);
+        var mo = 0; for(var q2 = 0; q2 < S.blanks.length; q2++) if(S.blanks[q2].kind === "choice") mo = Math.max(mo, S.blanks[q2].opts.length);
         h += '<div class="pad" id="pad"><button type="button" data-d="−">−</button>';
         for(var d = 0; d <= 9; d++) h += '<button type="button" data-d="'+d+'">'+d+'</button>';
-        h += '<button type="button" data-d="del" class="wide">消す</button></div>';
+        h += '<button type="button" data-d="del">消す</button></div>';
         h += '<div class="pad" id="padc">';
-        for(var z = 0; z < Math.max(mo, cbs.length ? 3 : 0); z++) h += '<button type="button" data-c="'+z+'">'+MARKS.charAt(z)+'</button>';
+        for(var z = 0; z < mo; z++) h += '<button type="button" data-c="'+z+'">'+MARKS.charAt(z)+'</button>';
         h += '</div><div class="ctl"><button type="button" id="check" class="prim">答え合わせ</button></div>';
       } else {
         var okN = 0; for(var u = 0; u < S.blanks.length; u++) if(st.val[k][S.blanks[u].id] === S.blanks[u].ans) okN++;
@@ -475,6 +563,7 @@ var DATA = {"steps": [{"grp": "(1)", "name": "メネラウスの式の枠", "hin
       h += '</div>';
     }
     box.innerHTML = h;
+    placeSheet();
     if(live && !st.chk[k]) syncPad();
     bind();
   }
@@ -507,7 +596,7 @@ var DATA = {"steps": [{"grp": "(1)", "name": "メネラウスの式の枠", "hin
       if(st.first[k] === null) st.first[k] = oi;
       st.cur[k] = oi; renderStep();
     });
-    var bxs = document.querySelectorAll("#stepbox .bx");
+    var bxs = document.querySelectorAll("#stepbox .bx[data-bi], #paper .bx[data-bi]");
     for(var i = 0; i < bxs.length; i++) bxs[i].addEventListener("click", function(ev){ st.sel = +ev.currentTarget.getAttribute("data-bi"); renderStep(); });
     var pad = $("pad"), padc = $("padc");
     if(pad) pad.addEventListener("click", function(ev){
@@ -531,8 +620,12 @@ var DATA = {"steps": [{"grp": "(1)", "name": "メネラウスの式の枠", "hin
     st.step = n; if(n > st.maxStep) st.maxStep = n;
     st.sel = Math.max(0, firstEmpty(n));
     renderAll();
-    var el = $("stepbox"); try{ if(!window.__noscroll) el.scrollIntoView({block:"start", behavior:"smooth"}); }catch(e){}
+    var el = $("curq"); try{ if(!window.__noscroll && el) el.scrollIntoView({block:"start", behavior:"smooth"}); }catch(e){}
   }
+  $("paper").addEventListener("click", function(ev){
+    if(ev.target.closest(".bx")) return;
+    var q = ev.target.closest(".pq.can"); if(!q) return; go(+q.getAttribute("data-pn"));
+  });
   $("maplist").addEventListener("click", function(ev){
     var b = ev.target.closest("button[data-n]"); if(!b || b.disabled) return; go(+b.getAttribute("data-n"));
   });
@@ -602,8 +695,12 @@ var DATA = {"steps": [{"grp": "(1)", "name": "メネラウスの式の枠", "hin
   renderJukko();
   fromHash();
   window.addEventListener("hashchange", function(){ location.reload(); });
-  window.addEventListener("resize", function(){ drawArrows(); });
+  window.addEventListener("resize", function(){ placeSheet(); drawArrows(); });
 })();
 </script>
+<script src="../app-config.js?v=20261123a"></script>
+<script src="../national-stats.js?v=20261123a"></script>
+<script src="../kakomon/kakomon-adjust.js?v=20261123a"></script>
+<script src="../score-grid.js?v=20261125a"></script>
 </body>
 </html>
