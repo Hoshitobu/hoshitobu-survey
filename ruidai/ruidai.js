@@ -218,7 +218,7 @@
       var mini = head.querySelector(".mini");
       if (mini) mini.outerHTML = it.card;
     }
-    [].forEach.call(head.querySelectorAll(".q-pool"), function (x) { x.remove(); });
+    [].forEach.call(head.querySelectorAll(".q-pool, .q-sum"), function (x) { x.remove(); });   // 見出しの1文はもとの問題のものなので外す（もどすと戻る）
     head.insertAdjacentHTML("beforeend", "<span class=\"q-pool\">同じ形のもう1問</span>");
     box.dataset.persist = "0"; box.dataset.cur = ""; paint(box);
     li.querySelector(".t-back").hidden = false;
@@ -361,4 +361,23 @@
   function init() { unlock(); summarize(); initTimer(); initMarks(); initMore(); initPanels(); drawSolved(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
   window.addEventListener("storage", function () { unlock(); summarize(); drawSolved(); });
+})();
+
+/* 問題のトグル：開くと、同じ一覧のほかの問題を閉じる（name 属性に対応していないブラウザのため） */
+(function () {
+  document.addEventListener("toggle", function (ev) {
+    var d = ev.target;
+    if (!d || !d.classList || !d.classList.contains("qfold") || !d.open) return;
+    var list = d.closest("ol, ul");
+    if (!list) return;
+    [].forEach.call(list.querySelectorAll("details.qfold[open]"), function (x) { if (x !== d) x.open = false; });
+  }, true);
+  // #c3 のようなリンクで来たときは、その問題を開く
+  function openHash() {
+    var id = decodeURIComponent((location.hash || "").slice(1)); if (!id) return;
+    var li = document.getElementById(id); if (!li) return;
+    var d = li.querySelector("details.qfold"); if (d && !d.open) d.open = true;
+  }
+  openHash();
+  window.addEventListener("hashchange", openHash);
 })();

@@ -313,3 +313,13 @@ a.tbadge:hover { border-color: var(--accent); }
 .tb-cards > span { color: var(--muted, #8a8f98); font-weight: 700; margin-right: 2px; }
 .tb-cards a { display: inline-block; padding: 3px 10px; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--ink); text-decoration: none; }
 .tb-cards a:hover { border-color: var(--accent); color: var(--accent); }
+
+/* 問題のトグル：1問ずつ開く（開くと、同じ一覧のほかの問題は閉じる） */
+.ruidai .qfold > summary { list-style: none; cursor: pointer; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 10px 40px 10px 0; position: relative; min-height: 48px; }
+.ruidai .qfold > summary::-webkit-details-marker { display: none; }
+.ruidai .qfold > summary::after { content: ""; position: absolute; right: 12px; top: 22px; width: 9px; height: 9px; border-right: 2px solid var(--muted, #8a8f98); border-bottom: 2px solid var(--muted, #8a8f98); transform: rotate(45deg); transition: transform .15s; }
+.ruidai .qfold[open] > summary::after { transform: rotate(-135deg); top: 26px; }
+.ruidai .qfold > summary:hover .q-n { color: var(--accent); }
+.ruidai .q-sum { flex: 1 1 100%; font-size: 14.5px; color: var(--muted, #8a8f98); line-height: 1.7; }
+.ruidai .qfold[open] > summary .q-sum { display: none; }
+.ruidai .qfold > summary .mini { font-size: 13px; color: var(--muted, #8a8f98); }
