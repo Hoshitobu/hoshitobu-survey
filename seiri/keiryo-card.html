@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)">
+<meta name="referrer" content="no-referrer">
+<title>図形と計量のカード — 星飛ぶの勉強部屋</title>
+<meta name="description" content="図を見て、問題のどこを見たらどの式（正弦定理・余弦定理・面積・直角三角形の比）を使うかを3秒で書く14枚のカード。">
+<link rel="canonical" href="https://hoshitobu.github.io/hoshitobu-survey/seiri/keiryo-card.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="星飛ぶの勉強部屋">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="図形と計量のカード — 星飛ぶの勉強部屋">
+<meta property="og:description" content="図を見て、問題のどこを見たらどの式（正弦定理・余弦定理・面積・直角三角形の比）を使うかを3秒で書く14枚のカード。">
+<meta property="og:url" content="https://hoshitobu.github.io/hoshitobu-survey/seiri/keiryo-card.html">
+<meta property="og:image" content="https://hoshitobu.github.io/hoshitobu-survey/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
+<link rel="stylesheet" href="../style.css?v=20261124b">
+<link rel="stylesheet" href="../kyotsu/kyotsu.css?v=20261124b">
+<style>
+
+.hz{--bg:#ffffff;--surface:#ffffff;--surface2:#f3f4f7;--ink:#15171c;--sub:#454a55;--faint:#686d78;
+  --line:#dfe2e8;--line-strong:#b4bac6;--accent:#2f3fd0;--accent-soft:rgba(47,63,208,.09);--accent-soft2:rgba(47,63,208,.20);--on-accent:#ffffff;
+  --amb:#a85a00;--grn:#0a7a52;--bad:#b3321e;--halo:#ffffff;--base:rgba(0,0,0,.05);
+  color:var(--ink);line-height:1.8;font-size:16px}
+@media (prefers-color-scheme: dark){
+  .hz{--bg:#0a0b0f;--surface:#111318;--surface2:#171a21;--ink:#e2e4e9;--sub:#b4b9c4;--faint:#8f94a0;
+    --line:#252935;--line-strong:#3c4252;--accent:#8d97ff;--accent-soft:rgba(141,151,255,.14);--accent-soft2:rgba(141,151,255,.26);--on-accent:#0a0b0f;
+    --amb:#ffb454;--grn:#5fd0a0;--bad:#ff8f7e;--halo:#111318;--base:rgba(255,255,255,.05)}
+}
+.hz h1{font-size:25px;line-height:1.4;margin:22px 0 6px}
+.hz h2{font-size:20px;line-height:1.5;margin:24px 0 8px}
+.hz p{margin:0 0 10px}
+.hz a{color:var(--accent)}
+.hz .lead{color:var(--sub);margin:0 0 14px}
+.hz button{font-family:inherit;font-size:16px;color:var(--ink);cursor:pointer}
+.hz button:focus-visible,.hz a:focus-visible{outline:3px solid var(--amb);outline-offset:2px}
+.hz .back{display:inline-flex;align-items:center;min-height:44px;padding:0 4px;margin:8px 0 0;color:var(--accent);background:none;border:0;font-weight:700}
+.hz .back-row{display:flex;justify-content:space-between;align-items:center}
+.hz .ret{margin:0 0 14px;padding:8px 14px;border-left:4px solid var(--amb);background:var(--surface2);border-radius:0 8px 8px 0;font-size:15px;line-height:1.7}
+.hz .ret b{color:var(--amb)}
+.hz .sets{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr;gap:10px}
+@media (min-width:760px){.hz .sets{grid-template-columns:1fr 1fr}}
+.hz .sets li{display:block}
+.hz .setcard{width:100%;min-height:76px;text-align:left;padding:10px 14px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);display:grid;grid-template-columns:auto 1fr auto;gap:2px 12px;align-items:start}
+.hz .setcard .no{grid-row:1 / span 2;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--accent);padding-top:3px;white-space:nowrap}
+.hz .setcard .nm{font-weight:700;line-height:1.5}
+.hz .setcard .sh{grid-column:2 / span 2;font-size:13px;line-height:1.6;color:var(--faint)}
+.hz .setcard .lastv{font-size:13px;color:var(--sub);white-space:nowrap;font-variant-numeric:tabular-nums;padding-top:2px}
+.hz .setcard.mix{border-color:var(--accent);background:var(--accent-soft)}
+.hz .setcard:hover{border-color:var(--accent)}
+.hz .foot{margin-top:22px;padding-top:12px;border-top:1px solid var(--line);color:var(--sub);font-size:14px;line-height:1.7}
+.hz .foot p{margin:0 0 8px}
+.hz .cardwrap{max-width:560px;margin:0 auto}
+.hz .cardtop{display:flex;justify-content:space-between;align-items:baseline;margin:0 0 6px;color:var(--faint);font-size:14px}
+.hz .cardtop .retl{color:var(--amb);font-weight:700}
+.hz .cardbox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.hz .cardbox svg{display:block;width:100%;max-width:340px;height:auto;margin:0 auto}
+.hz .cardbox .ask{font-weight:700;margin:2px 0 8px}
+.hz .cardbox .write{margin:6px 0 0;font-size:14px;color:var(--faint)}
+.hz .answer{margin:8px 0 0;padding:10px 12px;border-left:4px solid var(--accent);background:var(--surface2);border-radius:0 8px 8px 0;font-size:17px;line-height:1.7;font-weight:700}
+.hz .clock{height:4px;border-radius:2px;background:var(--line);overflow:hidden;margin:2px 0 4px}
+.hz .clock i{display:block;height:100%;width:100%;background:var(--amb);animation:clk 3s linear forwards}
+@keyframes clk{from{width:100%}to{width:0}}
+@media (prefers-reduced-motion: reduce){.hz .clock i{animation:none;width:100%}}
+.hz .slownote{margin:6px 0 0;font-size:14px;color:var(--amb)}
+.hz .extra{margin:8px 0 0;padding:8px 12px;border-left:3px solid var(--line-strong);background:var(--surface2);border-radius:0 8px 8px 0;font-size:14.5px;line-height:1.7;color:var(--sub)}
+.hz .extra b{color:var(--amb)}
+.hz .extra .hb b{color:var(--accent)}
+.hz .extra p{margin:0 0 4px}
+.hz .extra p:last-child{margin:0}
+.hz .big{width:100%;min-height:56px;margin:10px 0 0;border:1px solid var(--line-strong);border-radius:10px;background:transparent;font-weight:700}
+.hz .big.prim{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.hz .two{display:flex;gap:10px;margin:10px 0 0}
+.hz .two .big{margin:0}
+.hz .result{padding:14px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface)}
+.hz .result .score{font-size:26px;font-weight:700;margin:0 0 6px;line-height:1.4}
+.hz .result ul{margin:6px 0 10px;padding-left:1.3em}
+.hz .result .subt{color:var(--sub);font-size:15px}
+.hz .dots{display:flex;gap:4px;margin:0 0 10px}
+.hz .dots i{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.hz .dots i.slow{background:var(--amb);opacity:.55}
+.hz .dots i.on{background:var(--accent)}
+.hz .dots i.cur{background:var(--amb)}
+.hz .dots i.miss{background:var(--bad)}
+.hz .dots i.rt{outline:1px solid var(--amb);outline-offset:1px}
+@media (max-width:480px){.hz h1{font-size:22px}}
+.hz .s-ink{stroke:var(--ink)}
+.hz .s-faint{stroke:var(--faint)}
+.hz .s-acc{stroke:var(--accent)}
+.hz .s-amb{stroke:var(--amb)}
+.hz .s-grn{stroke:var(--grn)}
+.hz .s-line{stroke:var(--line-strong)}
+.hz .f-ink{fill:var(--ink)}
+.hz .f-acc{fill:var(--accent)}
+.hz .f-amb{fill:var(--amb)}
+.hz .f-grn{fill:var(--grn)}
+.hz .f-faint{fill:var(--faint)}
+.hz svg text{font-family:"Times New Roman","Noto Serif JP",serif;font-style:italic}
+.hz svg text.up{font-style:normal}
+.hz svg text.lbl{paint-order:stroke;stroke:var(--halo);stroke-width:4px;stroke-linejoin:round}
+.hz button{font-family:inherit}
+.hz .stepbox,.hz .cardbox{scroll-margin-top:calc(var(--hdr-h,56px) + 12px)}
+@media (min-width:900px){ .hz .mapcol{top:calc(var(--hdr-h,56px) + 10px)} }
+.hz h1,.hz h2,.hz h3{font-family:inherit}
+.hz ul.sets{padding:0}
+.hz .sets li:only-child{grid-column:1 / -1}
+.hz .chains a:hover{color:var(--ink)}
+.hz .chains a[aria-current="page"]:hover{color:var(--on-accent)}
+.hz a:hover{color:var(--accent)}
+.hz .big.prim:hover,.hz .ctl button.prim:hover{color:var(--on-accent)}
+.hz .tips{margin:14px 0 0;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.hz .tips h2{font-size:17px;margin:0 0 6px}
+.hz .tips table{width:100%;border-collapse:collapse;margin:0;font-size:15px}
+.hz .tips th{padding:6px 10px 6px 0;color:var(--faint);font-weight:400;border-bottom:1px solid var(--line);font-size:13px;white-space:nowrap;text-align:left}
+.hz .tips td{padding:7px 10px 7px 0;border-bottom:1px solid var(--line);vertical-align:top;font-weight:400;line-height:1.6}
+.hz .tips td:first-child{font-weight:700;padding-left:0}
+.hz .tips tr:last-child td{border-bottom:0}
+.hz .tips th,.hz .tips td{white-space:normal;overflow-wrap:anywhere}
+@media (max-width:620px){
+  .hz .tips thead{display:none}
+  .hz .tips table,.hz .tips tbody,.hz .tips tr,.hz .tips td{display:block;width:100%}
+  .hz .tips tr{padding:8px 0;border-bottom:1px solid var(--line)}
+  .hz .tips tr:last-child{border-bottom:0}
+  .hz .tips td{border-bottom:0;padding:1px 0}
+  .hz .tips td:first-child{color:var(--ink)}
+  .hz .tips td:last-child{color:var(--sub);font-size:14.5px}
+}
+
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "トップ", "item": "https://hoshitobu.github.io/hoshitobu-survey/"}, {"@type": "ListItem", "position": 2, "name": "知識の整理", "item": "https://hoshitobu.github.io/hoshitobu-survey/seiri/index.html"}, {"@type": "ListItem", "position": 3, "name": "図形と計量", "item": "https://hoshitobu.github.io/hoshitobu-survey/seiri/index.html#keiryo"}]}</script>
+<script src="../sitemap-nav.js?v=20261124b" defer></script>
+</head>
+<body>
+<header class="hd hd-a">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.1 7.4 7.4 2.1-7.4 2.1L12 21.5l-2.1-7.4L2.5 12l7.4-2.1z" fill="currentColor"/></svg>
+    <div><a class="sitename" href="../index.html">星飛ぶの勉強部屋</a></div>
+  </div>
+  <nav class="hd-nav" aria-label="サイトのメニュー">
+    <div class="hd-item has-kids"><a href="../kakomon.html">解く<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="../kakomon.html">過去問演習<small>時間を計って、1年分を解く</small></a><span class="soon">類題演習<small>Coming soon</small></span></div></div>
+    <div class="hd-item has-kids"><a href="../kakomon.html?view=quick">点数と集計<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="../kakomon.html?view=quick">点数を入れる<small>偏差値と順位が出る</small></a><a href="../kyotsu/index.html">平均点・正答率<small>2021〜2026・年度×科目</small></a><a href="../results.html">サイトの集計<small>送られた点数の分布とランキング</small></a></div></div>
+    <div class="hd-item has-kids"><a href="../seiri/index.html" aria-current="true">知識の整理<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="../seiri/index.html#muki">無機化学<small>化学｜カード・辞書</small></a><a href="../seiri/index.html#zukei">図形の性質<small>数学ⅠA｜鎖と反射カード・辞書</small></a><a href="../seiri/index.html#keiryo">図形と計量<small>数学ⅠA｜カード・辞書</small></a></div></div>
+    <div class="hd-item"><a href="../videos.html">解説動画</a></div>
+    <button type="button" class="hd-find" data-focus="1" aria-expanded="false" aria-controls="fd"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12.8 12.8L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>検索・地図</span></button>
+  </nav>
+</header>
+<main class="zukei-tool">
+<nav class="crumbs" aria-label="パンくず"><a href="../index.html">トップ</a> › <a href="index.html">知識の整理</a> › <a href="index.html#keiryo">図形と計量</a> › <span>カード</span></nav>
+<div class="k-title">
+  <h1>図形と計量のカード</h1>
+  <p class="note">正弦定理・余弦定理・面積の式を、問題に書いてあることから選べるようにするカードです。14枚で1セット。</p>
+</div>
+<div class="hz" id="app"></div>
+<footer class="src"><p class="note small">過去問の問題・正答率の出典：大学入試センター（<a href="https://www.dnc.ac.jp/" rel="noopener">https://www.dnc.ac.jp/</a>）。</p></footer>
+</main>
+<script>var DATA = {"sets": [{"id": "set1", "n": 1, "name": "図形と計量のカード", "cards": ["k-01", "k-07", "k-02", "s6-02", "s6-07", "k-03", "k-08", "s6-09", "k-04", "s6-03", "s6-10", "k-05", "s6-05", "k-06"], "shapes": "正弦定理・余弦定理・面積・直角三角形。問題のどこを見たら、どの式を使うかを回す。", "stop": "辺と向かいの角がそろっているか、2辺とその間の角か、3辺か"}], "cards": {"k-01": {"tag": "正弦定理（角を求める）", "ask": "△ABC で a＝√6、b＝2、A＝60°。B は？", "ans": "正弦定理 a/sinA＝b/sinB → √6/(√3/2)＝2/sinB → sinB＝2·(√3/2)/√6＝1/√2 → B＝45° または 135°。A＋B＜180° なので B＝45°", "svg": "<svg class=\"card-fig\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 250\" role=\"img\" aria-label=\"三角形 ABC。a＝√6、b＝2、A＝60°。\"><line x1=\"215.2\" y1=\"36.0\" x2=\"37.2\" y2=\"214.0\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"37.2\" y1=\"214.0\" x2=\"262.8\" y2=\"214.0\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"262.8\" y1=\"214.0\" x2=\"215.2\" y2=\"36.0\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><path d=\"M198.2,53.0 A24,24 0 0 0 221.4,59.2\" class=\"s-acc\" fill=\"none\" stroke-width=\"3\" stroke-linecap=\"round\"/><path d=\"M52.7,198.4 A22,22 0 0 1 59.2,214.0\" class=\"s-amb\" fill=\"none\" stroke-width=\"3\" stroke-linecap=\"round\"/><text x=\"203.2\" y=\"86.4\" class=\"f-acc lbl\" font-size=\"16\" text-anchor=\"middle\" font-style=\"normal\" font-weight=\"700\">60°</text><text x=\"72.3\" y=\"205.5\" class=\"f-amb lbl\" font-size=\"16\" text-anchor=\"middle\" font-style=\"normal\" font-weight=\"700\">？</text><circle cx=\"215.2\" cy=\"36.0\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"37.2\" cy=\"214.0\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"262.8\" cy=\"214.0\" r=\"3.6\" class=\"f-ink\"/><text x=\"221.1\" y=\"19.8\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">A</text><text x=\"17.2\" y=\"231.5\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">B</text><text x=\"282.8\" y=\"231.5\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">C</text><text x=\"150.0\" y=\"198.2\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">a＝√6</text><text x=\"257.4\" y=\"126.1\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">b＝2</text></svg>", "stop": "見る所：辺 a と、その向かいの角 A が1組そろっている → 正弦定理。sinB から B を決めるときは、135° も候補になる。内角の和が 180° なので、A との和で絞る。", "honban": null}, "k-07": {"tag": "正弦定理（外接円の半径）", "ask": "△ABC で a＝3、A＝60°。外接円の半径 R は？", "ans": "正弦定理 a/sinA＝2R → 3/(√3/2)＝2R → 2R＝2√3 → R＝√3", "svg": "<svg class=\"card-fig\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 250\" role=\"img\" aria-label=\"三角形 ABC と外接円。a＝3、A＝60°。\"><circle cx=\"150.0\" cy=\"125.0\" r=\"89.0\" class=\"s-line\" fill=\"none\" stroke-width=\"1.8\"/><line x1=\"99.0\" y1=\"52.1\" x2=\"72.9\" y2=\"169.5\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"72.9\" y1=\"169.5\" x2=\"227.1\" y2=\"169.5\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"227.1\" y1=\"169.5\" x2=\"99.0\" y2=\"52.1\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><path d=\"M93.8,75.5 A24,24 0 0 0 116.6,68.3\" class=\"s-acc\" fill=\"none\" stroke-width=\"3\" stroke-linecap=\"round\"/><text x=\"112.8\" y=\"102.0\" class=\"f-acc lbl\" font-size=\"16\" text-anchor=\"middle\" font-style=\"normal\" font-weight=\"700\">60°</text><circle cx=\"99.0\" cy=\"52.1\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"72.9\" cy=\"169.5\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"227.1\" cy=\"169.5\" r=\"3.6\" class=\"f-ink\"/><text x=\"87.5\" y=\"38.2\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">A</text><text x=\"53.0\" y=\"187.0\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">B</text><text x=\"247.0\" y=\"187.0\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">C</text><text x=\"150.0\" y=\"156.4\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">a＝3</text></svg>", "stop": "見る所：外接円の半径を聞かれている → 正弦定理。辺 a とその向かいの角 A だけで R が出る。他の辺や角は要らない。", "honban": null}, "k-02": {"tag": "正弦定理（R が与えられる）", "ask": "△ABC の外接円の半径は R＝5。A＝60°。a は？", "ans": "正弦定理 a/sinA＝2R → a＝2R sinA＝10·sin60°＝10·(√3/2)＝5√3", "svg": "<svg class=\"card-fig\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 250\" role=\"img\" aria-label=\"三角形 ABC と外接円。R＝5、A＝60°。\"><circle cx=\"150.0\" cy=\"125.0\" r=\"89.0\" class=\"s-line\" fill=\"none\" stroke-width=\"1.8\"/><line x1=\"194.5\" y1=\"47.9\" x2=\"72.9\" y2=\"169.5\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"72.9\" y1=\"169.5\" x2=\"227.1\" y2=\"169.5\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"227.1\" y1=\"169.5\" x2=\"194.5\" y2=\"47.9\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><path d=\"M177.5,64.9 A24,24 0 0 0 200.7,71.1\" class=\"s-acc\" fill=\"none\" stroke-width=\"3\" stroke-linecap=\"round\"/><text x=\"182.6\" y=\"98.4\" class=\"f-acc lbl\" font-size=\"16\" text-anchor=\"middle\" font-style=\"normal\" font-weight=\"700\">60°</text><circle cx=\"194.5\" cy=\"47.9\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"72.9\" cy=\"169.5\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"227.1\" cy=\"169.5\" r=\"3.6\" class=\"f-ink\"/><text x=\"206.0\" y=\"34.0\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">A</text><text x=\"53.0\" y=\"187.0\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">B</text><text x=\"247.0\" y=\"187.0\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">C</text><text x=\"150.0\" y=\"156.4\" class=\"f-acc lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">a＝？</text></svg>", "stop": "見る所：外接円の半径 R が出てきたら、正弦定理 a/sinA＝2R。向かい合う角と辺の組（A と a）だけで足りる。", "honban": null}, "s6-02": {"tag": "余弦定理（辺）", "ask": "△ABC で b＝6、c＝8、A＝60°。a は？", "ans": "余弦定理 a²＝b²＋c²−2bc cosA＝36＋64−2·6·8·½＝52 → a＝2√13", "svg": "<svg class=\"card-fig\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 250\" role=\"img\" aria-label=\"三角形 ABC。b＝6、c＝8、A＝60°。\"><line x1=\"209.9\" y1=\"36.0\" x2=\"38.7\" y2=\"214.0\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"38.7\" y1=\"214.0\" x2=\"261.3\" y2=\"214.0\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"261.3\" y1=\"214.0\" x2=\"209.9\" y2=\"36.0\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><path d=\"M193.3,53.3 A24,24 0 0 0 216.6,59.1\" class=\"s-acc\" fill=\"none\" stroke-width=\"3\" stroke-linecap=\"round\"/><text x=\"198.9\" y=\"86.7\" class=\"f-acc lbl\" font-size=\"16\" text-anchor=\"middle\" font-style=\"normal\" font-weight=\"700\">60°</text><circle cx=\"209.9\" cy=\"36.0\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"38.7\" cy=\"214.0\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"261.3\" cy=\"214.0\" r=\"3.6\" class=\"f-ink\"/><text x=\"215.9\" y=\"19.8\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">A</text><text x=\"18.7\" y=\"231.5\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">B</text><text x=\"281.3\" y=\"231.5\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">C</text><text x=\"254.0\" y=\"125.7\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">b＝6</text><text x=\"110.5\" y=\"117.8\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">c＝8</text><text x=\"150.0\" y=\"200.9\" class=\"f-acc lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">a＝？</text></svg>", "stop": "2辺とその間の角がわかっていれば、第3辺は余弦定理。cos は、求める辺の向かいの角（間の角）。", "honban": null}, "s6-07": {"tag": "余弦定理（鈍角）", "ask": "△ABC で b＝10、c＝6、A＝120°。a は？", "ans": "余弦定理 a²＝b²＋c²−2bc cosA＝100＋36−2·10·6·(−½)＝196 → a＝14", "svg": "<svg class=\"card-fig\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 250\" role=\"img\" aria-label=\"三角形 ABC。b＝10、c＝6、A＝120°。\"><line x1=\"112.8\" y1=\"94.8\" x2=\"36.0\" y2=\"155.2\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"36.0\" y1=\"155.2\" x2=\"264.0\" y2=\"155.2\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"264.0\" y1=\"155.2\" x2=\"112.8\" y2=\"94.8\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><path d=\"M97.1,107.1 A20,20 0 0 0 131.3,102.2\" class=\"s-acc\" fill=\"none\" stroke-width=\"3\" stroke-linecap=\"round\"/><text x=\"118.8\" y=\"142.3\" class=\"f-acc lbl\" font-size=\"16\" text-anchor=\"middle\" font-style=\"normal\" font-weight=\"700\">120°</text><circle cx=\"112.8\" cy=\"94.8\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"36.0\" cy=\"155.2\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"264.0\" cy=\"155.2\" r=\"3.6\" class=\"f-ink\"/><text x=\"101.3\" y=\"80.9\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">A</text><text x=\"13.8\" y=\"167.2\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">B</text><text x=\"286.2\" y=\"167.2\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">C</text><text x=\"196.5\" y=\"110.8\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">b＝10</text><text x=\"58.9\" y=\"111.3\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">c＝6</text><text x=\"150.0\" y=\"200.3\" class=\"f-acc lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">a＝？</text></svg>", "stop": "cos120°＝−½。引き算の記号に、−½ の負が重なる（−2bc·(−½)＝＋bc）。", "honban": null}, "k-03": {"tag": "余弦定理（辺の2次方程式）", "ask": "△ABC で a＝√7、b＝2、A＝60°。c は？", "ans": "余弦定理 a²＝b²＋c²−2bc cosA → 7＝4＋c²−2c → c²−2c−3＝0 → (c−3)(c＋1)＝0 → c＞0 より c＝3", "svg": "<svg class=\"card-fig\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 250\" role=\"img\" aria-label=\"三角形 ABC。a＝√7、b＝2、A＝60°。\"><line x1=\"231.4\" y1=\"40.4\" x2=\"36.0\" y2=\"209.6\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"36.0\" y1=\"209.6\" x2=\"264.0\" y2=\"209.6\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"264.0\" y1=\"209.6\" x2=\"231.4\" y2=\"40.4\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><path d=\"M213.3,56.1 A24,24 0 0 0 236.0,63.9\" class=\"s-acc\" fill=\"none\" stroke-width=\"3\" stroke-linecap=\"round\"/><text x=\"216.4\" y=\"89.8\" class=\"f-acc lbl\" font-size=\"16\" text-anchor=\"middle\" font-style=\"normal\" font-weight=\"700\">60°</text><circle cx=\"231.4\" cy=\"40.4\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"36.0\" cy=\"209.6\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"264.0\" cy=\"209.6\" r=\"3.6\" class=\"f-ink\"/><text x=\"242.9\" y=\"26.5\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">A</text><text x=\"13.8\" y=\"221.6\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">B</text><text x=\"283.9\" y=\"227.1\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">C</text><text x=\"150.0\" y=\"193.8\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">a＝√7</text><text x=\"266.5\" y=\"127.4\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">b＝2</text><text x=\"121.2\" y=\"116.6\" class=\"f-acc lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">c＝？</text></svg>", "stop": "見る所：与えられた角 A が、求める辺 c をはさむ角ではなく、a の向かいにある。そのときは a² の式に入れて、c の2次方程式にする。", "honban": null}, "k-08": {"tag": "余弦定理（角）", "ask": "△ABC で a＝7、b＝3、c＝8。A は？", "ans": "余弦定理 cosA＝(b²＋c²−a²)/2bc＝(9＋64−49)/(2·3·8)＝24/48＝½ → A＝60°", "svg": "<svg class=\"card-fig\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 250\" role=\"img\" aria-label=\"三角形 ABC。a＝7、b＝3、c＝8。\"><line x1=\"264.0\" y1=\"79.4\" x2=\"36.0\" y2=\"170.6\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"36.0\" y1=\"170.6\" x2=\"250.8\" y2=\"170.6\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"250.8\" y1=\"170.6\" x2=\"264.0\" y2=\"79.4\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><path d=\"M241.7,88.3 A24,24 0 0 0 260.6,103.2\" class=\"s-acc\" fill=\"none\" stroke-width=\"3\" stroke-linecap=\"round\"/><text x=\"239.3\" y=\"116.9\" class=\"f-acc lbl\" font-size=\"16\" text-anchor=\"middle\" font-style=\"normal\" font-weight=\"700\">？</text><circle cx=\"264.0\" cy=\"79.4\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"36.0\" cy=\"170.6\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"250.8\" cy=\"170.6\" r=\"3.6\" class=\"f-ink\"/><text x=\"283.9\" y=\"73.9\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">A</text><text x=\"13.8\" y=\"182.5\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">B</text><text x=\"270.8\" y=\"188.1\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">C</text><text x=\"143.4\" y=\"195.7\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">a＝7</text><text x=\"279.9\" y=\"151.0\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">b＝3</text><text x=\"142.9\" y=\"113.3\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">c＝8</text></svg>", "stop": "見る所：3辺がわかっていて、角を問われている。求める角 A の向かいが a。cosA の分子は、a² を引く（b²＋c²−a²）。", "honban": null}, "s6-09": {"tag": "余弦定理（角・鈍角）", "ask": "△ABC で a＝13、b＝7、c＝8。A は？", "ans": "cosA＝(b²＋c²−a²)/2bc＝(49＋64−169)/(2·7·8)＝−56/112＝−½ → A＝120°", "svg": "<svg class=\"card-fig\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 250\" role=\"img\" aria-label=\"三角形 ABC。a＝13、b＝7、c＝8。\"><line x1=\"160.1\" y1=\"92.3\" x2=\"36.0\" y2=\"157.7\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"36.0\" y1=\"157.7\" x2=\"264.0\" y2=\"157.7\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"264.0\" y1=\"157.7\" x2=\"160.1\" y2=\"92.3\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><path d=\"M142.4,101.6 A20,20 0 0 0 177.0,102.9\" class=\"s-acc\" fill=\"none\" stroke-width=\"3\" stroke-linecap=\"round\"/><text x=\"158.7\" y=\"134.3\" class=\"f-acc lbl\" font-size=\"16\" text-anchor=\"middle\" font-style=\"normal\" font-weight=\"700\">？</text><circle cx=\"160.1\" cy=\"92.3\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"36.0\" cy=\"157.7\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"264.0\" cy=\"157.7\" r=\"3.6\" class=\"f-ink\"/><text x=\"166.1\" y=\"76.1\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">A</text><text x=\"13.8\" y=\"169.7\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">B</text><text x=\"286.2\" y=\"169.7\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">C</text><text x=\"150.0\" y=\"191.5\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">a＝13</text><text x=\"222.2\" y=\"114.8\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">b＝7</text><text x=\"89.2\" y=\"114.1\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">c＝8</text></svg>", "stop": "cos が負なら鈍角（90° より大きい）。a がいちばん長い辺なら、A がいちばん大きい角。", "honban": null}, "k-04": {"tag": "sin から cos（鋭角）", "ask": "△ABC で sinA＝3/5、A は鋭角。b＝5、c＝9。a は？", "ans": "sin²A＋cos²A＝1 → cos²A＝1−9/25＝16/25 → A は鋭角なので cosA＝4/5。余弦定理 a²＝25＋81−2·5·9·(4/5)＝34 → a＝√34", "svg": "<svg class=\"card-fig\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 250\" role=\"img\" aria-label=\"三角形 ABC。sinA＝3/5、A は鋭角、b＝5、c＝9。\"><line x1=\"264.0\" y1=\"56.6\" x2=\"36.0\" y2=\"193.4\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"36.0\" y1=\"193.4\" x2=\"208.3\" y2=\"193.4\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"208.3\" y1=\"193.4\" x2=\"264.0\" y2=\"56.6\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><path d=\"M243.4,68.9 A24,24 0 0 0 254.9,78.8\" class=\"s-acc\" fill=\"none\" stroke-width=\"3\" stroke-linecap=\"round\"/><text x=\"238.0\" y=\"93.0\" class=\"f-acc lbl\" font-size=\"16\" text-anchor=\"middle\" font-style=\"normal\" font-weight=\"700\">鋭角</text><circle cx=\"264.0\" cy=\"56.6\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"36.0\" cy=\"193.4\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"208.3\" cy=\"193.4\" r=\"3.6\" class=\"f-ink\"/><text x=\"280.3\" y=\"46.3\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">A</text><text x=\"13.8\" y=\"205.4\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">B</text><text x=\"224.5\" y=\"215.7\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">C</text><text x=\"265.9\" y=\"143.1\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">b＝5</text><text x=\"140.2\" y=\"114.6\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">c＝9</text><text x=\"122.1\" y=\"218.5\" class=\"f-acc lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">a＝？</text></svg>", "stop": "見る所：与えられたのが sin だけ。cos は sin²A＋cos²A＝1 から出す。符号は、A が鋭角（cos＞0）か鈍角（cos＜0）かで決める。", "honban": null}, "s6-03": {"tag": "面積 S＝½bc sinA", "ask": "△ABC で b＝6、c＝11、A＝120°。面積 S は？", "ans": "S＝½bc sinA＝½·6·11·(√3/2)＝33√3/2", "svg": "<svg class=\"card-fig\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 250\" role=\"img\" aria-label=\"三角形 ABC。b＝6、c＝11、A＝120°。\"><line x1=\"193.5\" y1=\"95.8\" x2=\"36.0\" y2=\"154.2\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"36.0\" y1=\"154.2\" x2=\"264.0\" y2=\"154.2\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"264.0\" y1=\"154.2\" x2=\"193.5\" y2=\"95.8\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><path d=\"M172.8,103.4 A22,22 0 0 0 210.4,109.8\" class=\"s-acc\" fill=\"none\" stroke-width=\"3\" stroke-linecap=\"round\"/><text x=\"186.1\" y=\"145.2\" class=\"f-acc lbl\" font-size=\"16\" text-anchor=\"middle\" font-style=\"normal\" font-weight=\"700\">120°</text><circle cx=\"193.5\" cy=\"95.8\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"36.0\" cy=\"154.2\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"264.0\" cy=\"154.2\" r=\"3.6\" class=\"f-ink\"/><text x=\"205.0\" y=\"81.9\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">A</text><text x=\"13.8\" y=\"166.2\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">B</text><text x=\"286.2\" y=\"166.2\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">C</text><text x=\"244.7\" y=\"111.7\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">b＝6</text><text x=\"107.1\" y=\"110.6\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">c＝11</text></svg>", "stop": "2辺とその間の角で面積が出る。sin120°＝sin60°＝√3/2。", "honban": null}, "s6-10": {"tag": "面積 S＝½bc sinA", "ask": "△ABC で b＝7、c＝6、A＝135°。面積 S は？", "ans": "S＝½bc sinA＝½·7·6·(√2/2)＝21√2/2", "svg": "<svg class=\"card-fig\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 250\" role=\"img\" aria-label=\"三角形 ABC。b＝7、c＝6、A＝135°。\"><line x1=\"139.7\" y1=\"101.6\" x2=\"36.0\" y2=\"148.4\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"36.0\" y1=\"148.4\" x2=\"264.0\" y2=\"148.4\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"264.0\" y1=\"148.4\" x2=\"139.7\" y2=\"101.6\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><path d=\"M123.3,109.0 A18,18 0 0 0 156.6,107.9\" class=\"s-acc\" fill=\"none\" stroke-width=\"3\" stroke-linecap=\"round\"/><text x=\"141.0\" y=\"147.5\" class=\"f-acc lbl\" font-size=\"16\" text-anchor=\"middle\" font-style=\"normal\" font-weight=\"700\">135°</text><circle cx=\"139.7\" cy=\"101.6\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"36.0\" cy=\"148.4\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"264.0\" cy=\"148.4\" r=\"3.6\" class=\"f-ink\"/><text x=\"133.8\" y=\"85.3\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">A</text><text x=\"13.8\" y=\"160.4\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">B</text><text x=\"286.2\" y=\"160.4\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">C</text><text x=\"210.7\" y=\"107.5\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">b＝7</text><text x=\"77.5\" y=\"108.1\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">c＝6</text></svg>", "stop": "鈍角でも面積は同じ式。sin135°＝sin45°＝√2/2（正）。", "honban": null}, "k-05": {"tag": "3辺から面積", "ask": "△ABC で a＝5、b＝6、c＝7。面積 S は？", "ans": "余弦定理 cosA＝(b²＋c²−a²)/2bc＝(36＋49−25)/84＝5/7 → sinA＝√(1−25/49)＝2√6/7 → S＝½bc sinA＝½·6·7·(2√6/7)＝6√6", "svg": "<svg class=\"card-fig\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 250\" role=\"img\" aria-label=\"三角形 ABC。a＝5、b＝6、c＝7。\"><line x1=\"189.4\" y1=\"36.0\" x2=\"74.3\" y2=\"214.0\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"74.3\" y1=\"214.0\" x2=\"225.7\" y2=\"214.0\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"225.7\" y1=\"214.0\" x2=\"189.4\" y2=\"36.0\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><circle cx=\"189.4\" cy=\"36.0\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"74.3\" cy=\"214.0\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"225.7\" cy=\"214.0\" r=\"3.6\" class=\"f-ink\"/><text x=\"195.3\" y=\"19.8\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">A</text><text x=\"54.4\" y=\"231.5\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">B</text><text x=\"242.0\" y=\"236.3\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">C</text><text x=\"150.0\" y=\"200.9\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">a＝5</text><text x=\"226.2\" y=\"127.2\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">b＝6</text><text x=\"115.8\" y=\"120.6\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">c＝7</text></svg>", "stop": "見る所：3辺だけで面積を問われている。½bc sinA に使う sinA が無いので、先に余弦定理で cosA、そこから sinA（sin²A＋cos²A＝1）の順。", "honban": null}, "s6-05": {"tag": "面積と内接円の半径", "ask": "△ABC で a＝7、b＝5、c＝8。面積 S と内接円の半径 r は？", "ans": "cosA＝(25＋64−49)/(2·5·8)＝½ → A＝60°。S＝½bc sinA＝½·5·8·(√3/2)＝10√3。S＝½r(a＋b＋c)＝10r → r＝√3。ヘロンの公式 √(10·3·5·2) でも S は同じ", "svg": "<svg class=\"card-fig\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 250\" role=\"img\" aria-label=\"三角形 ABC。a＝7、b＝5、c＝8。\"><line x1=\"240.7\" y1=\"44.4\" x2=\"36.0\" y2=\"205.6\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"36.0\" y1=\"205.6\" x2=\"264.0\" y2=\"205.6\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"264.0\" y1=\"205.6\" x2=\"240.7\" y2=\"44.4\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><circle cx=\"240.7\" cy=\"44.4\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"36.0\" cy=\"205.6\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"264.0\" cy=\"205.6\" r=\"3.6\" class=\"f-ink\"/><text x=\"252.2\" y=\"30.5\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">A</text><text x=\"13.8\" y=\"217.5\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">B</text><text x=\"283.9\" y=\"223.1\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">C</text><text x=\"150.0\" y=\"192.5\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">a＝7</text><text x=\"271.3\" y=\"128.3\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">b＝5</text><text x=\"126.6\" y=\"116.0\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">c＝8</text></svg>", "stop": "3辺から面積は、余弦定理で cosA → A → S＝½bc sinA の順が基本。ヘロンの公式は教科書では参考の扱いなので、確かめに使うだけ。r は S＝½r(a＋b＋c) から出す。", "honban": null}, "k-06": {"tag": "直角三角形（定理は使わない）", "ask": "△ABC で A＝90°、B＝30°、a＝10。b と c は？", "ans": "直角三角形なので、辺の比そのままで書ける。b＝a sinB＝10·½＝5、c＝a cosB＝10·(√3/2)＝5√3", "svg": "<svg class=\"card-fig\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 250\" role=\"img\" aria-label=\"直角三角形 ABC。A＝90°、B＝30°、a＝10。\"><line x1=\"207.0\" y1=\"75.6\" x2=\"36.0\" y2=\"174.4\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"36.0\" y1=\"174.4\" x2=\"264.0\" y2=\"174.4\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><line x1=\"264.0\" y1=\"174.4\" x2=\"207.0\" y2=\"75.6\" class=\"s-ink\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><polyline points=\"197.5,81.1 203.0,90.7 212.5,85.2\" class=\"s-ink\" fill=\"none\" stroke-width=\"1.8\"/><path d=\"M58.5,161.4 A26,26 0 0 1 62.0,174.4\" class=\"s-acc\" fill=\"none\" stroke-width=\"3\" stroke-linecap=\"round\"/><text x=\"82.4\" y=\"167.9\" class=\"f-acc lbl\" font-size=\"16\" text-anchor=\"middle\" font-style=\"normal\" font-weight=\"700\">30°</text><circle cx=\"207.0\" cy=\"75.6\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"36.0\" cy=\"174.4\" r=\"3.6\" class=\"f-ink\"/><circle cx=\"264.0\" cy=\"174.4\" r=\"3.6\" class=\"f-ink\"/><text x=\"218.5\" y=\"61.7\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">A</text><text x=\"13.8\" y=\"186.3\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">B</text><text x=\"286.2\" y=\"186.3\" class=\"f-ink lbl\" font-size=\"18\" text-anchor=\"middle\">C</text><text x=\"150.0\" y=\"202.2\" class=\"f-ink lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">a＝10</text><text x=\"252.0\" y=\"121.5\" class=\"f-acc lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">b＝？</text><text x=\"112.0\" y=\"114.5\" class=\"f-acc lbl\" font-size=\"17\" text-anchor=\"middle\" font-weight=\"700\">c＝？</text></svg>", "stop": "見る所：直角がある。正弦定理や余弦定理は使わず、sinB＝対辺/斜辺、cosB＝隣辺/斜辺。斜辺は直角の向かいの辺（ここでは a）。", "honban": null}}, "key": "keiryo_card", "lead": "図を見て、使う式と答えの1行を頭の中で書きます。答えを見たあと、すぐ書けたかを ○× で付けます。", "foot": "<p>札の図は、類題演習の基礎ドリル（図形と計量）と同じ数値のものと、自作のものです。どの札も、図の座標で答えを確かめています。</p><p>ヘロンの公式は教科書では参考の扱いなので、札では確かめにしか使いません。</p><p>図形の大問の流れを通して練習するときは、<a href=\"kusari.html\">誘導の鎖</a>へ。反射カードで、円や比の定理も回せます：<a href=\"hansha.html\">図形の反射カード</a></p>", "single": true, "pre": "<section class=\"tips\" aria-label=\"問題のどこを見るか\">\n<h2>問題のどこを見たら、どの式を使うか</h2>\n<table><thead><tr><th>問題に書いてあること</th><th>使うもの</th></tr></thead><tbody>\n<tr><td>辺と、その向かいの角が1組そろっている／外接円の半径 R が出てくる</td><td>正弦定理　a/sinA＝b/sinB＝2R</td></tr>\n<tr><td>2辺とその間の角</td><td>余弦定理で第3辺　a²＝b²＋c²−2bc cosA。面積は ½bc sinA</td></tr>\n<tr><td>3辺</td><td>余弦定理で角　cosA＝(b²＋c²−a²)/2bc</td></tr>\n<tr><td>1辺と、その向かいの角、もう1辺（求めるのは残りの辺）</td><td>余弦定理を、求める辺の2次方程式にする</td></tr>\n<tr><td>sin（または cos）だけが与えられている</td><td>sin²A＋cos²A＝1 で、もう一方を出す。符号は鋭角か鈍角かで決める</td></tr>\n<tr><td>面積・内接円の半径 r</td><td>S＝½bc sinA、S＝½r(a＋b＋c)</td></tr>\n<tr><td>直角がある</td><td>定理は使わず、sin・cos・tan を辺の比で（対辺/斜辺、隣辺/斜辺、対辺/隣辺）</td></tr>\n</tbody></table></section>"};
+(function(){
+  "use strict";
+  var SETS = DATA.sets, CARDS = DATA.cards;
+  var KEY_MISS = DATA.key + "_miss_v1", KEY_LAST = DATA.key + "_last_v1";
+  var app = document.getElementById("app");
+
+  /* ---------- 端末の中の記録（使えなくても動く） ---------- */
+  function load(key, def){
+    try{ var s = window.localStorage.getItem(key); return s ? JSON.parse(s) : def; }catch(e){ return def; }
+  }
+  function save(key, val){
+    try{ window.localStorage.setItem(key, JSON.stringify(val)); }catch(e){}
+  }
+  var miss = load(KEY_MISS, []);          // まちがえた札の id（古い順）
+  var last = load(KEY_LAST, {});          // 組ごとの前回の結果 {set1:{n:7,t:10}}
+  if(!Array.isArray(miss)) miss = [];
+  miss = miss.filter(function(id){ return !!CARDS[id]; });
+  if(typeof last !== "object" || !last) last = {};
+
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function setById(id){ for(var i = 0; i < SETS.length; i++) if(SETS[i].id === id) return SETS[i]; return null; }
+  function setHash(h){ try{ history.replaceState(null, "", h ? "#" + h : location.pathname + location.search); }catch(e){} }
+
+  /* ---------- 状態 ---------- */
+  var st = null;      // {set, queue:[{id, ret}], i, shown, marks:[]}
+
+  function buildQueue(set){
+    var q = set.cards.map(function(id){ return {id:id, ret:false}; });
+    var back = miss.filter(function(id){ return set.cards.indexOf(id) < 0; }).slice(0, 3);
+    for(var k = 0; k < back.length; k++){
+      var pos = Math.min(3 + 4 * k, q.length);
+      q.splice(pos, 0, {id:back[k], ret:true});
+    }
+    return q;
+  }
+  function start(setId, idx, shown){
+    var set = setById(setId); if(!set) return home();
+    st = {set:set, queue:buildQueue(set), i:0, shown:false, marks:[], slow:[], t0:0};
+    if(idx){ st.i = Math.max(0, Math.min(st.queue.length - 1, idx - 1)); st.shown = !!shown; }
+    renderCard();
+  }
+
+  /* ---------- セット一覧 ---------- */
+  function home(){
+    st = null; setHash("");
+    var h = '<p class="lead">' + DATA.lead + '</p>' + (DATA.pre || '');
+    if(miss.length && !DATA.single){
+      h += '<p class="ret"><b>復習札　' + miss.length + '枚</b>　前に書けなかった札が、次に始めるセットに最大3枚まで混ざって出ます。</p>';
+    }
+    h += '<ul class="sets">';
+    for(var i = 0; i < SETS.length; i++){
+      var S = SETS[i], L = last[S.id];
+      h += '<li><button type="button" class="setcard' + (S.mix ? ' mix' : '') + '" data-set="' + S.id + '">'
+        + '<span class="no">セット' + S.n + '</span>'
+        + '<span class="nm">' + esc(S.name) + '</span>'
+        + '<span class="lastv">' + (L ? '前回 ' + L.n + '/' + L.t : S.cards.length + '枚') + '</span>'
+        + '<span class="sh">' + esc(S.shapes) + '</span>'
+        + '</button></li>';
+    }
+    h += '</ul>';
+    h += '<div class="foot">' + DATA.foot + '</div>';
+    app.innerHTML = h;
+  }
+
+  /* ---------- カード ---------- */
+  function okAt(i){ return st.marks[i] === 1 && !st.slow[i]; }
+  function dotsHTML(){
+    var h = '<div class="dots" aria-hidden="true">';
+    for(var i = 0; i < st.queue.length; i++){
+      var c = okAt(i) ? "on" : (st.marks[i] === 1 ? "slow" : (st.marks[i] === 0 ? "miss" : (i === st.i ? "cur" : "")));
+      h += '<i class="' + c + (st.queue[i].ret ? ' rt' : '') + '"></i>';
+    }
+    return h + '</div>';
+  }
+  function backBar(){
+    return '<div class="back-row"><button type="button" class="back" id="tohome">← セット一覧</button></div>';
+  }
+  function $(id){ return document.getElementById(id); }
+  function finish(){
+    var main = 0, mainOk = 0, ret = 0, retOk = 0, bad = [];
+    for(var i = 0; i < st.queue.length; i++){
+      var q = st.queue[i], ok = okAt(i);
+      if(q.ret){ ret++; if(ok) retOk++; } else { main++; if(ok) mainOk++; }
+      if(!ok) bad.push(q.id);
+      if(ok){ var p = miss.indexOf(q.id); if(p >= 0) miss.splice(p, 1); }
+      else if(miss.indexOf(q.id) < 0) miss.push(q.id);
+    }
+    save(KEY_MISS, miss);
+    last[st.set.id] = {n:mainOk, t:main}; save(KEY_LAST, last);
+    var h = '<div class="cardwrap">' + backBar() + '<h2>セット' + st.set.n + '　' + esc(st.set.name) + '</h2>' + dotsHTML()
+      + '<div class="result"><p class="score">' + main + '枚中 ' + mainOk + '枚、3秒以内に書けました</p>';
+    if(ret) h += '<p class="subt">復習札：' + ret + '枚中 ' + retOk + '枚 書けました</p>';
+    if(bad.length){
+      h += '<p>復習する札</p><ul>';
+      for(var j = 0; j < bad.length; j++) h += '<li>' + esc(CARDS[bad[j]].tag) + '</li>';
+      h += '</ul><p class="subt">' + (DATA.single ? '「もう一度」で、同じ札をもう一度回せます。' : 'これらの札は、別のセットを始めると混ざって出ます。') + '</p>';
+    } else h += '<p>すべて3秒以内に書けました。</p>';
+    h += '<button type="button" class="big prim" id="again">もう一度</button>'
+       + '<button type="button" class="big" id="tohome2">セット一覧</button></div></div>';
+    app.innerHTML = h;
+    $("again").addEventListener("click", function(){ start(st.set.id); });
+    $("tohome").addEventListener("click", home);
+    $("tohome2").addEventListener("click", home);
+  }
+  function renderCard(){
+    if(st.i >= st.queue.length){ setHash(st.set.id); return finish(); }
+    var q = st.queue[st.i], c = CARDS[q.id], mainIdx = 0, mainN = 0, k;
+    for(k = 0; k < st.queue.length; k++){ if(!st.queue[k].ret){ mainN++; if(k <= st.i) mainIdx++; } }
+    setHash(st.set.id + "-" + (st.i + 1) + (st.shown ? "a" : ""));
+    var h = '<div class="cardwrap">' + backBar() + dotsHTML()
+      + '<div class="cardtop"><span>' + (q.ret ? '<span class="retl">復習札</span>' : mainIdx + ' / ' + mainN) + '</span><span>' + (st.shown ? esc(c.tag) : '目安 3秒') + '</span></div>'
+      + '<div class="cardbox">' + c.svg + '<p class="ask">' + esc(c.ask) + '</p>';
+    if(!st.shown){
+      h += '<div class="clock" aria-hidden="true"><i></i></div><p class="write">何を書く？</p>'
+        + '<button type="button" class="big prim" id="show">答えを見る</button>';
+    } else {
+      h += '<p class="write">何を書く？</p><div class="answer" id="ans">' + esc(c.ans) + '</div>';
+      if(st.slow[st.i]) h += '<p class="slownote">3秒を過ぎて開いたので、○ を付けても復習札に入ります。</p>';
+      if(c.stop || c.honban){
+        h += '<div class="extra">';
+        if(c.stop) h += '<p><b>つまずきやすい所</b>　' + esc(c.stop) + '</p>';
+        if(c.honban) h += '<p class="hb"><b>共通テスト</b>　' + esc(c.honban) + '</p>';
+        h += '</div>';
+      }
+      h += '<p class="write">書けていた？</p>'
+         + '<div class="two"><button type="button" class="big" id="yes">○ すぐ書けた</button>'
+         + '<button type="button" class="big" id="no">× 書けなかった</button></div>';
+    }
+    h += '</div></div>';
+    app.innerHTML = h;
+    $("tohome").addEventListener("click", home);
+    if(!st.shown){
+      st.t0 = Date.now();
+      $("show").addEventListener("click", function(){
+        st.slow[st.i] = (Date.now() - st.t0) > 3000;
+        st.shown = true; renderCard();
+      });
+    } else {
+      $("yes").addEventListener("click", function(){ st.marks[st.i] = 1; st.i++; st.shown = false; renderCard(); });
+      $("no").addEventListener("click", function(){ st.marks[st.i] = 0; st.i++; st.shown = false; renderCard(); });
+    }
+  }
+
+  app.addEventListener("click", function(ev){
+    var b = ev.target.closest ? ev.target.closest("button[data-set]") : null;
+    if(b) start(b.getAttribute("data-set"));
+  });
+
+  /* ---------- 入口：#set3（セット3の1枚目）、#set3-2（2枚目）、#set3-1a（1枚目の答えを開いた所） ---------- */
+  function fromHash(){
+    var h = (location.hash || "").replace("#", ""), m;
+    if((m = /^set-?([1-8])(?:-(\d+)(a?))?$/.exec(h))){
+      start("set" + m[1], m[2] ? +m[2] : 0, !!m[3]);
+    } else home();
+  }
+  fromHash();
+  window.addEventListener("hashchange", function(){
+    var h = (location.hash || "").replace("#", "");
+    var want = st ? st.set.id + "-" + (st.i + 1) + (st.shown ? "a" : "") : "";
+    if(h !== want && h !== (st ? st.set.id : "")) fromHash();
+  });
+})();
+</script>
+</body>
+</html>

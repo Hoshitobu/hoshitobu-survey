@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)">
+<meta name="referrer" content="no-referrer">
+<title>誘導の鎖 — 星飛ぶの勉強部屋</title>
+<meta name="description" content="共通テスト数学ⅠA の図形の大問（2026 第3問・2025 第3問・2024 第5問）と同じ流れの自作問題で、小問どうしのつながりをたどる練習。">
+<link rel="canonical" href="https://hoshitobu.github.io/hoshitobu-survey/seiri/kusari.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="星飛ぶの勉強部屋">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="誘導の鎖 — 星飛ぶの勉強部屋">
+<meta property="og:description" content="共通テスト数学ⅠA の図形の大問（2026 第3問・2025 第3問・2024 第5問）と同じ流れの自作問題で、小問どうしのつながりをたどる練習。">
+<meta property="og:url" content="https://hoshitobu.github.io/hoshitobu-survey/seiri/kusari.html">
+<meta property="og:image" content="https://hoshitobu.github.io/hoshitobu-survey/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
+<link rel="stylesheet" href="../style.css?v=20261124b">
+<link rel="stylesheet" href="../kyotsu/kyotsu.css?v=20261124b">
+<style>
+
+.kidx{max-width:720px}
+.kidx ul{list-style:none;margin:0;padding:0}
+.kidx li{margin:0 0 12px}
+.kidx a.kitem{display:block;padding:14px 18px;border:1px solid var(--line-strong);border-radius:var(--radius);text-decoration:none;color:var(--ink);line-height:1.6;background:var(--surface)}
+.kidx a.kitem:hover{border-color:var(--accent)}
+.kidx a.kitem:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.kidx .kno{display:block;font-size:13px;color:var(--faint);letter-spacing:.06em}
+.kidx .kname{display:block;font-size:20px;font-weight:700;margin:0 0 2px}
+.kidx .kdesc{display:block;font-size:15px;color:var(--sub)}
+.kidx .kmore{margin:22px 0 0;font-size:15px;color:var(--sub);line-height:1.8}
+.kidx .kmore p{margin:0 0 8px}
+
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "トップ", "item": "https://hoshitobu.github.io/hoshitobu-survey/"}, {"@type": "ListItem", "position": 2, "name": "知識の整理", "item": "https://hoshitobu.github.io/hoshitobu-survey/seiri/index.html"}, {"@type": "ListItem", "position": 3, "name": "図形の性質", "item": "https://hoshitobu.github.io/hoshitobu-survey/seiri/index.html#zukei"}]}</script>
+<script src="../sitemap-nav.js?v=20261124b" defer></script>
+<script src="../kyotsu/toc.js?v=20261124b" defer></script>
+</head>
+<body>
+<header class="hd hd-a">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.1 7.4 7.4 2.1-7.4 2.1L12 21.5l-2.1-7.4L2.5 12l7.4-2.1z" fill="currentColor"/></svg>
+    <div><a class="sitename" href="../index.html">星飛ぶの勉強部屋</a></div>
+  </div>
+  <nav class="hd-nav" aria-label="サイトのメニュー">
+    <div class="hd-item has-kids"><a href="../kakomon.html">解く<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="../kakomon.html">過去問演習<small>時間を計って、1年分を解く</small></a><span class="soon">類題演習<small>Coming soon</small></span></div></div>
+    <div class="hd-item has-kids"><a href="../kakomon.html?view=quick">点数と集計<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="../kakomon.html?view=quick">点数を入れる<small>偏差値と順位が出る</small></a><a href="../kyotsu/index.html">平均点・正答率<small>2021〜2026・年度×科目</small></a><a href="../results.html">サイトの集計<small>送られた点数の分布とランキング</small></a></div></div>
+    <div class="hd-item has-kids"><a href="../seiri/index.html" aria-current="true">知識の整理<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="../seiri/index.html#muki">無機化学<small>化学｜カード・辞書</small></a><a href="../seiri/index.html#zukei">図形の性質<small>数学ⅠA｜鎖と反射カード・辞書</small></a><a href="../seiri/index.html#keiryo">図形と計量<small>数学ⅠA｜カード・辞書</small></a></div></div>
+    <div class="hd-item"><a href="../videos.html">解説動画</a></div>
+    <button type="button" class="hd-find" data-focus="1" aria-expanded="false" aria-controls="fd"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12.8 12.8L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>検索・地図</span></button>
+  </nav>
+</header>
+<main class="zukei-tool">
+<nav class="crumbs" aria-label="パンくず"><a href="../index.html">トップ</a> › <a href="index.html">知識の整理</a> › <a href="index.html#zukei">図形の性質</a> › <span>誘導の鎖</span></nav>
+<div class="k-title">
+  <h1>誘導の鎖</h1>
+  <p class="note">図形の大問は、前の小問の結果を次の小問で使う「誘導」でできています。そのつながりをたどりながら解く練習です。3本あります。</p>
+</div>
+<div class="kidx"><ul><li><a class="kitem" href="kusari-2026.html"><span class="kno">演習1</span><span class="kname">2026 第3問の流れ</span><span class="kdesc">三角錐の問題を、底面や切り口の平面に取り出して、角の二等分線・方べき・メネラウスをつなぐ。7つの小問。</span></a></li><li><a class="kitem" href="kusari-2025.html"><span class="kno">演習2</span><span class="kname">2025 第3問の流れ</span><span class="kdesc">平面を取りかえて、同じ形（相似）をもう一度使う。7つの小問。</span></a></li><li><a class="kitem" href="kusari-2024.html"><span class="kno">演習3</span><span class="kname">2024 第5問の流れ</span><span class="kdesc">円を描き足して、方べきの定理とメネラウスの定理をつなぐ。7つの小問。</span></a></li></ul><div class="kmore"><p>どの鎖も、小問ごとに「何のための小問か」を選んでから解きます。解き終えると、その結果が次のどの小問で使われるかが矢印で見えます。問題は自作で、本番の問題文・図・数値は載せていません。</p><p>鎖の途中で止まる形は、<a href="hansha.html">図形の反射カード</a>で先に回しておけます。各小問の終わりに、対応するセットへのリンクがあります。</p></div></div>
+<footer class="src"><p class="note small">過去問の問題・正答率の出典：大学入試センター（<a href="https://www.dnc.ac.jp/" rel="noopener">https://www.dnc.ac.jp/</a>）。</p></footer>
+</main>
+
+</body>
+</html>

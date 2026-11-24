@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)">
+<meta name="referrer" content="no-referrer">
+<title>誘導の鎖 2024 第5問の流れ — 星飛ぶの勉強部屋</title>
+<meta name="description" content="円を描き足して、方べきの定理とメネラウスの定理をつなぐ流れ。前の小問の結果が次のどこで使われるかが矢印で見える。2024 第5問と同じ流れの自作問題。">
+<link rel="canonical" href="https://hoshitobu.github.io/hoshitobu-survey/seiri/kusari-2024.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="星飛ぶの勉強部屋">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="誘導の鎖 2024 第5問の流れ — 星飛ぶの勉強部屋">
+<meta property="og:description" content="円を描き足して、方べきの定理とメネラウスの定理をつなぐ流れ。前の小問の結果が次のどこで使われるかが矢印で見える。2024 第5問と同じ流れの自作問題。">
+<meta property="og:url" content="https://hoshitobu.github.io/hoshitobu-survey/seiri/kusari-2024.html">
+<meta property="og:image" content="https://hoshitobu.github.io/hoshitobu-survey/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
+<link rel="stylesheet" href="../style.css?v=20261124b">
+<link rel="stylesheet" href="../kyotsu/kyotsu.css?v=20261124b">
+<style>
+
+.hz{--bg:#ffffff;--surface:#ffffff;--surface2:#f3f4f7;--ink:#15171c;--sub:#454a55;--faint:#686d78;
+  --line:#dfe2e8;--line-strong:#b4bac6;--accent:#2f3fd0;--accent-soft:rgba(47,63,208,.09);--accent-soft2:rgba(47,63,208,.20);--on-accent:#ffffff;
+  --amb:#a85a00;--grn:#0a7a52;--bad:#b3321e;--halo:#ffffff;--base:rgba(0,0,0,.05);
+  color:var(--ink);line-height:1.8;font-size:16px}
+@media (prefers-color-scheme: dark){
+  .hz{--bg:#0a0b0f;--surface:#111318;--surface2:#171a21;--ink:#e2e4e9;--sub:#b4b9c4;--faint:#8f94a0;
+    --line:#252935;--line-strong:#3c4252;--accent:#8d97ff;--accent-soft:rgba(141,151,255,.14);--accent-soft2:rgba(141,151,255,.26);--on-accent:#0a0b0f;
+    --amb:#ffb454;--grn:#5fd0a0;--bad:#ff8f7e;--halo:#111318;--base:rgba(255,255,255,.05)}
+}
+.hz h1{font-size:25px;line-height:1.4;margin:14px 0 6px}
+.hz h2{font-size:19px;line-height:1.5;margin:26px 0 8px}
+.hz h3{font-size:16px;margin:0 0 4px}
+.hz p{margin:0 0 10px}
+.hz .lead{color:var(--sub);margin:0 0 12px}
+.hz button{font-family:inherit;font-size:16px;color:var(--ink);cursor:pointer}
+.hz button:focus-visible,.hz a:focus-visible{outline:3px solid var(--amb);outline-offset:2px}
+.hz a{color:var(--accent)}
+.hz .chains{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 0}
+.hz .chains a{display:block;min-height:48px;padding:4px 14px;border:1px solid var(--line-strong);border-radius:8px;text-decoration:none;color:var(--ink);line-height:1.4;flex:1 1 160px}
+.hz .chains a b{display:block;font-size:15px}
+.hz .chains a span{display:block;font-size:12.5px;color:var(--sub)}
+.hz .chains a[aria-current="page"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.hz .chains a[aria-current="page"] span{color:var(--on-accent)}
+.hz .layout{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+@media (min-width:900px){.hz .layout{grid-template-columns:330px minmax(0,1fr);align-items:start}
+.hz .mapcol{position:sticky;top:10px}
+.hz .workcol{min-width:0}}
+.hz .mapbox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 10px 8px}
+.hz .mapbox h2{font-size:14px;letter-spacing:.06em;color:var(--accent);margin:0 0 6px}
+.hz .maprow{position:relative}
+.hz .maplist{list-style:none;margin:0;padding:0 70px 0 0}
+.hz .maplist li{margin:0 0 6px}
+.hz .maplist li.grp{font-size:12px;color:var(--faint);letter-spacing:.06em;margin:6px 0 2px;padding-left:2px}
+.hz .maplist button{width:100%;min-height:44px;padding:4px 10px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface2);
+  text-align:left;line-height:1.4;display:flex;align-items:center;gap:8px}
+.hz .maplist button .no{font-size:12px;color:var(--faint);min-width:2.8em;font-weight:700}
+.hz .maplist button .nm{flex:1;font-weight:700;font-size:15px}
+.hz .maplist button .st{font-size:13px;font-weight:700}
+.hz .maplist button[aria-current="step"]{background:var(--accent-soft);border-color:var(--accent)}
+.hz .maplist button:disabled{opacity:.45;cursor:default}
+.hz .maplist button.done .st{color:var(--grn)}
+.hz .maplist .carry{font-size:12.5px;color:var(--sub);line-height:1.55;margin:2px 4px 2px 12px;padding:2px 8px;border-left:3px solid var(--accent)}
+.hz .maplist .carry b{color:var(--accent)}
+.hz .arrows{position:absolute;top:0;right:0;width:68px;height:100%;pointer-events:none;overflow:visible}
+.hz .arrows path.e-v{stroke:var(--accent)}
+.hz .arrows path.e-t{stroke:var(--grn)}
+.hz .arrows path.e-p{stroke:var(--amb);stroke-dasharray:5 4}
+.hz .arrows .head-v{fill:var(--accent)}
+.hz .arrows .head-t{fill:var(--grn)}
+.hz .arrows .head-p{fill:var(--amb)}
+.hz .legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12.5px;color:var(--sub);margin:6px 0 0}
+.hz .legend i{display:inline-block;width:18px;height:0;border-top:3px solid;vertical-align:middle;margin-right:4px}
+.hz .legend .lv{border-color:var(--accent)}
+.hz .legend .lt{border-color:var(--grn)}
+.hz .legend .lp{border-top-style:dashed;border-color:var(--amb)}
+.hz .nolink{margin:8px 0 0;font-size:13.5px;color:var(--sub);border-top:1px solid var(--line);padding-top:6px}
+.hz .problem{border:1px solid var(--line-strong);border-radius:10px;padding:10px 14px;margin:0 0 12px;background:var(--surface)}
+.hz .problem b{display:block;font-size:12px;letter-spacing:.06em;color:var(--accent)}
+.hz .problem p{margin:2px 0 0}
+.hz .figs{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 6px}
+.hz .figbox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px;flex:1 1 300px;min-width:0}
+.hz .figbox h3{font-size:12.5px;letter-spacing:.06em;color:var(--faint);margin:0 0 2px;font-weight:700}
+.hz .figbox svg{display:block;width:100%;height:auto;max-width:440px;margin:0 auto}
+.hz .figcap{margin:4px 6px 12px;font-size:14px;color:var(--faint);line-height:1.6;min-height:1.6em}
+.hz .stepbox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.hz .stepbox .n{font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--accent);margin:0;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.hz .chip{display:inline-block;font-size:12px;border:1px solid var(--line-strong);border-radius:999px;padding:0 9px;line-height:1.7;color:var(--sub);letter-spacing:0;font-weight:400}
+.hz .chip.lv0{border-color:var(--bad);color:var(--bad)}
+.hz .chip.lv1{border-color:var(--amb);color:var(--amb)}
+.hz .chip.lv2{border-color:var(--grn);color:var(--grn)}
+.hz .stepbox h3{font-size:19px;margin:2px 0 6px;line-height:1.5}
+.hz .q{font-weight:700;margin:0 0 6px}
+.hz .opts{display:flex;flex-direction:column;gap:8px;margin:6px 0 8px}
+.hz .opts button{min-height:52px;padding:8px 14px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface2);text-align:left;font-weight:700;line-height:1.5}
+.hz .opts button .mk{display:inline-block;width:1.4em;font-weight:700}
+.hz .opts button.picked{border-color:var(--accent);background:var(--accent-soft)}
+.hz .fb{margin:6px 0 4px;padding:8px 12px;border-left:4px solid var(--line-strong);background:var(--surface2);border-radius:0 8px 8px 0;font-size:15px;line-height:1.7}
+.hz .fb.ok{border-color:var(--grn)}
+.hz .fb.ng{border-color:var(--amb)}
+.hz .fb b{font-weight:700}
+.hz .solve{margin-top:12px;border-top:1px dashed var(--line-strong);padding-top:10px}
+.hz .pre{margin:0 0 6px;color:var(--sub)}
+.hz .qtext{font-size:17px;line-height:2.5;margin:0 0 8px}
+.hz .bx{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;min-width:38px;height:42px;padding:0 4px;margin:0 2px;
+  border:2px solid var(--line-strong);border-radius:6px;background:var(--surface2);font-size:20px;font-weight:700;position:relative;color:var(--ink)}
+.hz .bx .lb{font-size:14px;color:var(--faint);font-weight:400}
+.hz .bx.sel{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft2)}
+.hz .bx.ok{border-color:var(--grn)}
+.hz .bx.ng{border-color:var(--bad)}
+.hz .bx .res{position:absolute;top:-10px;right:-6px;font-size:13px;font-weight:700;border-radius:999px;min-width:18px;height:18px;line-height:18px;background:var(--surface);text-align:center;border:1px solid}
+.hz .bx.ok .res{color:var(--grn)}
+.hz .bx.ng .res{color:var(--bad)}
+.hz .grp-opts{list-style:none;margin:0 0 8px;padding:8px 12px;border:1px solid var(--line-strong);border-radius:8px;display:flex;flex-wrap:wrap;gap:4px 18px}
+.hz .grp-opts li{font-size:15px}
+.hz .grp-opts .gl{font-size:13px;color:var(--faint);width:100%}
+.hz .pad{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:6px 0 8px}
+.hz .pad button{min-height:48px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface2);font-weight:700;font-size:19px}
+.hz .pad button:disabled{opacity:.3;cursor:default}
+.hz .pad button.wide{grid-column:span 2;font-size:15px}
+.hz .ctl{display:flex;gap:10px;margin:10px 0 0}
+.hz .ctl button{flex:1;min-height:52px;border:1px solid var(--line-strong);border-radius:10px;background:transparent;font-weight:700}
+.hz .ctl button.prim{background:var(--accent);border-color:var(--accent);color:var(--on-accent);flex:2}
+.hz .ctl button:disabled{opacity:.4;cursor:default}
+.hz .sum{margin:10px 0 4px;font-weight:700}
+.hz .marks{font-size:15px;margin:4px 0 8px}
+.hz .marks span{display:inline-block;margin:0 10px 0 0;white-space:nowrap}
+.hz .expl{margin:6px 0 8px;padding:8px 14px;border-left:3px solid var(--accent);background:var(--surface2);border-radius:0 8px 8px 0}
+.hz .expl h3{font-size:12.5px;letter-spacing:.06em;color:var(--accent)}
+.hz .expl ol{margin:0;padding-left:1.3em}
+.hz .expl li{margin:2px 0;font-size:16px}
+.hz .shape{margin:6px 0;font-size:15px}
+.hz .shape b{color:var(--accent)}
+.hz .stall{margin:6px 0;font-size:14.5px;color:var(--sub);padding-left:10px;border-left:3px solid var(--amb)}
+.hz .use{margin:8px 0;padding:8px 12px;border:1px solid var(--accent);border-radius:8px;background:var(--accent-soft)}
+.hz .use h3{font-size:13px;letter-spacing:.06em;color:var(--accent)}
+.hz .use ul{list-style:none;margin:0;padding:0}
+.hz .use li{padding:2px 0;font-size:15.5px}
+.hz .use li:before{content:"→ ";color:var(--accent);font-weight:700}
+.hz .rates,.hz .jukko,.hz .limit{margin-top:16px}
+.hz .rates{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.hz .rates h2{font-size:17px;margin:0 0 6px}
+.hz .rtabs{display:flex;gap:6px;margin:0 0 8px;flex-wrap:wrap}
+.hz .rtabs button{min-height:40px;padding:0 14px;border:1px solid var(--line-strong);border-radius:8px;background:transparent;font-weight:700;font-size:15px}
+.hz .rtabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.hz .rrow{display:grid;grid-template-columns:3.6em 1fr 4.4em;gap:8px;align-items:center;margin:0 0 4px;padding:2px 4px;border-radius:6px}
+.hz .rrow.now{background:var(--accent-soft)}
+.hz .rrow .rl{font-weight:700;font-size:15px}
+.hz .rrow .rb{height:14px;border-radius:7px;background:var(--line);overflow:hidden}
+.hz .rrow .rb i{display:block;height:100%;background:var(--accent);border-radius:7px}
+.hz .rrow .rv{font-variant-numeric:tabular-nums;text-align:right;font-weight:700;color:var(--accent);font-size:15px}
+.hz .rsub{grid-column:1 / -1;font-size:12.5px;color:var(--sub);margin:-2px 0 2px 3.9em;line-height:1.5}
+.hz .rsub .dn{color:var(--bad);font-weight:700}
+.hz .rsub .th{color:var(--amb);font-weight:700}
+.hz .srct{display:block;font-size:13px;color:var(--faint);line-height:1.6;margin-top:6px}
+.hz .jukko{border:1px solid var(--line-strong);border-radius:10px;padding:0 14px;background:var(--surface)}
+.hz .jukko summary{cursor:pointer;min-height:48px;display:flex;align-items:center;font-weight:700;font-size:17px}
+.hz .jukko .qa{margin:0 0 10px;padding:6px 0;border-top:1px solid var(--line)}
+.hz .jukko .qa b{display:block;font-size:15px}
+.hz .jukko .qa .my{margin:2px 0;color:var(--sub);font-size:15px}
+.hz .jukko .qa .hon{margin:2px 0;font-size:16px;font-weight:700}
+.hz .jukko .qa .from{font-size:12.5px;color:var(--faint)}
+.hz .limit{color:var(--sub);font-size:15px;border-top:1px solid var(--line);padding-top:10px}
+.hz .s-ink{stroke:var(--ink)}
+.hz .s-faint{stroke:var(--faint)}
+.hz .s-acc{stroke:var(--accent)}
+.hz .s-amb{stroke:var(--amb)}
+.hz .s-grn{stroke:var(--grn)}
+.hz .s-line{stroke:var(--line-strong)}
+.hz .s-bad{stroke:var(--bad)}
+.hz .f-ambs{fill:var(--amb);fill-opacity:.2}
+.hz .f-ink{fill:var(--ink)}
+.hz .f-acc{fill:var(--accent)}
+.hz .f-amb{fill:var(--amb)}
+.hz .f-grn{fill:var(--grn)}
+.hz .f-soft{fill:var(--accent-soft)}
+.hz .f-soft2{fill:var(--accent-soft2)}
+.hz .f-base{fill:var(--base)}
+.hz .f-bad{fill:var(--bad)}
+.hz svg text{font-family:"Times New Roman","Noto Serif JP",serif;font-style:italic}
+.hz svg text.lbl{paint-order:stroke;stroke:var(--halo);stroke-width:4px;stroke-linejoin:round}
+.hz [data-s],.hz [data-dim]{transition:opacity .35s ease}
+.hz .off{opacity:0 !important;pointer-events:none}
+.hz .dim{opacity:.25}
+@media (max-width:480px){.hz h1{font-size:22px}
+.hz .stepbox h3{font-size:18px}
+.hz .qtext{font-size:16px}}
+@media (prefers-reduced-motion: reduce){.hz [data-s],.hz [data-dim]{transition:none}}
+.hz button{font-family:inherit}
+.hz .stepbox,.hz .cardbox{scroll-margin-top:calc(var(--hdr-h,56px) + 12px)}
+@media (min-width:900px){ .hz .mapcol{top:calc(var(--hdr-h,56px) + 10px)} }
+.hz h1,.hz h2,.hz h3{font-family:inherit}
+.hz ul.sets{padding:0}
+.hz .sets li:only-child{grid-column:1 / -1}
+.hz .chains a:hover{color:var(--ink)}
+.hz .chains a[aria-current="page"]:hover{color:var(--on-accent)}
+.hz a:hover{color:var(--accent)}
+.hz .big.prim:hover,.hz .ctl button.prim:hover{color:var(--on-accent)}
+.hz .tips{margin:14px 0 0;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.hz .tips h2{font-size:17px;margin:0 0 6px}
+.hz .tips table{width:100%;border-collapse:collapse;margin:0;font-size:15px}
+.hz .tips th{padding:6px 10px 6px 0;color:var(--faint);font-weight:400;border-bottom:1px solid var(--line);font-size:13px;white-space:nowrap;text-align:left}
+.hz .tips td{padding:7px 10px 7px 0;border-bottom:1px solid var(--line);vertical-align:top;font-weight:400;line-height:1.6}
+.hz .tips td:first-child{font-weight:700;padding-left:0}
+.hz .tips tr:last-child td{border-bottom:0}
+.hz .tips th,.hz .tips td{white-space:normal;overflow-wrap:anywhere}
+@media (max-width:620px){
+  .hz .tips thead{display:none}
+  .hz .tips table,.hz .tips tbody,.hz .tips tr,.hz .tips td{display:block;width:100%}
+  .hz .tips tr{padding:8px 0;border-bottom:1px solid var(--line)}
+  .hz .tips tr:last-child{border-bottom:0}
+  .hz .tips td{border-bottom:0;padding:1px 0}
+  .hz .tips td:first-child{color:var(--ink)}
+  .hz .tips td:last-child{color:var(--sub);font-size:14.5px}
+}
+
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "トップ", "item": "https://hoshitobu.github.io/hoshitobu-survey/"}, {"@type": "ListItem", "position": 2, "name": "知識の整理", "item": "https://hoshitobu.github.io/hoshitobu-survey/seiri/index.html"}, {"@type": "ListItem", "position": 3, "name": "図形の性質", "item": "https://hoshitobu.github.io/hoshitobu-survey/seiri/index.html#zukei"}, {"@type": "ListItem", "position": 4, "name": "誘導の鎖", "item": "https://hoshitobu.github.io/hoshitobu-survey/seiri/kusari.html"}]}</script>
+<script src="../sitemap-nav.js?v=20261124b" defer></script>
+</head>
+<body>
+<header class="hd hd-a">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.1 7.4 7.4 2.1-7.4 2.1L12 21.5l-2.1-7.4L2.5 12l7.4-2.1z" fill="currentColor"/></svg>
+    <div><a class="sitename" href="../index.html">星飛ぶの勉強部屋</a></div>
+  </div>
+  <nav class="hd-nav" aria-label="サイトのメニュー">
+    <div class="hd-item has-kids"><a href="../kakomon.html">解く<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="../kakomon.html">過去問演習<small>時間を計って、1年分を解く</small></a><span class="soon">類題演習<small>Coming soon</small></span></div></div>
+    <div class="hd-item has-kids"><a href="../kakomon.html?view=quick">点数と集計<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="../kakomon.html?view=quick">点数を入れる<small>偏差値と順位が出る</small></a><a href="../kyotsu/index.html">平均点・正答率<small>2021〜2026・年度×科目</small></a><a href="../results.html">サイトの集計<small>送られた点数の分布とランキング</small></a></div></div>
+    <div class="hd-item has-kids"><a href="../seiri/index.html" aria-current="true">知識の整理<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="../seiri/index.html#muki">無機化学<small>化学｜カード・辞書</small></a><a href="../seiri/index.html#zukei">図形の性質<small>数学ⅠA｜鎖と反射カード・辞書</small></a><a href="../seiri/index.html#keiryo">図形と計量<small>数学ⅠA｜カード・辞書</small></a></div></div>
+    <div class="hd-item"><a href="../videos.html">解説動画</a></div>
+    <button type="button" class="hd-find" data-focus="1" aria-expanded="false" aria-controls="fd"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12.8 12.8L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>検索・地図</span></button>
+  </nav>
+</header>
+<main class="zukei-tool">
+<nav class="crumbs" aria-label="パンくず"><a href="../index.html">トップ</a> › <a href="index.html">知識の整理</a> › <a href="index.html#zukei">図形の性質</a> › <a href="kusari.html">誘導の鎖</a> › <span>2024 第5問の流れ</span></nav>
+<div class="k-title">
+  <h1>誘導の鎖：2024 第5問の流れ</h1>
+  <p class="note">円が描かれていない場面で、自分で円を描き足して方べきの定理を使い、積の大小で点が円の内か外かを判定します。問題は自作で、2024 第5問と同じ流れになっています。</p>
+</div>
+
+<div class="hz">
+<nav class="chains" aria-label="演習の切りかえ"><a href="kusari-2026.html"><b>演習1</b><span>三角錐（2026 第3問と同じ流れ）</span></a><a href="kusari-2024.html" aria-current="page"><b>演習2</b><span>円を描き足す（2024 第5問と同じ流れ）</span></a><a href="kusari-2025.html"><b>演習3</b><span>平面を取りかえる（2025 第3問と同じ流れ）</span></a></nav>
+
+
+<div class="layout">
+<div class="mapcol">
+  <div class="mapbox">
+    <h2>小問のつながり</h2>
+    <div class="maprow" id="maprow">
+      <ol class="maplist" id="maplist"></ol>
+      <svg class="arrows" id="arrows" aria-hidden="true"></svg>
+    </div>
+    <p class="legend"><span><i class="lv"></i>結果の値を使う</span><span><i class="lt"></i>結果の式を使う</span><span><i class="lp"></i>同じ手順をくり返す</span></p>
+    <p class="nolink">誘導のない小問や、前の小問とつながらない小問もあります。その場合は、前の結果を探さず、問題文の条件の意味から考えます。</p>
+  </div>
+</div>
+
+<div class="workcol">
+  <div class="problem"><b>問題（自作）</b><p>平面上に △ABC があり、BC＝18、CA＝12 である。辺 BC 上に点 D、辺 CA 上に点 E があって、BD : DC ＝ 1 : 2、CE : EA ＝ 5 : 1 とする。線分 AD と BE の交点を P とする。以下、比は最も簡単な整数の比で答える。</p></div>
+  <div class="figs"><div class="figbox" data-fb="fb1"><h3></h3><svg class="fig fig24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 350" role="img" aria-label="△ABC。D は辺 BC 上、E は辺 CA 上。AD と BE は P で交わる。円は描かれていない。"><polygon points="247.3,88.8 297.3,230.4 72.1,230.4" class="f-soft" data-s="0-1"/><polygon points="409.9,230.4 218.1,112.4 72.1,230.4" class="f-soft" data-s="2-2"/><line x1="247.3" y1="88.8" x2="409.9" y2="230.4" class="s-ink" stroke-width="2.6" stroke-linecap="round"/><line x1="409.9" y1="230.4" x2="72.1" y2="230.4" class="s-ink" stroke-width="2.6" stroke-linecap="round"/><line x1="72.1" y1="230.4" x2="247.3" y2="88.8" class="s-ink" stroke-width="2.6" stroke-linecap="round"/><line x1="247.3" y1="88.8" x2="297.3" y2="230.4" class="s-ink" stroke-width="2.6" stroke-linecap="round"/><line x1="409.9" y1="230.4" x2="218.1" y2="112.4" class="s-ink" stroke-width="2.6" stroke-linecap="round"/><line x1="409.9" y1="230.4" x2="218.1" y2="112.4" class="s-acc" stroke-width="4.6" stroke-linecap="round" data-s="0-1"/><line x1="247.3" y1="88.8" x2="297.3" y2="230.4" class="s-acc" stroke-width="4.6" stroke-linecap="round" data-s="2-2"/><circle cx="184.7" cy="220.4" r="113.1" class="s-grn" fill="none" stroke-width="2.8" data-s="3-3"/><line x1="247.3" y1="88.8" x2="218.1" y2="112.4" class="s-acc" stroke-width="5" stroke-linecap="round" data-s="3-3"/><line x1="218.1" y1="112.4" x2="72.1" y2="230.4" class="s-acc" stroke-width="5" stroke-linecap="round" data-s="3-3"/><line x1="247.3" y1="88.8" x2="266.0" y2="141.9" class="s-acc" stroke-width="5" stroke-linecap="round" data-s="3-3"/><line x1="266.0" y1="141.9" x2="297.3" y2="230.4" class="s-acc" stroke-width="5" stroke-linecap="round" data-s="3-3"/><line x1="409.9" y1="230.4" x2="297.3" y2="230.4" class="s-amb" stroke-width="5" stroke-linecap="round" data-s="3-3"/><line x1="297.3" y1="230.4" x2="72.1" y2="230.4" class="s-amb" stroke-width="5" stroke-linecap="round" data-s="3-3"/><line x1="409.9" y1="230.4" x2="266.0" y2="141.9" class="s-amb" stroke-width="5" stroke-linecap="round" data-s="3-3"/><line x1="266.0" y1="141.9" x2="218.1" y2="112.4" class="s-amb" stroke-width="5" stroke-linecap="round" data-s="3-3"/><circle cx="303.6" cy="188.4" r="114.4" class="s-grn" fill="none" stroke-width="2.8" data-s="4-5"/><line x1="266.0" y1="141.9" x2="297.3" y2="230.4" class="s-amb" stroke-width="5" stroke-linecap="round" data-s="4-5"/><line x1="266.0" y1="141.9" x2="322.3" y2="301.2" class="s-acc" stroke-width="5" stroke-linecap="round" stroke-dasharray="7 5" data-s="5-5"/><line x1="247.3" y1="88.8" x2="266.0" y2="141.9" class="s-faint" stroke-width="2.4" stroke-linecap="round" data-s="4-5"/><line x1="409.9" y1="230.4" x2="266.0" y2="141.9" class="s-ink" stroke-width="4" stroke-linecap="round" data-s="4-5"/><line x1="266.0" y1="141.9" x2="218.1" y2="112.4" class="s-ink" stroke-width="4" stroke-linecap="round" data-s="4-5"/><circle cx="322.3" cy="301.2" r="4.2" class="f-acc" data-s="5-5"/><circle cx="353.6" cy="130.9" r="114.4" class="s-grn" fill="none" stroke-width="2.8" data-s="6-6"/><line x1="266.0" y1="141.9" x2="218.1" y2="112.4" class="s-amb" stroke-width="5" stroke-linecap="round" data-s="6-6"/><line x1="266.0" y1="141.9" x2="239.4" y2="125.5" class="s-acc" stroke-width="5" stroke-linecap="round" stroke-dasharray="7 5" data-s="6-6"/><circle cx="239.4" cy="125.5" r="4.2" class="f-acc" data-s="6-6"/><circle cx="247.3" cy="88.8" r="4.2" class="f-ink"/><circle cx="409.9" cy="230.4" r="4.2" class="f-ink"/><circle cx="72.1" cy="230.4" r="4.2" class="f-ink"/><circle cx="297.3" cy="230.4" r="4.2" class="f-ink"/><circle cx="218.1" cy="112.4" r="4.2" class="f-ink"/><circle cx="266.0" cy="141.9" r="4.2" class="f-ink"/><text x="247.3" y="78.3" class="f-ink lbl" font-size="19" text-anchor="middle">A</text><text x="426.9" y="236.9" class="f-ink lbl" font-size="19" text-anchor="middle">B</text><text x="55.1" y="236.9" class="f-ink lbl" font-size="19" text-anchor="middle">C</text><text x="288.8" y="251.6" class="f-ink lbl" font-size="19" text-anchor="middle">D</text><text x="206.0" y="106.9" class="f-ink lbl" font-size="19" text-anchor="middle">E</text><text x="254.0" y="160.4" class="f-ink lbl" font-size="19" text-anchor="middle">P</text><text x="337.1" y="316.2" class="f-acc lbl" font-size="19" text-anchor="middle" data-s="5-5">X</text><text x="230.9" y="146.7" class="f-acc lbl" font-size="19" text-anchor="middle" data-s="6-6">X′</text><line x1="409.9" y1="234.4" x2="409.9" y2="280.4" class="s-faint" stroke-width="1.1" stroke-linecap="round"/><line x1="409.9" y1="271.4" x2="409.9" y2="281.4" class="s-ink" stroke-width="1.8" stroke-linecap="round"/><line x1="72.1" y1="234.4" x2="72.1" y2="280.4" class="s-faint" stroke-width="1.1" stroke-linecap="round"/><line x1="72.1" y1="271.4" x2="72.1" y2="281.4" class="s-ink" stroke-width="1.8" stroke-linecap="round"/><line x1="409.9" y1="276.4" x2="72.1" y2="276.4" class="s-ink" stroke-width="1.3" stroke-linecap="round"/><text x="241.0" y="281.2" class="f-ink lbl" font-size="14" text-anchor="middle" font-style="normal">BC＝18</text><line x1="69.6" y1="227.3" x2="40.6" y2="191.5" class="s-faint" stroke-width="1.1" stroke-linecap="round"/><line x1="46.3" y1="198.5" x2="40.0" y2="190.7" class="s-ink" stroke-width="1.8" stroke-linecap="round"/><line x1="244.7" y1="85.7" x2="215.8" y2="49.9" class="s-faint" stroke-width="1.1" stroke-linecap="round"/><line x1="221.5" y1="56.9" x2="215.2" y2="49.2" class="s-ink" stroke-width="1.8" stroke-linecap="round"/><line x1="43.2" y1="194.6" x2="218.3" y2="53.0" class="s-ink" stroke-width="1.3" stroke-linecap="round"/><text x="130.8" y="128.6" class="f-ink lbl" font-size="14" text-anchor="middle" font-style="normal">CA＝12</text><circle cx="353.6" cy="247.4" r="11" class="s-ink chipbg" fill="none" stroke-width="2" data-s="0-6"/><text x="353.6" y="252.4" class="f-ink up" font-size="14" text-anchor="middle" font-style="normal" font-weight="700" data-s="0-6">1</text><circle cx="184.7" cy="247.4" r="11" class="s-ink chipbg" fill="none" stroke-width="2" data-s="0-6"/><text x="184.7" y="252.4" class="f-ink up" font-size="14" text-anchor="middle" font-style="normal" font-weight="700" data-s="0-6">2</text><polygon points="134.4,143.2 120.1,168.4 148.6,168.4" class="s-ink chipbg" fill="none" stroke-width="2" stroke-linejoin="round" data-s="0-6"/><text x="134.4" y="163.2" class="f-ink up" font-size="14" text-anchor="middle" font-style="normal" font-weight="700" data-s="0-6">5</text><polygon points="222.0,72.4 207.7,97.6 236.2,97.6" class="s-ink chipbg" fill="none" stroke-width="2" stroke-linejoin="round" data-s="0-6"/><text x="222.0" y="92.4" class="f-ink up" font-size="14" text-anchor="middle" font-style="normal" font-weight="700" data-s="0-6">1</text><text x="269.6" y="117.8" class="f-acc lbl" font-size="16" text-anchor="middle" font-style="normal" data-s="2-6">3</text><text x="295.7" y="197.6" class="f-acc lbl" font-size="16" text-anchor="middle" font-style="normal" data-s="2-6">5</text><text x="340.0" y="177.6" class="f-amb lbl" font-size="16" text-anchor="middle" font-style="normal" data-s="4-6">9</text><text x="230.0" y="128.6" class="f-amb lbl" font-size="16" text-anchor="middle" font-style="normal" data-s="4-6">3</text><line x1="262.3" y1="143.3" x2="237.7" y2="151.9" class="s-faint" stroke-width="1.1" stroke-linecap="round" data-s="5-5"/><line x1="246.2" y1="148.9" x2="236.8" y2="152.3" class="s-ink" stroke-width="1.8" stroke-linecap="round" data-s="5-5"/><line x1="318.6" y1="302.5" x2="294.1" y2="311.2" class="s-faint" stroke-width="1.1" stroke-linecap="round" data-s="5-5"/><line x1="302.5" y1="308.2" x2="293.1" y2="311.5" class="s-ink" stroke-width="1.8" stroke-linecap="round" data-s="5-5"/><line x1="241.5" y1="150.6" x2="297.8" y2="309.9" class="s-ink" stroke-width="1.3" stroke-linecap="round" data-s="5-5"/><text x="269.7" y="235.7" class="f-acc lbl" font-size="16" text-anchor="middle" font-style="normal" data-s="5-5">9</text></svg></div></div>
+  <p class="figcap" id="figcap"></p>
+  <div class="stepbox" aria-live="polite" id="stepbox"></div>
+
+  <div class="rates" id="rates"></div>
+  <details class="jukko" id="jukko">
+    <summary>行き詰まったときの考え方</summary>
+    <div id="jukko-body"></div>
+  </details>
+  <p class="limit">この流れだけで、すべての図形問題が解けるわけではありません。よく出る誘導の一例です。</p>
+</div>
+</div>
+</div>
+
+
+<footer class="src"><p class="note small">過去問の問題・正答率の出典：大学入試センター（<a href="https://www.dnc.ac.jp/" rel="noopener">https://www.dnc.ac.jp/</a>）。</p></footer>
+</main>
+<script>
+var DATA = {"steps": [{"grp": "(1)", "name": "メネラウスの式の枠", "hint": "式の枠が示される", "hintlv": 2, "why": {"q": "この小問は、何のためにありますか。", "opts": [{"t": "AP : PD を出すため（△ADC を直線 BE が横切る）", "ok": true, "r": "頂点 A→D→C→A と、直線の上の点 P, B, E を交互にたどる式の最後の1項を選ぶ。そこから AP : PD が出る。"}, {"t": "4点が同じ円であることを示すため", "ok": false, "r": "円は (2) で出てくる。(1) は、辺の比だけを扱う。"}, {"t": "AD の長さを出すため", "ok": false, "r": "AD は (2) で、円と方べきから出す。ここで出るのは比である。"}]}, "pre": "(1)　△ADC と直線 BE に着目すると、次の式が成り立つ。", "text": [{"s": "(AP/PD)·(DB/"}, {"b": 0}, {"s": ")·(CE/EA) ＝ 1"}], "expl": ["三角形 ADC の頂点 A, D, C を順にたどり、直線 BE の上の点 P, B, E をはさむ：A→P→D→B→C→E→A。", "分数は AP/PD、DB/BC、CE/EA。BC は B から C まで（全体）。B は辺 CD の延長上にある。"], "stall": "つまずきやすい点：一周の最後が三角形の外の点（B）になる。DB/BD や DB/DC と取りちがえやすい。B から C まで（BC）。", "shape": "三角形を横切る直線 → メネラウス", "card": [{"l": "反射カード・第4回（メネラウス・チェバ）", "h": "hansha.html#set-4"}], "carry": [{"to": 1, "t": "式の枠 → AP : PD"}], "blanks": [{"id": "ア", "kind": "choice", "ans": "1", "opts": ["BD", "BC", "DC", "CA"]}]}, {"grp": "(1)", "name": "AP : PD", "hint": "式から数を入れるだけ", "hintlv": 2, "why": {"q": "この小問は、何のためにありますか。", "opts": [{"t": "あとで AP, PD の長さを出すため（AD が分かれば分けられる）", "ok": true, "r": "AP : PD は比。AD の長さが分かれば、AP と PD の長さに分けられる。(2)(ii) の積で使う。"}, {"t": "BD : DC を求め直すため", "ok": false, "r": "BD : DC は最初から与えられている。"}, {"t": "点 P が円の上にあることを示すため", "ok": false, "r": "P が円の上にあるのは、(2) で与えられる条件。比とは別の話。"}]}, "text": [{"s": "よって AP : PD ＝ "}, {"b": 0}, {"s": " : "}, {"b": 1}, {"s": " である。"}], "expl": ["BC＝18、DB＝6、CE : EA＝5 : 1 だから (AP/PD)·(6/18)·5 ＝ 1。", "AP/PD＝(18/6)·(1/5)＝3/5。AP : PD ＝ 3 : 5。"], "stall": "つまずきやすい点：BD : DC＝1 : 2 の 1 や 2 をそのまま入れる。DB は 6、BC は 18（全体）。比のままだと 1 と 3 になる。", "shape": "式に数を入れて比を出す", "card": [{"l": "反射カード・第4回（メネラウス・チェバ）", "h": "hansha.html#set-4"}], "carry": [{"to": 3, "t": "AP : PD（長さに分ける）"}, {"to": 2, "t": "同じ形をもう1本（別の三角形で）"}], "blanks": [{"id": "イ", "kind": "digit", "ans": "3"}, {"id": "ウ", "kind": "digit", "ans": "5"}]}, {"grp": "(1)", "name": "BP : PE", "hint": "式は自分で書く", "hintlv": 1, "why": {"q": "この小問は、何のためにありますか。", "opts": [{"t": "BP, PE の長さを出すための比にするため", "ok": true, "r": "BP : PE が分かれば、BE の長さを分けて BP と PE が出る。(2)(ii) の積 BP·PE で使う。"}, {"t": "AP : PD をたしかめるため", "ok": false, "r": "AP : PD はもう出ている。ここでは、別の線 BE の上の比を出す。"}, {"t": "辺 CA の長さを出すため", "ok": false, "r": "CA は最初から与えられている。"}]}, "text": [{"s": "また、△BEC と直線 AD に着目すると、BP : PE ＝ "}, {"b": 0}, {"s": " : "}, {"b": 1}, {"s": " である。"}], "expl": ["三角形 BEC の頂点 B, E, C を順に：B→P→E→A→C→D→B。(BP/PE)·(EA/AC)·(CD/DB)＝1。", "A は辺 CE の延長上にある。EA は 1 つ分（2）、AC は全体（12）。CD＝12、DB＝6。", "BP/PE＝(AC/EA)·(DB/CD)＝6·(1/2)＝3。BP : PE ＝ 3 : 1。"], "stall": "つまずきやすい点：式が書いていないので、どこから一周を始めるか迷う。A が三角形の外にあるので、EA と AC は「またぐ長さ」。EA/CA と読まない。", "shape": "三角形を横切る直線（延長の上の点がある）", "card": [{"l": "反射カード・第4回（メネラウス・チェバ）", "h": "hansha.html#set-4"}], "carry": [{"to": 4, "t": "BP : PE（長さに分ける）"}], "blanks": [{"id": "エ", "kind": "digit", "ans": "3"}, {"id": "オ", "kind": "digit", "ans": "1"}]}, {"grp": "(2)", "name": "円を描き足して方べき", "hint": "「4点は同一円周上」と示される", "hintlv": 1, "why": {"q": "この小問は、何のためにありますか。", "opts": [{"t": "AD と BE の長さを出すため（P までの比に分けて、(ii) の積に使う）", "ok": true, "r": "AP·AD の方べきで AD、BP·BE の方べきで BE が出る。(1) の比と合わせて、AP, PD, BP, PE の長さになる。"}, {"t": "円の半径を出すため", "ok": false, "r": "半径は聞かれていない。方べきは、円の外の点から2本の直線で長さの積を等しくする。"}, {"t": "BD : DC をたしかめるため", "ok": false, "r": "BD : DC は最初から与えられている。"}]}, "pre": "(2)　4点 C, D, P, E は同一円周上にあるとする。", "text": [{"s": "このとき AD ＝ "}, {"b": 0}, {"s": "、BE ＝ "}, {"b": 1}, {"b": 2}, {"s": " である。"}], "expl": ["円は図に無い。描き足す。A は円の外で、A から出る2本の直線は A→E→C と A→P→D。", "AE·AC＝AP·AD。AE＝2、AC＝12 だから 24。AP＝(3/8)AD なので (3/8)AD²＝24、AD²＝64、AD＝8。", "B からも同じ。BD·BC＝BP·BE＝108、BP＝(3/4)BE なので (3/4)BE²＝108、BE＝12。"], "stall": "つまずきやすい点：円が描かれていない。起点（A や B）から出る2本の直線を選ぶ所で止まる。掛けるのは A から円周までの AE と AC（AC＝AE＋EC）。AE·EC と書かない。", "shape": "同じ円の上 → 円の外の点から2本の直線 → 方べき", "card": [{"l": "反射カード・第2回（方べき）", "h": "hansha.html#set-2"}, {"l": "反射カード・第1回（円周角）", "h": "hansha.html#set-1"}], "carry": [{"to": 4, "t": "AD, BE（AP, PD, BP, PE の長さ）"}], "blanks": [{"id": "カ", "kind": "digit", "ans": "8"}, {"id": "キ", "kind": "digit", "ans": "1"}, {"id": "ク", "kind": "digit", "ans": "2"}]}, {"grp": "(2)(ii)", "name": "積の大小", "hint": "解き方の方針が示される", "hintlv": 2, "why": {"q": "この小問は、何のためにありますか。", "opts": [{"t": "点 D が円 ω の内か外かを、積の大小で決める準備", "ok": true, "r": "P を通る弦 BE の積 BP·PE は、円 ω の P での「積」。弦 AD を延ばして比べるために、AP·PD と並べる。"}, {"t": "円 ω の半径を出すため", "ok": false, "r": "半径は使わない。積の大小だけで内外が決まる。"}, {"t": "4点 A, B, D, E が同一円周上であることを示すため", "ok": false, "r": "（ii）で分かるのは、A, B, D, E が同じ円の上にはない（積が等しくない）ことのほう。"}]}, "pre": "(ii)　3点 A, B, E を通る円 ω と点 D の位置関係を、次の構想に基づいて調べよう。〔構想〕線分 AD と BE の交点 P に着目し、AP·PD と BP·PE の大小を比べる。", "text": [{"s": "まず、AP·PD ＝ "}, {"b": 0}, {"b": 1}, {"s": "、BP·PE ＝ "}, {"b": 2}, {"b": 3}, {"s": " であるから、AP·PD "}, {"b": 4}, {"s": " BP·PE …①"}], "expl": ["(1) の比と (i) の長さを合わせる。AD＝8 を 3 : 5 に分けて AP＝3、PD＝5。BE＝12 を 3 : 1 に分けて BP＝9、PE＝3。", "AP·PD＝15、BP·PE＝27。15 ＜ 27 で ⓪。"], "stall": "つまずきやすい点：(1) の比と (i) の長さの2つを同じ式に入れる所。比のままの 3, 5 と、長さ 8 を取りちがえる。", "shape": "2つの結果（比と長さ）を合わせる", "card": null, "carry": [{"to": 5, "t": "①：AP·PD ＜ BP·PE"}, {"to": 6, "t": "同じ比べ方（点 E に）"}], "blanks": [{"id": "ケ", "kind": "digit", "ans": "1"}, {"id": "コ", "kind": "digit", "ans": "5"}, {"id": "サ", "kind": "digit", "ans": "2"}, {"id": "シ", "kind": "digit", "ans": "7"}, {"id": "ス", "kind": "choice", "ans": "0", "opts": ["<", "=", ">"]}]}, {"grp": "(2)(ii)", "name": "D は円 ω の内か外か", "hint": "方針に沿って進む（同じ点 P から）", "hintlv": 2, "why": {"q": "この小問は、何のためにありますか。", "opts": [{"t": "PD と PX の大小から、D が円の内か外かを決める", "ok": true, "r": "X は直線 AD と ω の交点。D が X より P の近くにあれば、D は ω の内側にある。"}, {"t": "AD の長さをもう一度出すため", "ok": false, "r": "AD は (i) で出ている。ここで使うのは、積の大小の結果。"}, {"t": "BE の長さをたしかめるため", "ok": false, "r": "BE も (i) で出ている。ここでは使い道が違う。"}]}, "text": [{"s": "直線 AD と ω の交点のうち A と異なる点を X とすると、AP·PX ＝ BP·PE …②。①と②より PD "}, {"b": 0}, {"s": " PX。したがって、点 D は円 ω の "}, {"b": 1}, {"s": " にある。"}], "expl": ["②：弦 AX と弦 BE が P で交わる（円の内の方べき）。AP·PX＝BP·PE＝27、PX＝9。", "PD＝5 は PX＝9 より小さい。D は X より P に近い。X は円の上だから、D は ω の内部（⓪）。"], "stall": "つまずきやすい点：「円の内の点で2本の弦を考える」ことに気づく所。D は A の反対側にあり、X も同じ側（P から A と反対向き）。", "shape": "積の大小 → 点と円の位置", "card": [{"l": "反射カード・第2回（方べき）", "h": "hansha.html#set-2"}], "carry": [{"to": 6, "t": "同じ比べ方（別の点・別の円）"}], "blanks": [{"id": "セ", "kind": "choice", "ans": "0", "opts": ["<", "=", ">"]}, {"id": "ソ", "kind": "choice", "ans": "0", "opts": ["内部", "周上", "外部"]}]}, {"grp": "(2)(iii)", "name": "E は円 ω′ の内か外か", "hint": "なし（誘導がない）", "hintlv": 0, "why": {"q": "この小問は、前のどの手順をもう一度使いますか。", "opts": [{"t": "(ii) の比べ方（弦の積を並べて、点が円の内か外かを決める）", "ok": true, "r": "円は 3点 A, B, D を通る円に替わり、調べる点は E。P を通る弦は AD と、直線 BE。AP·PD と BP·PE を、反対の向きから読む。"}, {"t": "(1) の比だけ", "ok": false, "r": "比は、AP, PD, BP, PE の長さを出すのに使い終わっている。ここでは長さの積を使う。"}, {"t": "方べきで AD を出す所だけ", "ok": false, "r": "AD の長さは (i) で出ている。使い直すのは、(ii) の比べ方のほうである。"}]}, "pre": "(iii)　3点 A, B, D を通る円 ω′ と点 E の位置関係について調べよう。", "text": [{"s": "点 E は円 ω′ の "}, {"b": 0}, {"s": " にある。"}], "expl": ["直線 BE と ω′ の B でない交点を X′ とする。BP·PX′＝AP·PD＝15、BP＝9 より PX′＝5/3。", "PE＝3 は PX′＝5/3 より大きい。E は X′ より P から遠い。円の外（②）。", "(ii) では D が内側、(iii) では E が外側。AP·PD ≠ BP·PE だから、4点 A, B, D, E は同じ円の上にない。"], "stall": "つまずきやすい点：構想も空欄も無い。どの点を起点にするか、どの2本の弦を比べるかから自分で決める。(ii) の結果を言い換えるだけでも答えは出る（AP·PD ＜ BP·PE ⇔ E は ω′ の外）。", "shape": "同じ比べ方をもう一度（円と点を替える）", "card": null, "carry": [], "blanks": [{"id": "タ", "kind": "choice", "ans": "2", "opts": ["内部", "周上", "外部"]}]}], "edges": [{"a": 0, "b": 1, "k": "t", "t": "メネラウスの式"}, {"a": 1, "b": 3, "k": "v", "t": "AP : PD"}, {"a": 2, "b": 4, "k": "v", "t": "BP : PE"}, {"a": 3, "b": 4, "k": "v", "t": "AD, BE"}, {"a": 4, "b": 5, "k": "t", "t": "積の大小"}, {"a": 1, "b": 2, "k": "p", "t": "同じ形をもう1本"}, {"a": 4, "b": 6, "k": "p", "t": "同じ比べ方"}], "caps": ["△ADC を直線 BE が横切る（B は CD の延長上、E は辺 CA 上、P は辺 AD 上）。頂点と交点を交互にたどる。", "AP : PD は、BC・DB・CE・EA から出る。BC は全体の長さ、BD は一部。", "△BEC を直線 AD が横切る。A は CE の延長上にある（C→E→A の向き）。式は自分で書く。", "「4点 C, D, P, E は同一円周上」と言われた所で、円を描き足す（緑）。A から出る2本（青）、B から出る2本（橙）。", "点 P は、3点 A, B, E を通る円 ω の内側にある（弦 BE の上）。弦 AD を延ばして、円との交点を X とする。", "PX の長さは、BP·PE を AP で割る。D は X より P の近く（PD と PX を比べる）。", "誘導はありません。同じ比べ方を、3点 A, B, D を通る円 ω′ と点 E に当てます。"], "figs": {"fb1": ["図（円は描かれていない → 描き足す）", "図（円は描かれていない → 描き足す）", "図（円は描かれていない → 描き足す）", "図（円 CDPE を描き足す）", "図（3点 A, B, E を通る円 ω と D）", "図（3点 A, B, E を通る円 ω と D）", "図（3点 A, B, D を通る円 ω′ と E）"]}, "rates": {"2026": {"title": "2026 第3問", "rows": [["ア", 76.23], ["イ-ウ", 58.3], ["エ-カ", 39.52], ["キ-ク", 28.21], ["ケ-コ", 22.73], ["サ-シ", 12.3], ["ス-ソ", 6.25]], "notes": {"エ-カ": "条件が図に載っていない", "ケ-コ": "「前の結果に注意」とだけ書かれている", "ス-ソ": "誘導なし"}}, "2025": {"title": "2025 第3問", "rows": [["ア-イ", 85.42], ["ウ", 77.34], ["エ-カ", 73.95], ["キ-ク", 52.97], ["ケ", 49.57], ["コ-ス", 22.41], ["セ", 14.38]], "notes": {"コ-ス": "「したがって」とだけ書かれている", "セ": "誘導なし（真偽の判定）"}}, "2024": {"title": "2024 第5問", "rows": [["ア", 76.17], ["イ-ウ", 64.3], ["エ-オ", 50.04], ["カ", 33.42], ["キ-ケ", 17.32], ["コ-シ", 17.06], ["ス-セ", 16.54]], "notes": {"カ": "円を自分で描き足す", "ス-セ": "解き方の方針が示されない"}}}, "rateYear": "2024", "ratemap": [0, 1, 2, 3, 4, 5, 6], "linkStep": 2, "wrongId": "タ", "wrongVal": "0", "quotes": [{"when": "式が書いてないとき、どこから始める？", "my": "辺の外にある点（延長の上）は、頂点と交点を交互にたどると迷わない。三角形の外へはみ出して、また戻る。", "q": "頂点と交点を交互にたどれば、延長の上の点も迷わないぜ。", "from": "2026 第3問 解説動画（スライド16）"}, {"when": "円が図に描かれていないとき", "my": "「同じ円の上」と言われた所で、円を描き足す。どの点から、2本の直線を引く？", "q": "まず、参考図に無いこの条件を、図に描き込もう。", "from": "2026 第3問 解説動画（スライド11）"}, {"when": "前の結果を2つ組み合わせる所", "my": "比（前の小問）と、方べきで出した長さ。どちらも使う。", "q": "断定はできないけど、カは円を自分で描き足す必要がある。キケは、(1)の比と(i)の長さを組み合わせる。これが要因として考えられる。", "from": "2024 第5問 解説動画（スライド22）"}, {"when": "誘導のない最後の小問", "my": "何を比べるのか。前の小問と同じ比べ方で出せないか。", "q": "何を比べるかから決めよう。", "from": "2026 第3問 解説動画（スライド21）"}, {"when": "勘で決めない", "my": "内か外かは、見た目では決められない。積の大小で決める。", "q": "そう。勘で決めずに、同じ手順で確かめる。", "from": "2026 第3問 解説動画（スライド21）"}, {"when": "時間と位置", "my": "最後の小問は、途中で止まると届かない位置にある。", "q": "(iii)は構想がなく、しかも第5問の最後。時間が足りなかった人もいたのではないか、と考えられるぜ。", "from": "2024 第5問 解説動画（スライド22）"}]};
+(function(){
+  "use strict";
+  function $(id){return document.getElementById(id);}
+  var STEPS = DATA.steps, EDGES = DATA.edges, N = STEPS.length, CAPS = DATA.caps;
+  var st = {step:0, first:[], cur:[], perm:[], val:[], chk:[], sel:0, maxStep:0, rateTab:DATA.rateYear};
+  for(var i = 0; i < N; i++){ st.first.push(null); st.cur.push(null); st.perm.push(null); st.val.push({}); st.chk.push(false); }
+
+  function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+  function inRange(spec, n){
+    var m = /^(\d)-(\d)$/.exec(spec); if(!m) return true;
+    return n >= +m[1] && n <= +m[2];
+  }
+  var MARKS = "⓪①②③④⑤⑥⑦⑧⑨";
+  function firstEmpty(k){
+    var bs = STEPS[k].blanks;
+    for(var i = 0; i < bs.length; i++){ if(st.val[k][bs[i].id] === undefined) return i; }
+    return -1;
+  }
+
+  /* ---------- 地図 ---------- */
+  function renderMap(){
+    var h = "", lastG = "";
+    for(var i = 0; i < N; i++){
+      var S = STEPS[i];
+      if(S.grp !== lastG){ h += '<li class="grp">'+S.grp+'</li>'; lastG = S.grp; }
+      var done = st.chk[i];
+      h += '<li><button type="button" data-n="'+i+'" class="'+(done?'done':'')+'"'+(i===st.step?' aria-current="step"':'')+(i>st.maxStep?' disabled':'')+'>'
+        + '<span class="no">小問'+(i+1)+'</span><span class="nm">'+esc(S.name)+'</span><span class="st">'+(done?scoreText(i):(i===st.step?'解答中':''))+'</span></button></li>';
+      if(done && i === st.step && S.carry && S.carry.length){
+        h += '<li class="carry">この結果は、次の小問で使います　' + S.carry.map(function(c){return '<b>→ 小問'+(c.to+1)+'</b> '+esc(c.t);}).join('　') + '</li>';
+      }
+      if(i === 0) h += '<li class="carry">最初の小問です（前の小問はありません）</li>';
+      if(i === N-1) h += '<li class="carry">誘導はありません。前の手順をもう一度使います</li>';
+    }
+    $("maplist").innerHTML = h;
+    drawArrows();
+  }
+  function scoreText(k){
+    var bs = STEPS[k].blanks, n = 0;
+    for(var i = 0; i < bs.length; i++){ if(st.val[k][bs[i].id] === bs[i].ans) n++; }
+    return n === bs.length ? "〇" : (n+"/"+bs.length);
+  }
+  function drawArrows(){
+    var svg = $("arrows"), row = $("maprow");
+    var btns = $("maplist").querySelectorAll("button[data-n]");
+    var pos = {}, base = row.getBoundingClientRect();
+    for(var i = 0; i < btns.length; i++){
+      var r = btns[i].getBoundingClientRect();
+      pos[btns[i].getAttribute("data-n")] = {y: r.top - base.top + r.height/2};
+    }
+    var W = 68, H = row.offsetHeight;
+    svg.setAttribute("viewBox","0 0 "+W+" "+H); svg.setAttribute("height",H);
+    var active = [];
+    for(var e = 0; e < EDGES.length; e++){ if(st.chk[EDGES[e].a]) active.push(EDGES[e]); }
+    var lanes = [];
+    active.sort(function(p,q){ return (Math.abs(q.b-q.a)) - (Math.abs(p.b-p.a)); });
+    var out = "";
+    for(var a = 0; a < active.length; a++){
+      var E = active[a], lo = Math.min(E.a,E.b), hi = Math.max(E.a,E.b), ln = 0;
+      while(true){
+        var clash = false;
+        for(var m = 0; m < lanes.length; m++){ if(lanes[m].ln === ln && !(hi <= lanes[m].lo || lo >= lanes[m].hi)) clash = true; }
+        if(!clash) break; ln++;
+      }
+      lanes.push({ln:ln, lo:lo, hi:hi});
+      var A = pos[E.a], B = pos[E.b]; if(!A || !B) continue;
+      var xs = 4, xl = 16 + ln*13;
+      var d = "M"+xs+","+A.y.toFixed(1)+" H"+xl+" V"+B.y.toFixed(1)+" H"+(xs+6);
+      out += '<path class="e-'+E.k+'" d="'+d+'" fill="none" stroke-width="2.4" stroke-linejoin="round"'+(st.step===E.a && st.chk[E.a] ? '' : ' opacity=".75"')+'/>';
+      out += '<path class="head-'+E.k+'" d="M'+xs+','+B.y.toFixed(1)+' l8,-5 v10 z"/>';
+    }
+    svg.innerHTML = out;
+  }
+
+  /* ---------- 図 ---------- */
+  function renderFigs(){
+    var k = st.step, boxes = document.querySelectorAll(".figbox");
+    for(var b = 0; b < boxes.length; b++){
+      var id = boxes[b].getAttribute("data-fb"), T = DATA.figs[id][k];
+      boxes[b].style.display = T ? "" : "none";
+      boxes[b].querySelector("h3").textContent = T || "";
+      var svgs = boxes[b].querySelectorAll("svg.fig");
+      for(var s = 0; s < svgs.length; s++){
+        var fs = svgs[s].getAttribute("data-fs");
+        svgs[s].style.display = (!fs || inRange(fs, k)) ? "block" : "none";
+        var els = svgs[s].querySelectorAll("[data-s]");
+        for(var i = 0; i < els.length; i++){
+          var e = els[i], on = inRange(e.getAttribute("data-s"), k);
+          e.classList.toggle("off", !on);
+          var d = e.getAttribute("data-dim");
+          e.classList.toggle("dim", !!d && inRange(d, k));
+        }
+      }
+    }
+    $("figcap").textContent = CAPS[k];
+  }
+
+  /* ---------- 小問 ---------- */
+  function rng(k){
+    // 画面確認用（#ハッシュ付き）のときだけ、毎回同じ並びにする。ふだんは毎回ばらばら。
+    if(window.__noscroll){ var s = (k * 977 + 13) >>> 0; return function(){ s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+    return Math.random;
+  }
+  function permOf(k){
+    if(!st.perm[k]){
+      var n = STEPS[k].why.opts.length, a = [], r = rng(k), i, j, t;
+      for(i = 0; i < n; i++) a.push(i);
+      for(i = n - 1; i > 0; i--){ j = Math.floor(r() * (i + 1)); t = a[i]; a[i] = a[j]; a[j] = t; }
+      st.perm[k] = a;
+    }
+    return st.perm[k];
+  }
+  function blankHTML(k, bi, live){
+    var B = STEPS[k].blanks[bi], v = st.val[k][B.id], cls = "bx", res = "";
+    if(st.chk[k]){ var ok = (v === B.ans); cls += ok ? " ok" : " ng"; res = '<span class="res">'+(ok?'〇':'×')+'</span>'; }
+    else if(live && st.sel === bi) cls += " sel";
+    var shown = (v === undefined) ? '<span class="lb">'+B.id+'</span>' : (B.kind==="choice" ? MARKS.charAt(+v) : v);
+    return '<button type="button" class="'+cls+'" data-bi="'+bi+'" aria-label="'+B.id+(v===undefined?' 未入力':' '+v)+'"'+((st.chk[k]||!live)?' disabled':'')+'>'+shown+res+'</button>';
+  }
+  function renderStep(){
+    var k = st.step, S = STEPS[k], box = $("stepbox"), h = "", live = (st.first[k] !== null);
+    h += '<p class="n"><span>'+S.grp+'　小問'+(k+1)+' / '+N+'</span><span class="chip lv'+S.hintlv+'">ヒント：'+esc(S.hint)+'</span></p>';
+    h += '<h3>'+esc(S.name)+'</h3>';
+    // 1. 小問の文を先に読む
+    if(S.pre) h += '<p class="pre">'+esc(S.pre)+'</p>';
+    h += '<p class="qtext">';
+    for(var t = 0; t < S.text.length; t++){
+      var seg = S.text[t];
+      if(seg.s !== undefined) h += esc(seg.s); else h += blankHTML(k, seg.b, live);
+    }
+    h += '</p>';
+    var cbs = [];
+    for(var b = 0; b < S.blanks.length; b++){
+      var B = S.blanks[b];
+      if(B.kind === "choice"){
+        cbs.push(B);
+        h += '<ul class="grp-opts" aria-label="'+B.id+' の解答群"><li class="gl">'+B.id+' の解答群</li>';
+        for(var c = 0; c < B.opts.length; c++) h += '<li>'+MARKS.charAt(c)+' '+esc(B.opts[c])+'</li>';
+        h += '</ul>';
+      }
+    }
+    // 2. 解く前に「何のため？」を選ぶ（並びは毎回ばらばら。最初に選んだものを結果に出す）
+    h += '<p class="q">'+esc(S.why.q)+(live ? '' : '　（先に選ぶと、空欄に入力できます）')+'</p><div class="opts" id="opts">';
+    var pm = permOf(k), pf = st.first[k], pc = st.cur[k];
+    for(var i = 0; i < pm.length; i++){
+      var oi = pm[i], o = S.why.opts[oi], mk = "";
+      if(pf !== null){ if(o.ok) mk = "○"; else if(pf === oi) mk = "×"; }
+      h += '<button type="button" data-o="'+oi+'" class="'+(pc===oi?'picked':'')+'"><span class="mk">'+mk+'</span>'+esc(o.t)+'</button>';
+    }
+    h += '</div><div id="why-fb">';
+    if(pf !== null){
+      var po = S.why.opts[pf], co = null;
+      for(var j = 0; j < S.why.opts.length; j++) if(S.why.opts[j].ok) co = S.why.opts[j];
+      h += '<p class="fb '+(po.ok?'ok':'ng')+'"><b>最初に選んだ答え　'+(po.ok?'○ ':'× ')+'</b>'+esc(po.r)+'</p>';
+      if(!po.ok) h += '<p class="fb ok"><b>○ 正解は　</b>'+esc(co.t)+'。'+esc(co.r)+'</p>';
+      if(pc !== pf) h += '<p class="fb"><b>選び直し</b>　結果に反映されるのは、最初に選んだ答えです。</p>';
+    }
+    h += '</div>';
+    // 3. 解く
+    if(live){
+      h += '<div class="solve">';
+      if(!st.chk[k]){
+        var mo = 0; for(var q2 = 0; q2 < cbs.length; q2++) mo = Math.max(mo, cbs[q2].opts.length);
+        h += '<div class="pad" id="pad"><button type="button" data-d="−">−</button>';
+        for(var d = 0; d <= 9; d++) h += '<button type="button" data-d="'+d+'">'+d+'</button>';
+        h += '<button type="button" data-d="del" class="wide">消す</button></div>';
+        h += '<div class="pad" id="padc">';
+        for(var z = 0; z < Math.max(mo, cbs.length ? 3 : 0); z++) h += '<button type="button" data-c="'+z+'">'+MARKS.charAt(z)+'</button>';
+        h += '</div><div class="ctl"><button type="button" id="check" class="prim">答え合わせ</button></div>';
+      } else {
+        var okN = 0; for(var u = 0; u < S.blanks.length; u++) if(st.val[k][S.blanks[u].id] === S.blanks[u].ans) okN++;
+        h += '<p class="sum">'+(okN===S.blanks.length?'すべて〇':okN+' / '+S.blanks.length+' が〇')+'　（「何のための小問か」は、最初の選択で '+(S.why.opts[pf].ok?'〇':'×')+'）</p>';
+        h += '<p class="marks">正解のマーク　' + S.blanks.map(function(B2){ return '<span>'+B2.id+'＝'+(B2.kind==="choice"?MARKS.charAt(+B2.ans):B2.ans)+'</span>'; }).join('') + '</p>';
+        h += '<div class="expl"><h3>解き方</h3><ol>' + S.expl.map(function(x){return '<li>'+esc(x)+'</li>';}).join('') + '</ol></div>';
+        h += '<p class="shape"><b>着眼点</b>　'+esc(S.shape)+'</p>';
+        if(S.card){ h += '<p class="shape">' + S.card.map(function(c){return '<a href="'+c.h+'">'+esc(c.l)+'</a>';}).join('　') + '</p>'; }
+        h += '<p class="stall">'+esc(S.stall)+'</p>';
+        if(S.carry && S.carry.length){
+          h += '<div class="use"><h3>この結果の使い道</h3><ul>' + S.carry.map(function(c){return '<li>小問'+(c.to+1)+'　'+esc(c.t)+'</li>';}).join('') + '</ul></div>';
+        } else {
+          h += '<div class="use"><h3>最後の小問</h3><ul><li>前の手順をもう一度使います。ここから先の小問はありません。</li></ul></div>';
+        }
+        h += '<div class="ctl"><button type="button" id="retry">解き直す</button>'
+          + (k < N-1 ? '<button type="button" id="next" class="prim">次の小問へ（小問'+(k+2)+'）</button>' : '') + '</div>';
+      }
+      h += '</div>';
+    }
+    box.innerHTML = h;
+    if(live && !st.chk[k]) syncPad();
+    bind();
+  }
+  function syncPad(){
+    var k = st.step, B = STEPS[k].blanks[st.sel], pad = $("pad"), padc = $("padc");
+    if(!pad) return;
+    var isC = B && B.kind === "choice";
+    var pb = pad.querySelectorAll("button"), cb = padc.querySelectorAll("button");
+    for(var i = 0; i < pb.length; i++) pb[i].disabled = !!isC;
+    for(var j = 0; j < cb.length; j++) cb[j].disabled = !isC || (B && j >= B.opts.length);
+    padc.style.display = padc.children.length ? "grid" : "none";
+  }
+  function setVal(v){
+    var k = st.step, B = STEPS[k].blanks[st.sel];
+    if(!B) return;
+    if(v === null){ delete st.val[k][B.id]; } else { st.val[k][B.id] = v; }
+    if(v !== null){
+      var bs = STEPS[k].blanks, nx = -1;
+      for(var i = st.sel + 1; i < bs.length; i++){ if(st.val[k][bs[i].id] === undefined){ nx = i; break; } }
+      if(nx < 0){ for(var i2 = 0; i2 < bs.length; i2++){ if(st.val[k][bs[i2].id] === undefined){ nx = i2; break; } } }
+      if(nx >= 0) st.sel = nx;
+    }
+    renderStep();
+  }
+  function bind(){
+    var k = st.step, opts = $("opts");
+    opts.addEventListener("click", function(ev){
+      var b = ev.target.closest("button[data-o]"); if(!b || st.chk[k]) return;
+      var oi = +b.getAttribute("data-o");
+      if(st.first[k] === null) st.first[k] = oi;
+      st.cur[k] = oi; renderStep();
+    });
+    var bxs = document.querySelectorAll("#stepbox .bx");
+    for(var i = 0; i < bxs.length; i++) bxs[i].addEventListener("click", function(ev){ st.sel = +ev.currentTarget.getAttribute("data-bi"); renderStep(); });
+    var pad = $("pad"), padc = $("padc");
+    if(pad) pad.addEventListener("click", function(ev){
+      var b = ev.target.closest("button[data-d]"); if(!b || b.disabled) return;
+      var d = b.getAttribute("data-d"); setVal(d === "del" ? null : d);
+    });
+    if(padc) padc.addEventListener("click", function(ev){
+      var b = ev.target.closest("button[data-c]"); if(!b || b.disabled) return; setVal(b.getAttribute("data-c"));
+    });
+    var ck = $("check");
+    if(ck) ck.addEventListener("click", function(){
+      st.chk[k] = true; if(k + 1 > st.maxStep && k < N-1) st.maxStep = k + 1; renderAll();
+    });
+    var rt = $("retry");
+    if(rt) rt.addEventListener("click", function(){ st.chk[k] = false; st.val[k] = {}; st.sel = 0; st.perm[k] = null; st.cur[k] = st.first[k]; renderAll(); });
+    var nx = $("next");
+    if(nx) nx.addEventListener("click", function(){ go(k + 1); });
+  }
+  function go(n){
+    n = Math.max(0, Math.min(N-1, n));
+    st.step = n; if(n > st.maxStep) st.maxStep = n;
+    st.sel = Math.max(0, firstEmpty(n));
+    renderAll();
+    var el = $("stepbox"); try{ if(!window.__noscroll) el.scrollIntoView({block:"start", behavior:"smooth"}); }catch(e){}
+  }
+  $("maplist").addEventListener("click", function(ev){
+    var b = ev.target.closest("button[data-n]"); if(!b || b.disabled) return; go(+b.getAttribute("data-n"));
+  });
+  document.addEventListener("keydown", function(ev){
+    if(ev.target && /^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName)) return;   // サイトの検索の箱に打った数字を拾わない
+    if(ev.ctrlKey || ev.metaKey || ev.altKey) return;
+    var k = st.step; if(st.first[k] === null || st.chk[k]) return;
+    var B = STEPS[k].blanks[st.sel]; if(!B) return;
+    if(/^[0-9]$/.test(ev.key)){ if(B.kind === "choice"){ if(+ev.key < B.opts.length) setVal(ev.key); } else setVal(ev.key); }
+    else if(ev.key === "-" && B.kind !== "choice") setVal("−");
+    else if(ev.key === "Backspace" || ev.key === "Delete") setVal(null);
+  });
+
+  /* ---------- 正答率 ---------- */
+  function renderRates(){
+    var T = DATA.rates[st.rateTab], h = '<h2>本番の正答率の推移</h2><p class="srct" style="margin:0 0 6px">下の数値は、本番（'+T.title+'）で同じ位置にある小問の正答率です。この自作問題の正答率ではありません。</p><div class="rtabs" role="tablist">';
+    ["2026","2025","2024"].forEach(function(y){ h += '<button type="button" role="tab" data-y="'+y+'" aria-selected="'+(y===st.rateTab)+'">'+DATA.rates[y].title+'</button>'; });
+    h += '</div>';
+    for(var i = 0; i < T.rows.length; i++){
+      var r = T.rows[i], prev = i ? T.rows[i-1][1] : null;
+      var now = (st.rateTab === DATA.rateYear && DATA.ratemap[st.step] === i);
+      h += '<div class="rrow'+(now?' now':'')+'"><span class="rl">'+r[0]+'</span><span class="rb"><i style="width:'+r[1]+'%"></i></span><span class="rv">'+r[1].toFixed(2)+'%</span>';
+      var sub = "";
+      if(prev !== null) sub += '<span class="dn">前の小問から −'+(prev - r[1]).toFixed(2)+'</span>';
+      if(T.notes[r[0]]) sub += (sub?'　':'')+'<span class="th">ヒントが少なくなる小問：'+esc(T.notes[r[0]])+'</span>';
+      if(now) sub += (sub?'　':'')+'いま解いている小問は、本番ではこの位置にあたります';
+      if(sub) h += '<div class="rsub">'+sub+'</div>';
+      h += '</div>';
+    }
+    h += '<span class="srct">出典：大学入試センター 設問別得点率及び正答率（本試験）。2026・2025 は全員必答、2024 は選択問題のため、選んだ受験者についての値と推定しています。'
+      + 'エ-カ のように範囲で採点される箇所は、その範囲全体の正答率です。最後の小問には、前の小問を解いていない人も含まれます。'
+      + '低下の要因は断定できません。本番の問題文・図・数値は掲載していません。</span>';
+    $("rates").innerHTML = h;
+    var tabs = $("rates").querySelectorAll("button[data-y]");
+    for(var j = 0; j < tabs.length; j++) tabs[j].addEventListener("click", function(ev){ st.rateTab = ev.currentTarget.getAttribute("data-y"); renderRates(); });
+  }
+
+  /* ---------- 熟考 ---------- */
+  function renderJukko(){
+    var h = "";
+    DATA.quotes.forEach(function(q){
+      h += '<div class="qa"><b>'+esc(q.when)+'</b><p class="my">'+esc(q.my)+'</p><p class="hon">「'+esc(q.q)+'」</p><span class="from">出典：'+esc(q.from)+'</span></div>';
+    });
+    h += '<p class="my">誘導のない小問や、前の小問とつながらない小問もあります。その場合は、前の結果を探さず、問題文の条件の意味から考えます。</p>';
+    $("jukko-body").innerHTML = h;
+  }
+
+  function renderAll(){ renderMap(); renderFigs(); renderStep(); renderRates(); }
+
+  /* ---------- 見た目の確認用：#s0、#s1-why、#linked、#s6-done ---------- */
+  function fill(k, wrongId){
+    var bs = STEPS[k].blanks;
+    for(var i = 0; i < bs.length; i++) st.val[k][bs[i].id] = bs[i].ans;
+    if(wrongId){ for(var j = 0; j < bs.length; j++) if(bs[j].id === wrongId) st.val[k][wrongId] = DATA.wrongVal || (bs[j].ans === "3" ? "8" : "3"); }
+    st.chk[k] = true;
+    var o = STEPS[k].why.opts; for(var q = 0; q < o.length; q++) if(o[q].ok){ st.first[k] = q; st.cur[k] = q; }
+  }
+  function fromHash(){
+    var h = (location.hash || "").replace("#","");
+    window.__noscroll = !!h;
+    if(h === "s1-why"){ st.step = 0; st.first[0] = 1; st.cur[0] = 1; }
+    else if(h === "linked"){ for(var i = 0; i <= DATA.linkStep; i++) fill(i); st.step = DATA.linkStep; st.maxStep = DATA.linkStep + 1; }
+    else if(h === "s6-done"){ for(var j = 0; j < N-1; j++) fill(j); fill(N-1, DATA.wrongId); st.step = N-1; st.maxStep = N-1; }
+    st.sel = Math.max(0, firstEmpty(st.step));
+    renderAll();
+  }
+  renderJukko();
+  fromHash();
+  window.addEventListener("hashchange", function(){ location.reload(); });
+  window.addEventListener("resize", function(){ drawArrows(); });
+})();
+</script>
+</body>
+</html>

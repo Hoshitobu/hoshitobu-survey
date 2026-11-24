@@ -26,7 +26,8 @@
     if (/^kyotsu\//.test(rel)) return ["score", "kyotsu"];
     if (rel === "videos.html") return ["videos", null];
     if (/^muki\//.test(rel)) return ["seiri", "muki"];
-    if (rel === "seiri/zukei.html") return ["seiri", "zukei"];
+    if (rel === "seiri/zukei.html" || /^seiri\/(hansha|kusari)/.test(rel)) return ["seiri", "zukei"];
+    if (/^seiri\/keiryo/.test(rel)) return ["seiri", "keiryo"];
     if (/^seiri\//.test(rel)) return ["seiri", null];
     return [null, null];
   }
@@ -78,8 +79,11 @@
       .catch(function () { INDEX = []; loading = false; done(); });
   }
   function crumb(u) {
+    if (/^muki\/card/.test(u)) return "知識の整理 › 無機化学 › カード";
     if (/^muki\//.test(u)) return "知識の整理 › 無機化学 › 辞書";
     if (/^seiri\/zukei/.test(u)) return "知識の整理 › 図形の性質 › 辞書";
+    if (/^seiri\/(hansha|kusari)/.test(u)) return "知識の整理 › 図形の性質 › 鎖と反射カード";
+    if (/^seiri\/keiryo/.test(u)) return "知識の整理 › 図形と計量 › カード";
     if (/^seiri\//.test(u)) return "知識の整理";
     if (/^kyotsu\//.test(u)) return "点数と集計 › 平均点・正答率";
     if (/^kakomon/.test(u)) return "解く › 過去問演習";

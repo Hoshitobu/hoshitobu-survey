@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)">
+<meta name="referrer" content="no-referrer">
+<title>誘導の鎖 2026 第3問の流れ — 星飛ぶの勉強部屋</title>
+<meta name="description" content="三角錐の問題を、小問ごとに「何のための小問か」を選んでから解く。前の小問の結果が次のどこで使われるかが矢印で見える。2026 第3問と同じ流れの自作問題。">
+<link rel="canonical" href="https://hoshitobu.github.io/hoshitobu-survey/seiri/kusari-2026.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="星飛ぶの勉強部屋">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="誘導の鎖 2026 第3問の流れ — 星飛ぶの勉強部屋">
+<meta property="og:description" content="三角錐の問題を、小問ごとに「何のための小問か」を選んでから解く。前の小問の結果が次のどこで使われるかが矢印で見える。2026 第3問と同じ流れの自作問題。">
+<meta property="og:url" content="https://hoshitobu.github.io/hoshitobu-survey/seiri/kusari-2026.html">
+<meta property="og:image" content="https://hoshitobu.github.io/hoshitobu-survey/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
+<link rel="stylesheet" href="../style.css?v=20261124b">
+<link rel="stylesheet" href="../kyotsu/kyotsu.css?v=20261124b">
+<style>
+
+.hz{--bg:#ffffff;--surface:#ffffff;--surface2:#f3f4f7;--ink:#15171c;--sub:#454a55;--faint:#686d78;
+  --line:#dfe2e8;--line-strong:#b4bac6;--accent:#2f3fd0;--accent-soft:rgba(47,63,208,.09);--accent-soft2:rgba(47,63,208,.20);--on-accent:#ffffff;
+  --amb:#a85a00;--grn:#0a7a52;--bad:#b3321e;--halo:#ffffff;--base:rgba(0,0,0,.05);
+  color:var(--ink);line-height:1.8;font-size:16px}
+@media (prefers-color-scheme: dark){
+  .hz{--bg:#0a0b0f;--surface:#111318;--surface2:#171a21;--ink:#e2e4e9;--sub:#b4b9c4;--faint:#8f94a0;
+    --line:#252935;--line-strong:#3c4252;--accent:#8d97ff;--accent-soft:rgba(141,151,255,.14);--accent-soft2:rgba(141,151,255,.26);--on-accent:#0a0b0f;
+    --amb:#ffb454;--grn:#5fd0a0;--bad:#ff8f7e;--halo:#111318;--base:rgba(255,255,255,.05)}
+}
+.hz h1{font-size:25px;line-height:1.4;margin:14px 0 6px}
+.hz h2{font-size:19px;line-height:1.5;margin:26px 0 8px}
+.hz h3{font-size:16px;margin:0 0 4px}
+.hz p{margin:0 0 10px}
+.hz .lead{color:var(--sub);margin:0 0 12px}
+.hz button{font-family:inherit;font-size:16px;color:var(--ink);cursor:pointer}
+.hz button:focus-visible,.hz a:focus-visible{outline:3px solid var(--amb);outline-offset:2px}
+.hz a{color:var(--accent)}
+.hz .chains{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 0}
+.hz .chains a{display:block;min-height:48px;padding:4px 14px;border:1px solid var(--line-strong);border-radius:8px;text-decoration:none;color:var(--ink);line-height:1.4;flex:1 1 160px}
+.hz .chains a b{display:block;font-size:15px}
+.hz .chains a span{display:block;font-size:12.5px;color:var(--sub)}
+.hz .chains a[aria-current="page"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.hz .chains a[aria-current="page"] span{color:var(--on-accent)}
+.hz .layout{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+@media (min-width:900px){.hz .layout{grid-template-columns:330px minmax(0,1fr);align-items:start}
+.hz .mapcol{position:sticky;top:10px}
+.hz .workcol{min-width:0}}
+.hz .mapbox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 10px 8px}
+.hz .mapbox h2{font-size:14px;letter-spacing:.06em;color:var(--accent);margin:0 0 6px}
+.hz .maprow{position:relative}
+.hz .maplist{list-style:none;margin:0;padding:0 70px 0 0}
+.hz .maplist li{margin:0 0 6px}
+.hz .maplist li.grp{font-size:12px;color:var(--faint);letter-spacing:.06em;margin:6px 0 2px;padding-left:2px}
+.hz .maplist button{width:100%;min-height:44px;padding:4px 10px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface2);
+  text-align:left;line-height:1.4;display:flex;align-items:center;gap:8px}
+.hz .maplist button .no{font-size:12px;color:var(--faint);min-width:2.8em;font-weight:700}
+.hz .maplist button .nm{flex:1;font-weight:700;font-size:15px}
+.hz .maplist button .st{font-size:13px;font-weight:700}
+.hz .maplist button[aria-current="step"]{background:var(--accent-soft);border-color:var(--accent)}
+.hz .maplist button:disabled{opacity:.45;cursor:default}
+.hz .maplist button.done .st{color:var(--grn)}
+.hz .maplist .carry{font-size:12.5px;color:var(--sub);line-height:1.55;margin:2px 4px 2px 12px;padding:2px 8px;border-left:3px solid var(--accent)}
+.hz .maplist .carry b{color:var(--accent)}
+.hz .arrows{position:absolute;top:0;right:0;width:68px;height:100%;pointer-events:none;overflow:visible}
+.hz .arrows path.e-v{stroke:var(--accent)}
+.hz .arrows path.e-t{stroke:var(--grn)}
+.hz .arrows path.e-p{stroke:var(--amb);stroke-dasharray:5 4}
+.hz .arrows .head-v{fill:var(--accent)}
+.hz .arrows .head-t{fill:var(--grn)}
+.hz .arrows .head-p{fill:var(--amb)}
+.hz .legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12.5px;color:var(--sub);margin:6px 0 0}
+.hz .legend i{display:inline-block;width:18px;height:0;border-top:3px solid;vertical-align:middle;margin-right:4px}
+.hz .legend .lv{border-color:var(--accent)}
+.hz .legend .lt{border-color:var(--grn)}
+.hz .legend .lp{border-top-style:dashed;border-color:var(--amb)}
+.hz .nolink{margin:8px 0 0;font-size:13.5px;color:var(--sub);border-top:1px solid var(--line);padding-top:6px}
+.hz .problem{border:1px solid var(--line-strong);border-radius:10px;padding:10px 14px;margin:0 0 12px;background:var(--surface)}
+.hz .problem b{display:block;font-size:12px;letter-spacing:.06em;color:var(--accent)}
+.hz .problem p{margin:2px 0 0}
+.hz .figs{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 6px}
+.hz .figbox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px;flex:1 1 300px;min-width:0}
+.hz .figbox h3{font-size:12.5px;letter-spacing:.06em;color:var(--faint);margin:0 0 2px;font-weight:700}
+.hz .figbox svg{display:block;width:100%;height:auto;max-width:440px;margin:0 auto}
+.hz .figcap{margin:4px 6px 12px;font-size:14px;color:var(--faint);line-height:1.6;min-height:1.6em}
+.hz .stepbox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.hz .stepbox .n{font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--accent);margin:0;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.hz .chip{display:inline-block;font-size:12px;border:1px solid var(--line-strong);border-radius:999px;padding:0 9px;line-height:1.7;color:var(--sub);letter-spacing:0;font-weight:400}
+.hz .chip.lv0{border-color:var(--bad);color:var(--bad)}
+.hz .chip.lv1{border-color:var(--amb);color:var(--amb)}
+.hz .chip.lv2{border-color:var(--grn);color:var(--grn)}
+.hz .stepbox h3{font-size:19px;margin:2px 0 6px;line-height:1.5}
+.hz .q{font-weight:700;margin:0 0 6px}
+.hz .opts{display:flex;flex-direction:column;gap:8px;margin:6px 0 8px}
+.hz .opts button{min-height:52px;padding:8px 14px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface2);text-align:left;font-weight:700;line-height:1.5}
+.hz .opts button .mk{display:inline-block;width:1.4em;font-weight:700}
+.hz .opts button.picked{border-color:var(--accent);background:var(--accent-soft)}
+.hz .fb{margin:6px 0 4px;padding:8px 12px;border-left:4px solid var(--line-strong);background:var(--surface2);border-radius:0 8px 8px 0;font-size:15px;line-height:1.7}
+.hz .fb.ok{border-color:var(--grn)}
+.hz .fb.ng{border-color:var(--amb)}
+.hz .fb b{font-weight:700}
+.hz .solve{margin-top:12px;border-top:1px dashed var(--line-strong);padding-top:10px}
+.hz .pre{margin:0 0 6px;color:var(--sub)}
+.hz .qtext{font-size:17px;line-height:2.5;margin:0 0 8px}
+.hz .bx{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;min-width:38px;height:42px;padding:0 4px;margin:0 2px;
+  border:2px solid var(--line-strong);border-radius:6px;background:var(--surface2);font-size:20px;font-weight:700;position:relative;color:var(--ink)}
+.hz .bx .lb{font-size:14px;color:var(--faint);font-weight:400}
+.hz .bx.sel{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft2)}
+.hz .bx.ok{border-color:var(--grn)}
+.hz .bx.ng{border-color:var(--bad)}
+.hz .bx .res{position:absolute;top:-10px;right:-6px;font-size:13px;font-weight:700;border-radius:999px;min-width:18px;height:18px;line-height:18px;background:var(--surface);text-align:center;border:1px solid}
+.hz .bx.ok .res{color:var(--grn)}
+.hz .bx.ng .res{color:var(--bad)}
+.hz .grp-opts{list-style:none;margin:0 0 8px;padding:8px 12px;border:1px solid var(--line-strong);border-radius:8px;display:flex;flex-wrap:wrap;gap:4px 18px}
+.hz .grp-opts li{font-size:15px}
+.hz .grp-opts .gl{font-size:13px;color:var(--faint);width:100%}
+.hz .pad{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:6px 0 8px}
+.hz .pad button{min-height:48px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface2);font-weight:700;font-size:19px}
+.hz .pad button:disabled{opacity:.3;cursor:default}
+.hz .pad button.wide{grid-column:span 2;font-size:15px}
+.hz .ctl{display:flex;gap:10px;margin:10px 0 0}
+.hz .ctl button{flex:1;min-height:52px;border:1px solid var(--line-strong);border-radius:10px;background:transparent;font-weight:700}
+.hz .ctl button.prim{background:var(--accent);border-color:var(--accent);color:var(--on-accent);flex:2}
+.hz .ctl button:disabled{opacity:.4;cursor:default}
+.hz .sum{margin:10px 0 4px;font-weight:700}
+.hz .marks{font-size:15px;margin:4px 0 8px}
+.hz .marks span{display:inline-block;margin:0 10px 0 0;white-space:nowrap}
+.hz .expl{margin:6px 0 8px;padding:8px 14px;border-left:3px solid var(--accent);background:var(--surface2);border-radius:0 8px 8px 0}
+.hz .expl h3{font-size:12.5px;letter-spacing:.06em;color:var(--accent)}
+.hz .expl ol{margin:0;padding-left:1.3em}
+.hz .expl li{margin:2px 0;font-size:16px}
+.hz .shape{margin:6px 0;font-size:15px}
+.hz .shape b{color:var(--accent)}
+.hz .stall{margin:6px 0;font-size:14.5px;color:var(--sub);padding-left:10px;border-left:3px solid var(--amb)}
+.hz .use{margin:8px 0;padding:8px 12px;border:1px solid var(--accent);border-radius:8px;background:var(--accent-soft)}
+.hz .use h3{font-size:13px;letter-spacing:.06em;color:var(--accent)}
+.hz .use ul{list-style:none;margin:0;padding:0}
+.hz .use li{padding:2px 0;font-size:15.5px}
+.hz .use li:before{content:"→ ";color:var(--accent);font-weight:700}
+.hz .rates,.hz .jukko,.hz .limit{margin-top:16px}
+.hz .rates{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.hz .rates h2{font-size:17px;margin:0 0 6px}
+.hz .rtabs{display:flex;gap:6px;margin:0 0 8px;flex-wrap:wrap}
+.hz .rtabs button{min-height:40px;padding:0 14px;border:1px solid var(--line-strong);border-radius:8px;background:transparent;font-weight:700;font-size:15px}
+.hz .rtabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.hz .rrow{display:grid;grid-template-columns:3.6em 1fr 4.4em;gap:8px;align-items:center;margin:0 0 4px;padding:2px 4px;border-radius:6px}
+.hz .rrow.now{background:var(--accent-soft)}
+.hz .rrow .rl{font-weight:700;font-size:15px}
+.hz .rrow .rb{height:14px;border-radius:7px;background:var(--line);overflow:hidden}
+.hz .rrow .rb i{display:block;height:100%;background:var(--accent);border-radius:7px}
+.hz .rrow .rv{font-variant-numeric:tabular-nums;text-align:right;font-weight:700;color:var(--accent);font-size:15px}
+.hz .rsub{grid-column:1 / -1;font-size:12.5px;color:var(--sub);margin:-2px 0 2px 3.9em;line-height:1.5}
+.hz .rsub .dn{color:var(--bad);font-weight:700}
+.hz .rsub .th{color:var(--amb);font-weight:700}
+.hz .srct{display:block;font-size:13px;color:var(--faint);line-height:1.6;margin-top:6px}
+.hz .jukko{border:1px solid var(--line-strong);border-radius:10px;padding:0 14px;background:var(--surface)}
+.hz .jukko summary{cursor:pointer;min-height:48px;display:flex;align-items:center;font-weight:700;font-size:17px}
+.hz .jukko .qa{margin:0 0 10px;padding:6px 0;border-top:1px solid var(--line)}
+.hz .jukko .qa b{display:block;font-size:15px}
+.hz .jukko .qa .my{margin:2px 0;color:var(--sub);font-size:15px}
+.hz .jukko .qa .hon{margin:2px 0;font-size:16px;font-weight:700}
+.hz .jukko .qa .from{font-size:12.5px;color:var(--faint)}
+.hz .limit{color:var(--sub);font-size:15px;border-top:1px solid var(--line);padding-top:10px}
+.hz .s-ink{stroke:var(--ink)}
+.hz .s-faint{stroke:var(--faint)}
+.hz .s-acc{stroke:var(--accent)}
+.hz .s-amb{stroke:var(--amb)}
+.hz .s-grn{stroke:var(--grn)}
+.hz .s-line{stroke:var(--line-strong)}
+.hz .s-bad{stroke:var(--bad)}
+.hz .f-ambs{fill:var(--amb);fill-opacity:.2}
+.hz .f-ink{fill:var(--ink)}
+.hz .f-acc{fill:var(--accent)}
+.hz .f-amb{fill:var(--amb)}
+.hz .f-grn{fill:var(--grn)}
+.hz .f-soft{fill:var(--accent-soft)}
+.hz .f-soft2{fill:var(--accent-soft2)}
+.hz .f-base{fill:var(--base)}
+.hz .f-bad{fill:var(--bad)}
+.hz svg text{font-family:"Times New Roman","Noto Serif JP",serif;font-style:italic}
+.hz svg text.lbl{paint-order:stroke;stroke:var(--halo);stroke-width:4px;stroke-linejoin:round}
+.hz [data-s],.hz [data-dim]{transition:opacity .35s ease}
+.hz .off{opacity:0 !important;pointer-events:none}
+.hz .dim{opacity:.25}
+@media (max-width:480px){.hz h1{font-size:22px}
+.hz .stepbox h3{font-size:18px}
+.hz .qtext{font-size:16px}}
+@media (prefers-reduced-motion: reduce){.hz [data-s],.hz [data-dim]{transition:none}}
+.hz button{font-family:inherit}
+.hz .stepbox,.hz .cardbox{scroll-margin-top:calc(var(--hdr-h,56px) + 12px)}
+@media (min-width:900px){ .hz .mapcol{top:calc(var(--hdr-h,56px) + 10px)} }
+.hz h1,.hz h2,.hz h3{font-family:inherit}
+.hz ul.sets{padding:0}
+.hz .sets li:only-child{grid-column:1 / -1}
+.hz .chains a:hover{color:var(--ink)}
+.hz .chains a[aria-current="page"]:hover{color:var(--on-accent)}
+.hz a:hover{color:var(--accent)}
+.hz .big.prim:hover,.hz .ctl button.prim:hover{color:var(--on-accent)}
+.hz .tips{margin:14px 0 0;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.hz .tips h2{font-size:17px;margin:0 0 6px}
+.hz .tips table{width:100%;border-collapse:collapse;margin:0;font-size:15px}
+.hz .tips th{padding:6px 10px 6px 0;color:var(--faint);font-weight:400;border-bottom:1px solid var(--line);font-size:13px;white-space:nowrap;text-align:left}
+.hz .tips td{padding:7px 10px 7px 0;border-bottom:1px solid var(--line);vertical-align:top;font-weight:400;line-height:1.6}
+.hz .tips td:first-child{font-weight:700;padding-left:0}
+.hz .tips tr:last-child td{border-bottom:0}
+.hz .tips th,.hz .tips td{white-space:normal;overflow-wrap:anywhere}
+@media (max-width:620px){
+  .hz .tips thead{display:none}
+  .hz .tips table,.hz .tips tbody,.hz .tips tr,.hz .tips td{display:block;width:100%}
+  .hz .tips tr{padding:8px 0;border-bottom:1px solid var(--line)}
+  .hz .tips tr:last-child{border-bottom:0}
+  .hz .tips td{border-bottom:0;padding:1px 0}
+  .hz .tips td:first-child{color:var(--ink)}
+  .hz .tips td:last-child{color:var(--sub);font-size:14.5px}
+}
+
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "トップ", "item": "https://hoshitobu.github.io/hoshitobu-survey/"}, {"@type": "ListItem", "position": 2, "name": "知識の整理", "item": "https://hoshitobu.github.io/hoshitobu-survey/seiri/index.html"}, {"@type": "ListItem", "position": 3, "name": "図形の性質", "item": "https://hoshitobu.github.io/hoshitobu-survey/seiri/index.html#zukei"}, {"@type": "ListItem", "position": 4, "name": "誘導の鎖", "item": "https://hoshitobu.github.io/hoshitobu-survey/seiri/kusari.html"}]}</script>
+<script src="../sitemap-nav.js?v=20261124b" defer></script>
+</head>
+<body>
+<header class="hd hd-a">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.1 7.4 7.4 2.1-7.4 2.1L12 21.5l-2.1-7.4L2.5 12l7.4-2.1z" fill="currentColor"/></svg>
+    <div><a class="sitename" href="../index.html">星飛ぶの勉強部屋</a></div>
+  </div>
+  <nav class="hd-nav" aria-label="サイトのメニュー">
+    <div class="hd-item has-kids"><a href="../kakomon.html">解く<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="../kakomon.html">過去問演習<small>時間を計って、1年分を解く</small></a><span class="soon">類題演習<small>Coming soon</small></span></div></div>
+    <div class="hd-item has-kids"><a href="../kakomon.html?view=quick">点数と集計<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="../kakomon.html?view=quick">点数を入れる<small>偏差値と順位が出る</small></a><a href="../kyotsu/index.html">平均点・正答率<small>2021〜2026・年度×科目</small></a><a href="../results.html">サイトの集計<small>送られた点数の分布とランキング</small></a></div></div>
+    <div class="hd-item has-kids"><a href="../seiri/index.html" aria-current="true">知識の整理<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="../seiri/index.html#muki">無機化学<small>化学｜カード・辞書</small></a><a href="../seiri/index.html#zukei">図形の性質<small>数学ⅠA｜鎖と反射カード・辞書</small></a><a href="../seiri/index.html#keiryo">図形と計量<small>数学ⅠA｜カード・辞書</small></a></div></div>
+    <div class="hd-item"><a href="../videos.html">解説動画</a></div>
+    <button type="button" class="hd-find" data-focus="1" aria-expanded="false" aria-controls="fd"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12.8 12.8L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>検索・地図</span></button>
+  </nav>
+</header>
+<main class="zukei-tool">
+<nav class="crumbs" aria-label="パンくず"><a href="../index.html">トップ</a> › <a href="index.html">知識の整理</a> › <a href="index.html#zukei">図形の性質</a> › <a href="kusari.html">誘導の鎖</a> › <span>2026 第3問の流れ</span></nav>
+<div class="k-title">
+  <h1>誘導の鎖：2026 第3問の流れ</h1>
+  <p class="note">各小問で、まず「何のための小問か」を選んでから解くと、解き終えたあとに、その結果が次のどの小問で使われるかが矢印で表示されます。問題は自作で、2026 第3問と同じ流れになっています。</p>
+</div>
+
+<div class="hz">
+<nav class="chains" aria-label="演習の切りかえ"><a href="kusari-2026.html" aria-current="page"><b>演習1</b><span>三角錐（2026 第3問と同じ流れ）</span></a><a href="kusari-2024.html"><b>演習2</b><span>円を描き足す（2024 第5問と同じ流れ）</span></a><a href="kusari-2025.html"><b>演習3</b><span>平面を取りかえる（2025 第3問と同じ流れ）</span></a></nav>
+
+
+<div class="layout">
+<div class="mapcol">
+  <div class="mapbox">
+    <h2>小問のつながり</h2>
+    <div class="maprow" id="maprow">
+      <ol class="maplist" id="maplist"></ol>
+      <svg class="arrows" id="arrows" aria-hidden="true"></svg>
+    </div>
+    <p class="legend"><span><i class="lv"></i>結果の値を使う</span><span><i class="lt"></i>結果の式を使う</span><span><i class="lp"></i>同じ手順をくり返す</span></p>
+    <p class="nolink">誘導のない小問や、前の小問とつながらない小問もあります。その場合は、前の結果を探さず、問題文の条件の意味から考えます。</p>
+  </div>
+</div>
+
+<div class="workcol">
+  <div class="problem"><b>問題（自作）</b><p>空間内に △ABC があり、AB＝15、BC＝13、CA＝14 である。∠B の二等分線と辺 CA の交点を K とし、辺 CA の中点を N とする。N を通り平面 ABC に垂直な直線上に、N と異なる点 Q をとり、三角錐 QABC について考える。辺 QA 上の点 R は、∠QRC＝∠QKC を満たしているとする。比は、最も簡単な整数の比で答える。</p></div>
+  <div class="figs"><div class="figbox" data-fb="fb1"><h3></h3><svg class="fig solid-fig" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="三角錐 QABC の参考図（斜め上から見る）。底面 ABC は水平、Q は CA の中点 N の真上。見えない所は破線。K は ∠B の二等分線が CA と交わる点、R は QA の上。図は縮尺どおりではない。"><polygon points="34.0,250.8 302.4,109.2 366.0,234.1" class="f-base"/><polygon points="34.0,250.8 366.0,234.1 200.0,49.2" class="f-soft" data-s="2-6"/><line x1="34.0" y1="250.8" x2="302.4" y2="109.2" class="s-faint" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="7 5"/><line x1="302.4" y1="109.2" x2="366.0" y2="234.1" class="s-ink" stroke-width="2.6" stroke-linecap="round"/><line x1="34.0" y1="250.8" x2="366.0" y2="234.1" class="s-ink" stroke-width="2.6" stroke-linecap="round"/><line x1="200.0" y1="49.2" x2="34.0" y2="250.8" class="s-ink" stroke-width="2.6" stroke-linecap="round"/><line x1="200.0" y1="49.2" x2="302.4" y2="109.2" class="s-ink" stroke-width="2.6" stroke-linecap="round"/><line x1="200.0" y1="49.2" x2="366.0" y2="234.1" class="s-ink" stroke-width="2.6" stroke-linecap="round"/><line x1="302.4" y1="109.2" x2="247.4" y2="240.1" class="s-acc" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="7 5" data-s="0-1"/><line x1="200.0" y1="49.2" x2="200.0" y2="242.5" class="s-grn" stroke-width="1.8" stroke-linecap="round" data-s="0-6"/><path d="M200.0,231.5 L189.0,232.0 L189.0,243.0" class="s-faint" fill="none" stroke-width="1.8" data-s="0-6"/><line x1="200.0" y1="49.2" x2="247.4" y2="240.1" class="s-grn" stroke-width="1.8" stroke-linecap="round" data-s="3-6"/><line x1="366.0" y1="234.1" x2="146.5" y2="114.2" class="s-acc" stroke-width="3" stroke-linecap="round" data-s="3-5"/><circle cx="34.0" cy="250.8" r="4.2" class="f-ink"/><circle cx="302.4" cy="109.2" r="4.2" class="f-ink"/><circle cx="366.0" cy="234.1" r="4.2" class="f-ink"/><circle cx="200.0" cy="49.2" r="4.2" class="f-ink"/><circle cx="247.4" cy="240.1" r="4.2" class="f-ink"/><circle cx="200.0" cy="242.5" r="4.2" class="f-ink"/><circle cx="146.5" cy="114.2" r="4.2" class="f-ink" data-s="2-6"/><circle cx="227.1" cy="158.3" r="4.2" class="f-ink" data-s="3-6"/><text x="25.5" y="272.0" class="f-ink lbl" font-size="19" text-anchor="middle">A</text><text x="317.1" y="107.2" class="f-ink lbl" font-size="19" text-anchor="middle">B</text><text x="380.7" y="249.1" class="f-ink lbl" font-size="19" text-anchor="middle">C</text><text x="188.0" y="43.6" class="f-ink lbl" font-size="19" text-anchor="middle">Q</text><text x="247.4" y="263.5" class="f-ink lbl" font-size="19" text-anchor="middle">K</text><text x="200.0" y="265.9" class="f-ink lbl" font-size="19" text-anchor="middle">N</text><text x="134.4" y="108.7" class="f-ink lbl" font-size="19" text-anchor="middle" data-s="2-6">R</text><text x="215.1" y="176.7" class="f-ink lbl" font-size="19" text-anchor="middle" data-s="3-6">H</text></svg></div><div class="figbox" data-fb="fb2"><h3></h3><svg class="fig base-fig" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 330" role="img" aria-label="底面の三角形 ABC（AB=15, BC=13, CA=14）。BK は ∠B を 2 等分し、K は辺 CA 上。N は CA の中点。図は縮尺どおりではない。" data-fs="0-1"><polygon points="46.0,247.2 306.5,82.8 354.0,247.2" class="f-soft" data-s="0-1"/><line x1="46.0" y1="247.2" x2="306.5" y2="82.8" class="s-ink" stroke-width="2.6" stroke-linecap="round" data-s="0-1"/><line x1="306.5" y1="82.8" x2="354.0" y2="247.2" class="s-ink" stroke-width="2.6" stroke-linecap="round" data-s="0-1"/><line x1="46.0" y1="247.2" x2="354.0" y2="247.2" class="s-ink" stroke-width="2.6" stroke-linecap="round" data-s="0-1"/><line x1="306.5" y1="82.8" x2="244.0" y2="247.2" class="s-acc" stroke-width="4.4" stroke-linecap="round" data-s="0-1"/><path d="M274.3,103.1 A38,38 0 0 0 293.0,118.3" class="s-acc" fill="none" stroke-width="3" stroke-linecap="round" data-s="0-1"/><path d="M293.0,118.3 A38,38 0 0 0 317.0,119.3" class="s-acc" fill="none" stroke-width="3" stroke-linecap="round" data-s="0-1"/><line x1="123.0" y1="241.2" x2="123.0" y2="253.2" class="s-ink" stroke-width="2.2" stroke-linecap="round" data-s="0-1"/><line x1="277.0" y1="241.2" x2="277.0" y2="253.2" class="s-ink" stroke-width="2.2" stroke-linecap="round" data-s="0-1"/><circle cx="46.0" cy="247.2" r="4.2" class="f-ink" data-s="0-1"/><circle cx="306.5" cy="82.8" r="4.2" class="f-ink" data-s="0-1"/><circle cx="354.0" cy="247.2" r="4.2" class="f-ink" data-s="0-1"/><circle cx="244.0" cy="247.2" r="4.2" class="f-ink" data-s="0-1"/><circle cx="200.0" cy="247.2" r="4.2" class="f-ink" data-s="0-1"/><text x="27.0" y="253.6" class="f-ink lbl" font-size="19" text-anchor="middle" data-s="0-1">A</text><text x="306.5" y="70.3" class="f-ink lbl" font-size="19" text-anchor="middle" data-s="0-1">B</text><text x="373.0" y="253.6" class="f-ink lbl" font-size="19" text-anchor="middle" data-s="0-1">C</text><text x="248.9" y="272.0" class="f-ink lbl" font-size="19" text-anchor="middle" data-s="0-1">K</text><text x="195.1" y="272.0" class="f-ink lbl" font-size="19" text-anchor="middle" data-s="0-1">N</text><text x="167.2" y="156.4" class="f-ink lbl" font-size="17" text-anchor="middle" font-style="normal" data-s="0-1">15</text><text x="346.6" y="166.1" class="f-ink lbl" font-size="17" text-anchor="middle" font-style="normal" data-s="0-1">13</text><line x1="46.0" y1="251.2" x2="46.0" y2="291.2" class="s-faint" stroke-width="1.1" stroke-linecap="round" data-s="1-1"/><line x1="46.0" y1="282.2" x2="46.0" y2="292.2" class="s-ink" stroke-width="1.8" stroke-linecap="round" data-s="1-1"/><line x1="244.0" y1="273.2" x2="244.0" y2="291.2" class="s-faint" stroke-width="1.1" stroke-linecap="round" data-s="1-1"/><line x1="244.0" y1="282.2" x2="244.0" y2="292.2" class="s-ink" stroke-width="1.8" stroke-linecap="round" data-s="1-1"/><line x1="46.0" y1="287.2" x2="244.0" y2="287.2" class="s-ink" stroke-width="1.3" stroke-linecap="round" data-s="1-1"/><text x="145.0" y="292.6" class="f-acc lbl" font-size="16" text-anchor="middle" font-style="normal" data-s="1-1">？</text><line x1="244.0" y1="273.2" x2="244.0" y2="291.2" class="s-faint" stroke-width="1.1" stroke-linecap="round" data-s="1-1"/><line x1="244.0" y1="282.2" x2="244.0" y2="292.2" class="s-ink" stroke-width="1.8" stroke-linecap="round" data-s="1-1"/><line x1="354.0" y1="251.2" x2="354.0" y2="291.2" class="s-faint" stroke-width="1.1" stroke-linecap="round" data-s="1-1"/><line x1="354.0" y1="282.2" x2="354.0" y2="292.2" class="s-ink" stroke-width="1.8" stroke-linecap="round" data-s="1-1"/><line x1="244.0" y1="287.2" x2="354.0" y2="287.2" class="s-ink" stroke-width="1.3" stroke-linecap="round" data-s="1-1"/><text x="299.0" y="292.6" class="f-acc lbl" font-size="16" text-anchor="middle" font-style="normal" data-s="1-1">？</text><line x1="46.0" y1="251.2" x2="46.0" y2="317.2" class="s-faint" stroke-width="1.1" stroke-linecap="round" data-s="0-1"/><line x1="46.0" y1="308.2" x2="46.0" y2="318.2" class="s-ink" stroke-width="1.8" stroke-linecap="round" data-s="0-1"/><line x1="354.0" y1="251.2" x2="354.0" y2="317.2" class="s-faint" stroke-width="1.1" stroke-linecap="round" data-s="0-1"/><line x1="354.0" y1="308.2" x2="354.0" y2="318.2" class="s-ink" stroke-width="1.8" stroke-linecap="round" data-s="0-1"/><line x1="46.0" y1="313.2" x2="354.0" y2="313.2" class="s-ink" stroke-width="1.3" stroke-linecap="round" data-s="0-1"/><text x="200.0" y="318.6" class="f-ink lbl" font-size="16" text-anchor="middle" font-style="normal" data-s="0-1">14</text></svg><svg class="fig plane-fig" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 410 350" role="img" aria-label="平面 AQC。A, N, K, C は一直線で、Q は N の真上。R は QA 上、H は QK と CR の交点。図は縮尺どおりではない。" data-fs="2-6"><polygon points="79.0,253.6 313.9,253.6 196.5,57.2" class="f-soft" data-s="2-6"/><polygon points="79.0,253.6 196.5,57.2 230.0,253.6" class="f-soft2" data-s="3-5"/><circle cx="272.0" cy="145.4" r="116.0" class="s-line" fill="none" stroke-width="2" data-s="2-2"/><circle cx="272.0" cy="145.4" r="116.0" class="s-line" fill="none" stroke-width="1.4" data-s="3-6" data-dim="3-6"/><line x1="79.0" y1="253.6" x2="313.9" y2="253.6" class="s-ink" stroke-width="2.6" stroke-linecap="round" data-s="2-6"/><line x1="313.9" y1="253.6" x2="196.5" y2="57.2" class="s-ink" stroke-width="2.6" stroke-linecap="round" data-s="2-6"/><line x1="79.0" y1="253.6" x2="196.5" y2="57.2" class="s-ink" stroke-width="2.6" stroke-linecap="round" data-s="2-6"/><line x1="196.5" y1="253.6" x2="196.5" y2="57.2" class="s-faint" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 5" data-s="2-6"/><path d="M184.5,253.6 L184.5,241.6 L196.5,241.6" class="s-faint" fill="none" stroke-width="1.8" data-s="2-6"/><line x1="79.0" y1="253.6" x2="158.6" y2="120.6" class="s-acc" stroke-width="5" stroke-linecap="round" data-s="2-2"/><line x1="158.6" y1="120.6" x2="196.5" y2="57.2" class="s-acc" stroke-width="5" stroke-linecap="round" data-s="2-2"/><line x1="79.0" y1="253.6" x2="230.0" y2="253.6" class="s-amb" stroke-width="5" stroke-linecap="round" data-s="2-2"/><line x1="230.0" y1="253.6" x2="313.9" y2="253.6" class="s-amb" stroke-width="5" stroke-linecap="round" data-s="2-2"/><path d="M170.9,100.0 A24,24 0 0 1 176.8,136.2" class="s-grn" fill="none" stroke-width="3" stroke-linecap="round" data-s="2-2"/><path d="M226.0,229.9 A24,24 0 0 1 254.0,253.6" class="s-grn" fill="none" stroke-width="3" stroke-linecap="round" data-s="2-2"/><line x1="230.0" y1="253.6" x2="196.5" y2="57.2" class="s-ink" stroke-width="2.6" stroke-linecap="round" data-s="3-5"/><line x1="313.9" y1="253.6" x2="158.6" y2="120.6" class="s-acc" stroke-width="4.2" stroke-linecap="round" data-s="3-5"/><line x1="230.0" y1="253.6" x2="196.5" y2="57.2" class="s-faint" stroke-width="2" stroke-linecap="round" data-s="2-2"/><line x1="313.9" y1="253.6" x2="158.6" y2="120.6" class="s-faint" stroke-width="2" stroke-linecap="round" data-s="2-2"/><line x1="79.0" y1="253.6" x2="196.5" y2="92.7" class="s-amb" stroke-width="3.4" stroke-linecap="round" data-s="6-6"/><line x1="230.0" y1="253.6" x2="196.5" y2="92.7" class="s-amb" stroke-width="2.8" stroke-linecap="round" data-s="6-6"/><line x1="313.9" y1="253.6" x2="184.0" y2="109.8" class="s-amb" stroke-width="2.8" stroke-linecap="round" data-s="6-6"/><line x1="196.5" y1="253.6" x2="196.5" y2="92.7" class="s-amb" stroke-width="6" stroke-linecap="round" data-s="6-6"/><line x1="196.5" y1="253.6" x2="196.5" y2="57.2" class="s-acc" stroke-width="6" stroke-linecap="round" data-s="6-6"/><circle cx="79.0" cy="253.6" r="4.2" class="f-ink" data-s="2-6"/><circle cx="313.9" cy="253.6" r="4.2" class="f-ink" data-s="2-6"/><circle cx="230.0" cy="253.6" r="4.2" class="f-ink" data-s="2-6"/><circle cx="196.5" cy="253.6" r="4.2" class="f-ink" data-s="2-6"/><circle cx="196.5" cy="57.2" r="4.2" class="f-ink" data-s="2-6"/><circle cx="158.6" cy="120.6" r="4.2" class="f-ink" data-s="2-6"/><circle cx="215.6" cy="169.4" r="4.2" class="f-ink" data-s="3-5"/><circle cx="196.5" cy="92.7" r="4.2" class="f-amb" data-s="6-6"/><circle cx="184.0" cy="109.8" r="4.2" class="f-amb" data-s="6-6"/><circle cx="204.8" cy="132.9" r="4.2" class="f-amb" data-s="6-6"/><text x="62.0" y="260.0" class="f-ink lbl" font-size="19" text-anchor="middle" data-s="2-6">A</text><text x="330.9" y="260.0" class="f-ink lbl" font-size="19" text-anchor="middle" data-s="2-6">C</text><text x="230.0" y="277.0" class="f-ink lbl" font-size="19" text-anchor="middle" data-s="2-6">K</text><text x="196.5" y="277.0" class="f-ink lbl" font-size="19" text-anchor="middle" data-s="2-6">N</text><text x="196.5" y="46.7" class="f-ink lbl" font-size="19" text-anchor="middle" data-s="2-6">Q</text><text x="142.2" y="122.6" class="f-ink lbl" font-size="19" text-anchor="middle" data-s="2-6">R</text><text x="232.1" y="180.3" class="f-ink lbl" font-size="19" text-anchor="middle" data-s="3-5">H</text><text x="212.9" y="103.5" class="f-amb lbl" font-size="19" text-anchor="middle" data-s="6-6">Q′</text><text x="180.5" y="200.5" class="f-acc lbl" font-size="17" text-anchor="middle" font-style="normal" data-s="2-5">？</text><text x="180.5" y="200.5" class="f-acc lbl" font-size="17" text-anchor="middle" font-style="normal" data-s="6-6">11</text><text x="216.5" y="178.2" class="f-amb lbl" font-size="15" text-anchor="middle" font-style="normal" data-s="6-6">17/2</text><circle cx="236.6" cy="209.1" r="11" class="s-ink chipbg" fill="none" stroke-width="2" data-s="3-5"/><text x="236.6" y="214.2" class="f-ink up" font-size="14" text-anchor="middle" font-style="normal" font-weight="700" data-s="3-5">3</text><circle cx="222.9" cy="128.9" r="11" class="s-ink chipbg" fill="none" stroke-width="2" data-s="3-5"/><text x="222.9" y="134.0" class="f-ink up" font-size="14" text-anchor="middle" font-style="normal" font-weight="700" data-s="3-5">4</text><polygon points="162.9,65.2 148.7,90.4 177.2,90.4" class="s-acc chipbg" fill="none" stroke-width="2" stroke-linejoin="round" data-s="3-3"/><text x="162.9" y="85.2" class="f-acc up" font-size="14" text-anchor="middle" font-style="normal" font-weight="700" data-s="3-3">？</text><polygon points="162.9,65.2 148.7,90.4 177.2,90.4" class="s-acc chipbg" fill="none" stroke-width="2" stroke-linejoin="round" data-s="4-5"/><text x="162.9" y="84.9" class="f-acc up" font-size="12" text-anchor="middle" font-style="normal" font-weight="700" data-s="4-5">13</text><polygon points="104.2,163.3 90.0,188.5 118.5,188.5" class="s-acc chipbg" fill="none" stroke-width="2" stroke-linejoin="round" data-s="3-3"/><text x="104.2" y="183.4" class="f-acc up" font-size="14" text-anchor="middle" font-style="normal" font-weight="700" data-s="3-3">？</text><polygon points="104.2,163.3 90.0,188.5 118.5,188.5" class="s-acc chipbg" fill="none" stroke-width="2" stroke-linejoin="round" data-s="4-5"/><text x="104.2" y="183.0" class="f-acc up" font-size="12" text-anchor="middle" font-style="normal" font-weight="700" data-s="4-5">21</text><line x1="79.0" y1="257.6" x2="79.0" y2="297.6" class="s-faint" stroke-width="1.1" stroke-linecap="round" data-s="2-6"/><line x1="79.0" y1="288.6" x2="79.0" y2="298.6" class="s-ink" stroke-width="1.8" stroke-linecap="round" data-s="2-6"/><line x1="230.0" y1="279.6" x2="230.0" y2="297.6" class="s-faint" stroke-width="1.1" stroke-linecap="round" data-s="2-6"/><line x1="230.0" y1="288.6" x2="230.0" y2="298.6" class="s-ink" stroke-width="1.8" stroke-linecap="round" data-s="2-6"/><line x1="79.0" y1="293.6" x2="230.0" y2="293.6" class="s-ink" stroke-width="1.3" stroke-linecap="round" data-s="2-6"/><text x="154.5" y="298.3" class="f-ink lbl" font-size="14" text-anchor="middle" font-style="normal" data-s="2-6">15/2</text><line x1="230.0" y1="279.6" x2="230.0" y2="297.6" class="s-faint" stroke-width="1.1" stroke-linecap="round" data-s="2-6"/><line x1="230.0" y1="288.6" x2="230.0" y2="298.6" class="s-ink" stroke-width="1.8" stroke-linecap="round" data-s="2-6"/><line x1="313.9" y1="257.6" x2="313.9" y2="297.6" class="s-faint" stroke-width="1.1" stroke-linecap="round" data-s="2-6"/><line x1="313.9" y1="288.6" x2="313.9" y2="298.6" class="s-ink" stroke-width="1.8" stroke-linecap="round" data-s="2-6"/><line x1="230.0" y1="293.6" x2="313.9" y2="293.6" class="s-ink" stroke-width="1.3" stroke-linecap="round" data-s="2-6"/><text x="272.0" y="298.3" class="f-ink lbl" font-size="14" text-anchor="middle" font-style="normal" data-s="2-6">13/2</text><line x1="75.6" y1="251.5" x2="49.9" y2="236.1" class="s-faint" stroke-width="1.1" stroke-linecap="round" data-s="4-5"/><line x1="57.6" y1="240.7" x2="49.0" y2="235.6" class="s-ink" stroke-width="1.8" stroke-linecap="round" data-s="4-5"/><line x1="193.0" y1="55.2" x2="167.3" y2="39.8" class="s-faint" stroke-width="1.1" stroke-linecap="round" data-s="4-5"/><line x1="175.0" y1="44.4" x2="166.4" y2="39.3" class="s-ink" stroke-width="1.8" stroke-linecap="round" data-s="4-5"/><line x1="53.3" y1="238.2" x2="170.7" y2="41.8" class="s-ink" stroke-width="1.3" stroke-linecap="round" data-s="4-5"/><text x="112.0" y="145.1" class="f-acc lbl" font-size="15" text-anchor="middle" font-style="normal" data-s="4-4">？</text><text x="112.0" y="145.1" class="f-acc lbl" font-size="15" text-anchor="middle" font-style="normal" data-s="5-5">√170</text></svg></div></div>
+  <p class="figcap" id="figcap"></p>
+  <div class="stepbox" aria-live="polite" id="stepbox"></div>
+
+  <div class="rates" id="rates"></div>
+  <details class="jukko" id="jukko">
+    <summary>行き詰まったときの考え方</summary>
+    <div id="jukko-body"></div>
+  </details>
+  <p class="limit">この流れだけで、すべての図形問題が解けるわけではありません。よく出る誘導の一例です。</p>
+</div>
+</div>
+</div>
+
+
+<footer class="src"><p class="note small">過去問の問題・正答率の出典：大学入試センター（<a href="https://www.dnc.ac.jp/" rel="noopener">https://www.dnc.ac.jp/</a>）。</p></footer>
+</main>
+<script>
+var DATA = {"steps": [{"grp": "(1)", "name": "角の二等分線の比", "hint": "選択肢つき", "hintlv": 2, "why": {"q": "この小問は、何のためにありますか。", "opts": [{"t": "AK : KC を出し、AK の長さにつなげるため", "ok": true, "r": "BK が ∠B を 2 等分するなら、AK : KC は ∠B をはさむ2辺の比 BA : BC になる。これが次の AK の長さの材料になる。"}, {"t": "4点が同じ円であることを示すため", "ok": false, "r": "円は、角の条件 ∠QRC＝∠QKC から出てくる。BK の性質とは関係しない。"}, {"t": "三角錐の高さを出すため", "ok": false, "r": "高さは Q の位置の話。BK は底面の中の線で、高さには触れない。"}]}, "pre": "(1)　BK は ∠B の二等分線で、K は辺 CA 上にある。", "text": [{"s": "AK : KC ＝ BA : "}, {"b": 0}, {"s": " である。"}], "expl": ["角の二等分線は、向かいの辺を、∠B をはさむ2辺の比に分ける。K は CA 上だから AK : KC ＝ BA : BC（①）。"], "stall": "つまずきやすい点：相手を AC（K をふくむ辺そのもの）にしてしまう。比の相手は、∠B をはさむ2辺 BA と BC。", "shape": "角の二等分線と辺の比", "card": [{"l": "反射カード・組3（角の二等分線）", "h": "hansha.html#set-3"}], "carry": [{"to": 1, "t": "二等分線の比（BA : BC）"}], "blanks": [{"id": "ア", "kind": "choice", "ans": "1", "opts": ["AC", "BC", "BK", "CK"]}]}, {"grp": "(1)", "name": "AK の長さ", "hint": "「辺 CA に着目」と示される", "hintlv": 2, "why": {"q": "この小問は、何のためにありますか。", "opts": [{"t": "方べきの積 AK·AC と、あとのメネラウスの比 AC : CK に使うため", "ok": true, "r": "AK・KC・AC は、方べきの積と、メネラウスの比 AC : CK の両方の材料になる。1つの結果が2か所で使われる。"}, {"t": "底面積を出すため", "ok": false, "r": "底面積は3辺（または B から CA への高さ）から出る。AK と KC は要らない。"}, {"t": "QN の長さを出すため", "ok": false, "r": "QN は Q の高さ。AK と KC は底面の中の長さで、そこには届かない。"}]}, "text": [{"s": "AK : KC ＝ "}, {"b": 0}, {"b": 1}, {"s": " : "}, {"b": 2}, {"b": 3}, {"s": " である。CA の長さに着目すると、AK ＝ "}, {"b": 4}, {"b": 5}, {"s": " ／ "}, {"b": 6}, {"s": " である。"}], "expl": ["BA＝15、BC＝13 だから AK : KC ＝ 15 : 13。", "CA＝14 を 15 : 13 に分けて AK＝14×15/28＝15/2、KC＝14×13/28＝13/2。"], "stall": "つまずきやすい点：15 : 13 のまま AK＝15 としてしまう。AK と KC の和が CA（14）になるように分ける。", "shape": "辺の比を長さに分ける", "card": [{"l": "反射カード・組3（角の二等分線）", "h": "hansha.html#set-3"}], "carry": [{"to": 2, "t": "AK と AC（方べきの積）"}, {"to": 3, "t": "AC : CK（メネラウスの比）"}], "blanks": [{"id": "イ", "kind": "digit", "ans": "1"}, {"id": "ウ", "kind": "digit", "ans": "5"}, {"id": "エ", "kind": "digit", "ans": "1"}, {"id": "オ", "kind": "digit", "ans": "3"}, {"id": "カ", "kind": "digit", "ans": "1"}, {"id": "キ", "kind": "digit", "ans": "5"}, {"id": "ク", "kind": "digit", "ans": "2"}]}, {"grp": "(1)", "name": "円と方べき", "hint": "「4点は同一円周上」と示される", "hintlv": 2, "why": {"q": "この小問は、何のためにありますか。", "opts": [{"t": "AQ を出す道具を作るため", "ok": true, "r": "AR·AQ は、Q の高さによらない定数。あとで AR を AQ で表せば、AQ が出る。"}, {"t": "QN の長さを直接出すため", "ok": false, "r": "この式に QN は入っていない。高さを使わずに作れる積である。"}, {"t": "KH : HQ を決めるため", "ok": false, "r": "KH : HQ は条件として与えられる。この小問で決めるものではない。"}]}, "pre": "辺 QA 上の点 R は ∠QRC＝∠QKC を満たす（図には描かれていない）。", "text": [{"s": "点 R, K, C と "}, {"b": 0}, {"s": " は同一円周上にある。よって AR・AQ ＝ "}, {"b": 1}, {"b": 2}, {"b": 3}, {"s": " である。"}], "expl": ["条件 ∠QRC＝∠QKC を図に描き込む。2つの角は、どちらも線分 QC を見込み、R と K は直線 QC の同じ側にある。", "→ 円周角の逆で、Q, R, K, C は同じ円の上（③）。", "A は円の外。A から出る2本の直線 A→R→Q と A→K→C で、AR·AQ ＝ AK·AC ＝ 15/2 × 14 ＝ 105。"], "stall": "つまずきやすい点：条件が図に無いので円が見えない。4つ目の点を A や N にしてしまう。方べきは起点 A から出る2本で書く。", "shape": "等しい角が同じ線分を見込む → 4点が同じ円 → 方べき", "card": [{"l": "反射カード・組1（円周角）", "h": "hansha.html#set-1"}, {"l": "反射カード・組2（方べき）", "h": "hansha.html#set-2"}], "carry": [{"to": 4, "t": "AR·AQ＝105（高さによらない定数）"}], "blanks": [{"id": "ケ", "kind": "choice", "ans": "3", "opts": ["A", "B", "N", "Q"]}, {"id": "コ", "kind": "digit", "ans": "1"}, {"id": "サ", "kind": "digit", "ans": "0"}, {"id": "シ", "kind": "digit", "ans": "5"}]}, {"grp": "(2)", "name": "QR : RA", "hint": "比だけ示される（式は自分で作る）", "hintlv": 1, "why": {"q": "この小問は、何のためにありますか。", "opts": [{"t": "AR を AQ の何倍かで表すため", "ok": true, "r": "QR : RA が分かれば、AR は AQ の 21/34 倍と書ける。前の 105 と合わせて AQ が出る。"}, {"t": "底面積を出すため", "ok": false, "r": "底面積は底面の三角形だけで決まる。比 QR : RA は関係しない。"}, {"t": "∠QRC の大きさを出すため", "ok": false, "r": "角の大きさは聞かれていない。ここでは長さの比を取る。"}]}, "pre": "(2)　線分 QK と CR の交点を H とする。KH : HQ ＝ 3 : 4 のときの三角錐 QABC の体積を V とする。", "text": [{"s": "このとき QR : RA ＝ "}, {"b": 0}, {"b": 1}, {"s": " : "}, {"b": 2}, {"b": 3}, {"s": " である。"}], "expl": ["使う点は全部、平面 AQC の上。△AQK を、直線 C–H–R が横切る。C は辺 AK の延長上。", "頂点と交点を交互に：Q→R→A→C→K→H→Q。(QR/RA)·(AC/CK)·(KH/HQ)＝1。", "AC/CK＝14/(13/2)＝28/13、KH/HQ＝3/4 だから QR/RA＝1÷(28/13 × 3/4)＝13/21。"], "stall": "つまずきやすい点：A から C へは K を越えて延長上へ行く。AC : CK を AK : KC（15 : 13）にしない。", "shape": "三角形を横切る直線 → メネラウス", "card": [{"l": "反射カード・組4（メネラウス・チェバ）", "h": "hansha.html#set-4"}], "carry": [{"to": 4, "t": "AR＝(21/34)·AQ"}], "blanks": [{"id": "ス", "kind": "digit", "ans": "1"}, {"id": "セ", "kind": "digit", "ans": "3"}, {"id": "ソ", "kind": "digit", "ans": "2"}, {"id": "タ", "kind": "digit", "ans": "1"}]}, {"grp": "(2)", "name": "AQ", "hint": "「前の結果に注意」と示される（何を使うかは書かれていない）", "hintlv": 1, "why": {"q": "この小問は、何のためにありますか。", "opts": [{"t": "高さ QN を三平方で出すため", "ok": true, "r": "QN ⊥ AN だから QN² ＝ AQ² − AN²。AQ が分かればよい。"}, {"t": "R の位置を決めるため", "ok": false, "r": "R の位置は QR : RA で、もう決まっている。"}, {"t": "底面の辺の長さを確かめるため", "ok": false, "r": "底面は最初から与えられていて、確かめる必要は無い。"}]}, "text": [{"s": "(1) の結果に注意すると、AQ ＝ √"}, {"b": 0}, {"b": 1}, {"b": 2}, {"s": " である。"}], "expl": ["QR : RA＝13 : 21 だから、AR＝(21/34)·AQ。", "(1) の AR·AQ＝105 に代入して (21/34)·AQ²＝105、AQ²＝170、AQ＝√170。"], "stall": "つまずきやすい点：前の結果に注意すると言われても、何を使うかは書いていない。AR·AQ の値と、AR と AQ の関係の2つを合わせる。AR を (13/34)·AQ としない。", "shape": "前の式に代入する（前の結果の式を使う）", "card": null, "carry": [{"to": 5, "t": "AQ（と AN）から高さ QN"}], "blanks": [{"id": "チ", "kind": "digit", "ans": "1"}, {"id": "ツ", "kind": "digit", "ans": "7"}, {"id": "テ", "kind": "digit", "ans": "0"}]}, {"grp": "(2)", "name": "体積 V", "hint": "「垂直に注意」とだけ示される", "hintlv": 1, "why": {"q": "この小問は、何のためにありますか。", "opts": [{"t": "W と比べる基準にするため", "ok": true, "r": "(3) は W : V を聞く。V はその相手になる。"}, {"t": "KH : HQ を逆算するため", "ok": false, "r": "KH : HQ は与えられている。逆算はしない。"}, {"t": "方べきの値を確かめるため", "ok": false, "r": "方べきの値は (1) で出ていて、V では使わない。"}]}, "text": [{"s": "直線 QN が平面 ABC に垂直であることに注意すると、三角錐 QABC の体積は V ＝ "}, {"b": 0}, {"b": 1}, {"b": 2}, {"s": " である。"}], "expl": ["QN ⊥ 平面 ABC だから QN ⊥ AC。直角三角形 QNA で QN²＝AQ²−AN²＝170−49＝121、QN＝11。", "底面積は、3辺 15・13・14 から 84（ヘロンの公式。B から CA への高さ 12 でもよい）。V ＝ ⅓·84·11 ＝ 308。"], "stall": "つまずきやすい点：QN² を出すとき、AQ² から AC² や AK² を引く。引くのは N までの AN²（49）。底面積は3辺から出す。", "shape": "直線と平面の垂直 → 三平方 → 錐の体積", "card": null, "carry": [{"to": 6, "t": "V（比べる基準）"}], "blanks": [{"id": "ト", "kind": "digit", "ans": "3"}, {"id": "ナ", "kind": "digit", "ans": "0"}, {"id": "ニ", "kind": "digit", "ans": "8"}]}, {"grp": "(3)", "name": "W : V", "hint": "なし（誘導がない）", "hintlv": 0, "why": {"q": "この小問は、前のどの手順をもう一度使いますか。", "opts": [{"t": "メネラウス → 方べき → 三平方 → 体積の4手を、比だけ替えて", "ok": true, "r": "空欄の誘導は無いが、(2) と同じ道を回せば出る。底面は同じだから、体積の比は高さの比になる。"}, {"t": "角の二等分線の比だけ", "ok": false, "r": "AK : KC は底面の話で、KH : HQ を替えても変わらない。使い直すのは、比に反応する手のほう。"}, {"t": "円周角の逆を、新しい円で", "ok": false, "r": "円は Q の高さとともに変わる。けれども A からの方べき AR·AQ＝AK·AC は Q によらず 105 のままで、そのまま使える。"}]}, "pre": "(3)　KH : HQ ＝ 3 : 1 のときの三角錐 QABC の体積を W とする。", "text": [{"s": "W : V ＝ "}, {"b": 0}, {"b": 1}, {"s": " : "}, {"b": 2}, {"b": 3}, {"s": " であり、"}, {"b": 4}, {"s": "。"}], "expl": ["同じ手順。QR/RA＝1÷(28/13 × 3/1)＝13/84。AR＝(84/97)·AQ。", "(84/97)·AQ²＝105 から AQ²＝485/4。QN²＝485/4−49＝289/4、QN＝17/2。W＝⅓·84·17/2＝238。", "底面が同じなので W : V ＝ QN の比 ＝ 17/2 : 11 ＝ 17 : 22。W は V より小さい（⓪）。"], "stall": "つまずきやすい点：H が K に近いか Q に近いかを見て、勘で大小を決める。同じ手順で確かめる。（KH : HQ が 3 : 4 から 3 : 1 に変わると、Q は低くなる）", "shape": "同じ手順をもう一度（条件だけ替える）", "card": null, "carry": [], "blanks": [{"id": "ヌ", "kind": "digit", "ans": "1"}, {"id": "ネ", "kind": "digit", "ans": "7"}, {"id": "ノ", "kind": "digit", "ans": "2"}, {"id": "ハ", "kind": "digit", "ans": "2"}, {"id": "ヒ", "kind": "choice", "ans": "0", "opts": ["W は V より小さい", "W と V は等しい", "W は V より大きい"]}]}], "edges": [{"a": 0, "b": 1, "k": "t", "t": "二等分線の比"}, {"a": 1, "b": 2, "k": "v", "t": "AK と AC"}, {"a": 1, "b": 3, "k": "v", "t": "AC : CK"}, {"a": 2, "b": 4, "k": "t", "t": "AR·AQ＝105"}, {"a": 3, "b": 4, "k": "v", "t": "AR＝21/34·AQ"}, {"a": 4, "b": 5, "k": "v", "t": "AQ"}, {"a": 5, "b": 6, "k": "v", "t": "V"}, {"a": 3, "b": 6, "k": "p", "t": "同じ手順"}], "caps": ["底面の三角形 ABC だけを見る。BK は ∠B のまわりの2つの角を分け、K は辺 CA の上にある。", "BA と BC が ∠B をはさむ辺。CA の上の AK と KC の長さを聞かれている。", "Q, N, R, K, C, A は全部この平面の上。等しい角（緑の弧）は同じ線分 QC を見込む。A から出る2本の直線（青・橙）。", "△AQK を直線 C–H–R が横切る。C は辺 AK の延長上。聞かれているのは QR : RA。", "QR : RA が分かると、AR は AQ のいくらか。聞かれているのは AQ。", "QN は底面に垂直。直角三角形 QNA の AQ と AN から QN を出す（引くのは AC ではなく AN）。", "橙は KH : HQ ＝ 3 : 1 のとき。同じ手順で QN を出して、高さを比べる。"], "figs": {"fb1": ["参考図（立体）", "参考図（立体）", "参考図（立体）", "参考図（立体）", "参考図（立体）", "参考図（立体）", "参考図（立体）"], "fb2": ["いま見る平面：底面 ABC", "いま見る平面：底面 ABC", "いま見る平面：平面 AQC（Q, N, R, K, H, C, A は全部この上）", "いま見る平面：平面 AQC（Q, N, R, K, H, C, A は全部この上）", "いま見る平面：平面 AQC（Q, N, R, K, H, C, A は全部この上）", "いま見る平面：平面 AQC（Q, N, R, K, H, C, A は全部この上）", "いま見る平面：平面 AQC（Q, N, R, K, H, C, A は全部この上）"]}, "rates": {"2026": {"title": "2026 第3問", "rows": [["ア", 76.23], ["イ-ウ", 58.3], ["エ-カ", 39.52], ["キ-ク", 28.21], ["ケ-コ", 22.73], ["サ-シ", 12.3], ["ス-ソ", 6.25]], "notes": {"エ-カ": "条件が図に載っていない", "ケ-コ": "「前の結果に注意」とだけ書かれている", "ス-ソ": "誘導なし"}}, "2025": {"title": "2025 第3問", "rows": [["ア-イ", 85.42], ["ウ", 77.34], ["エ-カ", 73.95], ["キ-ク", 52.97], ["ケ", 49.57], ["コ-ス", 22.41], ["セ", 14.38]], "notes": {"コ-ス": "「したがって」とだけ書かれている", "セ": "誘導なし（真偽の判定）"}}, "2024": {"title": "2024 第5問", "rows": [["ア", 76.17], ["イ-ウ", 64.3], ["エ-オ", 50.04], ["カ", 33.42], ["キ-ケ", 17.32], ["コ-シ", 17.06], ["ス-セ", 16.54]], "notes": {"カ": "円を自分で描き足す", "ス-セ": "解き方の方針が示されない"}}}, "rateYear": "2026", "ratemap": [0, 1, 2, 3, 4, 5, 6], "linkStep": 2, "wrongId": "ノ", "wrongVal": "8", "quotes": [{"when": "条件が図に無いとき", "my": "自作の問題なら：∠QRC＝∠QKC は何を言っている？（同じ線分 QC を見込む2つの角 → 4点が同じ円）", "q": "まず、参考図に無いこの条件を、図に描き込もう。", "from": "2026 第3問 解説動画（スライド11）"}, {"when": "立体で止まったとき", "my": "点が全部のっている平面は、どれか。", "q": "空間の問題でも、点が全部のってる平面を抜き出せば、いつもの平面の問題だぜ。", "from": "2026 第3問 解説動画（スライド8）"}, {"when": "なぜこの比が与えられている？", "my": "比は、メネラウスの1辺になる。延長の上の点は、頂点と交点を交互にたどる。", "q": "頂点と交点を交互にたどれば、延長の上の点も迷わないぜ。", "from": "2026 第3問 解説動画（スライド16）"}, {"when": "比と長さの関係", "my": "比が決まると、何が決まる？", "q": "そう。比が決まれば、高さが決まる。空欄は、その道順どおりに並んでるぜ。", "from": "2026 第3問 解説動画（スライド15）"}, {"when": "前の小問の結果を、もう一度使えないか", "my": "前の小問で出した式・長さは、どこで効く？", "q": "(1)で作った式が、ここで高さを決める道具になったぜ。", "from": "2026 第3問 解説動画（スライド17）"}, {"when": "誘導のない最後の小問", "my": "何を比べるのか。前と同じ手順で出せないか。", "q": "何を比べるかから決めよう。", "from": "2026 第3問 解説動画（スライド21）"}, {"when": "誘導のない最後の小問（つづき）", "my": "勘で大小を決めない。", "q": "そう。勘で決めずに、同じ手順で確かめる。", "from": "2026 第3問 解説動画（スライド21）"}, {"when": "平面を取りかえても同じ形", "my": "別の平面でも、同じ形（相似・方べき）が出る。", "q": "そう。平面を取りかえても同じ形。そこが見どころだぜ。", "from": "2025 第3問 解説動画（スライド4）"}]};
+(function(){
+  "use strict";
+  function $(id){return document.getElementById(id);}
+  var STEPS = DATA.steps, EDGES = DATA.edges, N = STEPS.length, CAPS = DATA.caps;
+  var st = {step:0, first:[], cur:[], perm:[], val:[], chk:[], sel:0, maxStep:0, rateTab:DATA.rateYear};
+  for(var i = 0; i < N; i++){ st.first.push(null); st.cur.push(null); st.perm.push(null); st.val.push({}); st.chk.push(false); }
+
+  function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+  function inRange(spec, n){
+    var m = /^(\d)-(\d)$/.exec(spec); if(!m) return true;
+    return n >= +m[1] && n <= +m[2];
+  }
+  var MARKS = "⓪①②③④⑤⑥⑦⑧⑨";
+  function firstEmpty(k){
+    var bs = STEPS[k].blanks;
+    for(var i = 0; i < bs.length; i++){ if(st.val[k][bs[i].id] === undefined) return i; }
+    return -1;
+  }
+
+  /* ---------- 地図 ---------- */
+  function renderMap(){
+    var h = "", lastG = "";
+    for(var i = 0; i < N; i++){
+      var S = STEPS[i];
+      if(S.grp !== lastG){ h += '<li class="grp">'+S.grp+'</li>'; lastG = S.grp; }
+      var done = st.chk[i];
+      h += '<li><button type="button" data-n="'+i+'" class="'+(done?'done':'')+'"'+(i===st.step?' aria-current="step"':'')+(i>st.maxStep?' disabled':'')+'>'
+        + '<span class="no">小問'+(i+1)+'</span><span class="nm">'+esc(S.name)+'</span><span class="st">'+(done?scoreText(i):(i===st.step?'解答中':''))+'</span></button></li>';
+      if(done && i === st.step && S.carry && S.carry.length){
+        h += '<li class="carry">この結果は、次の小問で使います　' + S.carry.map(function(c){return '<b>→ 小問'+(c.to+1)+'</b> '+esc(c.t);}).join('　') + '</li>';
+      }
+      if(i === 0) h += '<li class="carry">最初の小問です（前の小問はありません）</li>';
+      if(i === N-1) h += '<li class="carry">誘導はありません。前の手順をもう一度使います</li>';
+    }
+    $("maplist").innerHTML = h;
+    drawArrows();
+  }
+  function scoreText(k){
+    var bs = STEPS[k].blanks, n = 0;
+    for(var i = 0; i < bs.length; i++){ if(st.val[k][bs[i].id] === bs[i].ans) n++; }
+    return n === bs.length ? "〇" : (n+"/"+bs.length);
+  }
+  function drawArrows(){
+    var svg = $("arrows"), row = $("maprow");
+    var btns = $("maplist").querySelectorAll("button[data-n]");
+    var pos = {}, base = row.getBoundingClientRect();
+    for(var i = 0; i < btns.length; i++){
+      var r = btns[i].getBoundingClientRect();
+      pos[btns[i].getAttribute("data-n")] = {y: r.top - base.top + r.height/2};
+    }
+    var W = 68, H = row.offsetHeight;
+    svg.setAttribute("viewBox","0 0 "+W+" "+H); svg.setAttribute("height",H);
+    var active = [];
+    for(var e = 0; e < EDGES.length; e++){ if(st.chk[EDGES[e].a]) active.push(EDGES[e]); }
+    var lanes = [];
+    active.sort(function(p,q){ return (Math.abs(q.b-q.a)) - (Math.abs(p.b-p.a)); });
+    var out = "";
+    for(var a = 0; a < active.length; a++){
+      var E = active[a], lo = Math.min(E.a,E.b), hi = Math.max(E.a,E.b), ln = 0;
+      while(true){
+        var clash = false;
+        for(var m = 0; m < lanes.length; m++){ if(lanes[m].ln === ln && !(hi <= lanes[m].lo || lo >= lanes[m].hi)) clash = true; }
+        if(!clash) break; ln++;
+      }
+      lanes.push({ln:ln, lo:lo, hi:hi});
+      var A = pos[E.a], B = pos[E.b]; if(!A || !B) continue;
+      var xs = 4, xl = 16 + ln*13;
+      var d = "M"+xs+","+A.y.toFixed(1)+" H"+xl+" V"+B.y.toFixed(1)+" H"+(xs+6);
+      out += '<path class="e-'+E.k+'" d="'+d+'" fill="none" stroke-width="2.4" stroke-linejoin="round"'+(st.step===E.a && st.chk[E.a] ? '' : ' opacity=".75"')+'/>';
+      out += '<path class="head-'+E.k+'" d="M'+xs+','+B.y.toFixed(1)+' l8,-5 v10 z"/>';
+    }
+    svg.innerHTML = out;
+  }
+
+  /* ---------- 図 ---------- */
+  function renderFigs(){
+    var k = st.step, boxes = document.querySelectorAll(".figbox");
+    for(var b = 0; b < boxes.length; b++){
+      var id = boxes[b].getAttribute("data-fb"), T = DATA.figs[id][k];
+      boxes[b].style.display = T ? "" : "none";
+      boxes[b].querySelector("h3").textContent = T || "";
+      var svgs = boxes[b].querySelectorAll("svg.fig");
+      for(var s = 0; s < svgs.length; s++){
+        var fs = svgs[s].getAttribute("data-fs");
+        svgs[s].style.display = (!fs || inRange(fs, k)) ? "block" : "none";
+        var els = svgs[s].querySelectorAll("[data-s]");
+        for(var i = 0; i < els.length; i++){
+          var e = els[i], on = inRange(e.getAttribute("data-s"), k);
+          e.classList.toggle("off", !on);
+          var d = e.getAttribute("data-dim");
+          e.classList.toggle("dim", !!d && inRange(d, k));
+        }
+      }
+    }
+    $("figcap").textContent = CAPS[k];
+  }
+
+  /* ---------- 小問 ---------- */
+  function rng(k){
+    // 画面確認用（#ハッシュ付き）のときだけ、毎回同じ並びにする。ふだんは毎回ばらばら。
+    if(window.__noscroll){ var s = (k * 977 + 13) >>> 0; return function(){ s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+    return Math.random;
+  }
+  function permOf(k){
+    if(!st.perm[k]){
+      var n = STEPS[k].why.opts.length, a = [], r = rng(k), i, j, t;
+      for(i = 0; i < n; i++) a.push(i);
+      for(i = n - 1; i > 0; i--){ j = Math.floor(r() * (i + 1)); t = a[i]; a[i] = a[j]; a[j] = t; }
+      st.perm[k] = a;
+    }
+    return st.perm[k];
+  }
+  function blankHTML(k, bi, live){
+    var B = STEPS[k].blanks[bi], v = st.val[k][B.id], cls = "bx", res = "";
+    if(st.chk[k]){ var ok = (v === B.ans); cls += ok ? " ok" : " ng"; res = '<span class="res">'+(ok?'〇':'×')+'</span>'; }
+    else if(live && st.sel === bi) cls += " sel";
+    var shown = (v === undefined) ? '<span class="lb">'+B.id+'</span>' : (B.kind==="choice" ? MARKS.charAt(+v) : v);
+    return '<button type="button" class="'+cls+'" data-bi="'+bi+'" aria-label="'+B.id+(v===undefined?' 未入力':' '+v)+'"'+((st.chk[k]||!live)?' disabled':'')+'>'+shown+res+'</button>';
+  }
+  function renderStep(){
+    var k = st.step, S = STEPS[k], box = $("stepbox"), h = "", live = (st.first[k] !== null);
+    h += '<p class="n"><span>'+S.grp+'　小問'+(k+1)+' / '+N+'</span><span class="chip lv'+S.hintlv+'">ヒント：'+esc(S.hint)+'</span></p>';
+    h += '<h3>'+esc(S.name)+'</h3>';
+    // 1. 小問の文を先に読む
+    if(S.pre) h += '<p class="pre">'+esc(S.pre)+'</p>';
+    h += '<p class="qtext">';
+    for(var t = 0; t < S.text.length; t++){
+      var seg = S.text[t];
+      if(seg.s !== undefined) h += esc(seg.s); else h += blankHTML(k, seg.b, live);
+    }
+    h += '</p>';
+    var cbs = [];
+    for(var b = 0; b < S.blanks.length; b++){
+      var B = S.blanks[b];
+      if(B.kind === "choice"){
+        cbs.push(B);
+        h += '<ul class="grp-opts" aria-label="'+B.id+' の解答群"><li class="gl">'+B.id+' の解答群</li>';
+        for(var c = 0; c < B.opts.length; c++) h += '<li>'+MARKS.charAt(c)+' '+esc(B.opts[c])+'</li>';
+        h += '</ul>';
+      }
+    }
+    // 2. 解く前に「何のため？」を選ぶ（並びは毎回ばらばら。最初に選んだものを結果に出す）
+    h += '<p class="q">'+esc(S.why.q)+(live ? '' : '　（先に選ぶと、空欄に入力できます）')+'</p><div class="opts" id="opts">';
+    var pm = permOf(k), pf = st.first[k], pc = st.cur[k];
+    for(var i = 0; i < pm.length; i++){
+      var oi = pm[i], o = S.why.opts[oi], mk = "";
+      if(pf !== null){ if(o.ok) mk = "○"; else if(pf === oi) mk = "×"; }
+      h += '<button type="button" data-o="'+oi+'" class="'+(pc===oi?'picked':'')+'"><span class="mk">'+mk+'</span>'+esc(o.t)+'</button>';
+    }
+    h += '</div><div id="why-fb">';
+    if(pf !== null){
+      var po = S.why.opts[pf], co = null;
+      for(var j = 0; j < S.why.opts.length; j++) if(S.why.opts[j].ok) co = S.why.opts[j];
+      h += '<p class="fb '+(po.ok?'ok':'ng')+'"><b>最初に選んだ答え　'+(po.ok?'○ ':'× ')+'</b>'+esc(po.r)+'</p>';
+      if(!po.ok) h += '<p class="fb ok"><b>○ 正解は　</b>'+esc(co.t)+'。'+esc(co.r)+'</p>';
+      if(pc !== pf) h += '<p class="fb"><b>選び直し</b>　結果に反映されるのは、最初に選んだ答えです。</p>';
+    }
+    h += '</div>';
+    // 3. 解く
+    if(live){
+      h += '<div class="solve">';
+      if(!st.chk[k]){
+        var mo = 0; for(var q2 = 0; q2 < cbs.length; q2++) mo = Math.max(mo, cbs[q2].opts.length);
+        h += '<div class="pad" id="pad"><button type="button" data-d="−">−</button>';
+        for(var d = 0; d <= 9; d++) h += '<button type="button" data-d="'+d+'">'+d+'</button>';
+        h += '<button type="button" data-d="del" class="wide">消す</button></div>';
+        h += '<div class="pad" id="padc">';
+        for(var z = 0; z < Math.max(mo, cbs.length ? 3 : 0); z++) h += '<button type="button" data-c="'+z+'">'+MARKS.charAt(z)+'</button>';
+        h += '</div><div class="ctl"><button type="button" id="check" class="prim">答え合わせ</button></div>';
+      } else {
+        var okN = 0; for(var u = 0; u < S.blanks.length; u++) if(st.val[k][S.blanks[u].id] === S.blanks[u].ans) okN++;
+        h += '<p class="sum">'+(okN===S.blanks.length?'すべて〇':okN+' / '+S.blanks.length+' が〇')+'　（「何のための小問か」は、最初の選択で '+(S.why.opts[pf].ok?'〇':'×')+'）</p>';
+        h += '<p class="marks">正解のマーク　' + S.blanks.map(function(B2){ return '<span>'+B2.id+'＝'+(B2.kind==="choice"?MARKS.charAt(+B2.ans):B2.ans)+'</span>'; }).join('') + '</p>';
+        h += '<div class="expl"><h3>解き方</h3><ol>' + S.expl.map(function(x){return '<li>'+esc(x)+'</li>';}).join('') + '</ol></div>';
+        h += '<p class="shape"><b>着眼点</b>　'+esc(S.shape)+'</p>';
+        if(S.card){ h += '<p class="shape">' + S.card.map(function(c){return '<a href="'+c.h+'">'+esc(c.l)+'</a>';}).join('　') + '</p>'; }
+        h += '<p class="stall">'+esc(S.stall)+'</p>';
+        if(S.carry && S.carry.length){
+          h += '<div class="use"><h3>この結果の使い道</h3><ul>' + S.carry.map(function(c){return '<li>小問'+(c.to+1)+'　'+esc(c.t)+'</li>';}).join('') + '</ul></div>';
+        } else {
+          h += '<div class="use"><h3>最後の小問</h3><ul><li>前の手順をもう一度使います。ここから先の小問はありません。</li></ul></div>';
+        }
+        h += '<div class="ctl"><button type="button" id="retry">解き直す</button>'
+          + (k < N-1 ? '<button type="button" id="next" class="prim">次の小問へ（小問'+(k+2)+'）</button>' : '') + '</div>';
+      }
+      h += '</div>';
+    }
+    box.innerHTML = h;
+    if(live && !st.chk[k]) syncPad();
+    bind();
+  }
+  function syncPad(){
+    var k = st.step, B = STEPS[k].blanks[st.sel], pad = $("pad"), padc = $("padc");
+    if(!pad) return;
+    var isC = B && B.kind === "choice";
+    var pb = pad.querySelectorAll("button"), cb = padc.querySelectorAll("button");
+    for(var i = 0; i < pb.length; i++) pb[i].disabled = !!isC;
+    for(var j = 0; j < cb.length; j++) cb[j].disabled = !isC || (B && j >= B.opts.length);
+    padc.style.display = padc.children.length ? "grid" : "none";
+  }
+  function setVal(v){
+    var k = st.step, B = STEPS[k].blanks[st.sel];
+    if(!B) return;
+    if(v === null){ delete st.val[k][B.id]; } else { st.val[k][B.id] = v; }
+    if(v !== null){
+      var bs = STEPS[k].blanks, nx = -1;
+      for(var i = st.sel + 1; i < bs.length; i++){ if(st.val[k][bs[i].id] === undefined){ nx = i; break; } }
+      if(nx < 0){ for(var i2 = 0; i2 < bs.length; i2++){ if(st.val[k][bs[i2].id] === undefined){ nx = i2; break; } } }
+      if(nx >= 0) st.sel = nx;
+    }
+    renderStep();
+  }
+  function bind(){
+    var k = st.step, opts = $("opts");
+    opts.addEventListener("click", function(ev){
+      var b = ev.target.closest("button[data-o]"); if(!b || st.chk[k]) return;
+      var oi = +b.getAttribute("data-o");
+      if(st.first[k] === null) st.first[k] = oi;
+      st.cur[k] = oi; renderStep();
+    });
+    var bxs = document.querySelectorAll("#stepbox .bx");
+    for(var i = 0; i < bxs.length; i++) bxs[i].addEventListener("click", function(ev){ st.sel = +ev.currentTarget.getAttribute("data-bi"); renderStep(); });
+    var pad = $("pad"), padc = $("padc");
+    if(pad) pad.addEventListener("click", function(ev){
+      var b = ev.target.closest("button[data-d]"); if(!b || b.disabled) return;
+      var d = b.getAttribute("data-d"); setVal(d === "del" ? null : d);
+    });
+    if(padc) padc.addEventListener("click", function(ev){
+      var b = ev.target.closest("button[data-c]"); if(!b || b.disabled) return; setVal(b.getAttribute("data-c"));
+    });
+    var ck = $("check");
+    if(ck) ck.addEventListener("click", function(){
+      st.chk[k] = true; if(k + 1 > st.maxStep && k < N-1) st.maxStep = k + 1; renderAll();
+    });
+    var rt = $("retry");
+    if(rt) rt.addEventListener("click", function(){ st.chk[k] = false; st.val[k] = {}; st.sel = 0; st.perm[k] = null; st.cur[k] = st.first[k]; renderAll(); });
+    var nx = $("next");
+    if(nx) nx.addEventListener("click", function(){ go(k + 1); });
+  }
+  function go(n){
+    n = Math.max(0, Math.min(N-1, n));
+    st.step = n; if(n > st.maxStep) st.maxStep = n;
+    st.sel = Math.max(0, firstEmpty(n));
+    renderAll();
+    var el = $("stepbox"); try{ if(!window.__noscroll) el.scrollIntoView({block:"start", behavior:"smooth"}); }catch(e){}
+  }
+  $("maplist").addEventListener("click", function(ev){
+    var b = ev.target.closest("button[data-n]"); if(!b || b.disabled) return; go(+b.getAttribute("data-n"));
+  });
+  document.addEventListener("keydown", function(ev){
+    if(ev.target && /^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName)) return;   // サイトの検索の箱に打った数字を拾わない
+    if(ev.ctrlKey || ev.metaKey || ev.altKey) return;
+    var k = st.step; if(st.first[k] === null || st.chk[k]) return;
+    var B = STEPS[k].blanks[st.sel]; if(!B) return;
+    if(/^[0-9]$/.test(ev.key)){ if(B.kind === "choice"){ if(+ev.key < B.opts.length) setVal(ev.key); } else setVal(ev.key); }
+    else if(ev.key === "-" && B.kind !== "choice") setVal("−");
+    else if(ev.key === "Backspace" || ev.key === "Delete") setVal(null);
+  });
+
+  /* ---------- 正答率 ---------- */
+  function renderRates(){
+    var T = DATA.rates[st.rateTab], h = '<h2>本番の正答率の推移</h2><p class="srct" style="margin:0 0 6px">下の数値は、本番（'+T.title+'）で同じ位置にある小問の正答率です。この自作問題の正答率ではありません。</p><div class="rtabs" role="tablist">';
+    ["2026","2025","2024"].forEach(function(y){ h += '<button type="button" role="tab" data-y="'+y+'" aria-selected="'+(y===st.rateTab)+'">'+DATA.rates[y].title+'</button>'; });
+    h += '</div>';
+    for(var i = 0; i < T.rows.length; i++){
+      var r = T.rows[i], prev = i ? T.rows[i-1][1] : null;
+      var now = (st.rateTab === DATA.rateYear && DATA.ratemap[st.step] === i);
+      h += '<div class="rrow'+(now?' now':'')+'"><span class="rl">'+r[0]+'</span><span class="rb"><i style="width:'+r[1]+'%"></i></span><span class="rv">'+r[1].toFixed(2)+'%</span>';
+      var sub = "";
+      if(prev !== null) sub += '<span class="dn">前の小問から −'+(prev - r[1]).toFixed(2)+'</span>';
+      if(T.notes[r[0]]) sub += (sub?'　':'')+'<span class="th">ヒントが少なくなる小問：'+esc(T.notes[r[0]])+'</span>';
+      if(now) sub += (sub?'　':'')+'いま解いている小問は、本番ではこの位置にあたります';
+      if(sub) h += '<div class="rsub">'+sub+'</div>';
+      h += '</div>';
+    }
+    h += '<span class="srct">出典：大学入試センター 設問別得点率及び正答率（本試験）。2026・2025 は全員必答、2024 は選択問題のため、選んだ受験者についての値と推定しています。'
+      + 'エ-カ のように範囲で採点される箇所は、その範囲全体の正答率です。最後の小問には、前の小問を解いていない人も含まれます。'
+      + '低下の要因は断定できません。本番の問題文・図・数値は掲載していません。</span>';
+    $("rates").innerHTML = h;
+    var tabs = $("rates").querySelectorAll("button[data-y]");
+    for(var j = 0; j < tabs.length; j++) tabs[j].addEventListener("click", function(ev){ st.rateTab = ev.currentTarget.getAttribute("data-y"); renderRates(); });
+  }
+
+  /* ---------- 熟考 ---------- */
+  function renderJukko(){
+    var h = "";
+    DATA.quotes.forEach(function(q){
+      h += '<div class="qa"><b>'+esc(q.when)+'</b><p class="my">'+esc(q.my)+'</p><p class="hon">「'+esc(q.q)+'」</p><span class="from">出典：'+esc(q.from)+'</span></div>';
+    });
+    h += '<p class="my">誘導のない小問や、前の小問とつながらない小問もあります。その場合は、前の結果を探さず、問題文の条件の意味から考えます。</p>';
+    $("jukko-body").innerHTML = h;
+  }
+
+  function renderAll(){ renderMap(); renderFigs(); renderStep(); renderRates(); }
+
+  /* ---------- 見た目の確認用：#s0、#s1-why、#linked、#s6-done ---------- */
+  function fill(k, wrongId){
+    var bs = STEPS[k].blanks;
+    for(var i = 0; i < bs.length; i++) st.val[k][bs[i].id] = bs[i].ans;
+    if(wrongId){ for(var j = 0; j < bs.length; j++) if(bs[j].id === wrongId) st.val[k][wrongId] = DATA.wrongVal || (bs[j].ans === "3" ? "8" : "3"); }
+    st.chk[k] = true;
+    var o = STEPS[k].why.opts; for(var q = 0; q < o.length; q++) if(o[q].ok){ st.first[k] = q; st.cur[k] = q; }
+  }
+  function fromHash(){
+    var h = (location.hash || "").replace("#","");
+    window.__noscroll = !!h;
+    if(h === "s1-why"){ st.step = 0; st.first[0] = 1; st.cur[0] = 1; }
+    else if(h === "linked"){ for(var i = 0; i <= DATA.linkStep; i++) fill(i); st.step = DATA.linkStep; st.maxStep = DATA.linkStep + 1; }
+    else if(h === "s6-done"){ for(var j = 0; j < N-1; j++) fill(j); fill(N-1, DATA.wrongId); st.step = N-1; st.maxStep = N-1; }
+    st.sel = Math.max(0, firstEmpty(st.step));
+    renderAll();
+  }
+  renderJukko();
+  fromHash();
+  window.addEventListener("hashchange", function(){ location.reload(); });
+  window.addEventListener("resize", function(){ drawArrows(); });
+})();
+</script>
+</body>
+</html>

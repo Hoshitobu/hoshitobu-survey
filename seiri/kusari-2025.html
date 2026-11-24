@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0b0f" media="(prefers-color-scheme: dark)">
+<meta name="referrer" content="no-referrer">
+<title>誘導の鎖 2025 第3問の流れ — 星飛ぶの勉強部屋</title>
+<meta name="description" content="平面を取りかえて、同じ形（相似）をもう一度使う流れ。前の小問の結果が次のどこで使われるかが矢印で見える。2025 第3問と同じ流れの自作問題。">
+<link rel="canonical" href="https://hoshitobu.github.io/hoshitobu-survey/seiri/kusari-2025.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="星飛ぶの勉強部屋">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="誘導の鎖 2025 第3問の流れ — 星飛ぶの勉強部屋">
+<meta property="og:description" content="平面を取りかえて、同じ形（相似）をもう一度使う流れ。前の小問の結果が次のどこで使われるかが矢印で見える。2025 第3問と同じ流れの自作問題。">
+<meta property="og:url" content="https://hoshitobu.github.io/hoshitobu-survey/seiri/kusari-2025.html">
+<meta property="og:image" content="https://hoshitobu.github.io/hoshitobu-survey/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
+<link rel="stylesheet" href="../style.css?v=20261124b">
+<link rel="stylesheet" href="../kyotsu/kyotsu.css?v=20261124b">
+<style>
+
+.hz{--bg:#ffffff;--surface:#ffffff;--surface2:#f3f4f7;--ink:#15171c;--sub:#454a55;--faint:#686d78;
+  --line:#dfe2e8;--line-strong:#b4bac6;--accent:#2f3fd0;--accent-soft:rgba(47,63,208,.09);--accent-soft2:rgba(47,63,208,.20);--on-accent:#ffffff;
+  --amb:#a85a00;--grn:#0a7a52;--bad:#b3321e;--halo:#ffffff;--base:rgba(0,0,0,.05);
+  color:var(--ink);line-height:1.8;font-size:16px}
+@media (prefers-color-scheme: dark){
+  .hz{--bg:#0a0b0f;--surface:#111318;--surface2:#171a21;--ink:#e2e4e9;--sub:#b4b9c4;--faint:#8f94a0;
+    --line:#252935;--line-strong:#3c4252;--accent:#8d97ff;--accent-soft:rgba(141,151,255,.14);--accent-soft2:rgba(141,151,255,.26);--on-accent:#0a0b0f;
+    --amb:#ffb454;--grn:#5fd0a0;--bad:#ff8f7e;--halo:#111318;--base:rgba(255,255,255,.05)}
+}
+.hz h1{font-size:25px;line-height:1.4;margin:14px 0 6px}
+.hz h2{font-size:19px;line-height:1.5;margin:26px 0 8px}
+.hz h3{font-size:16px;margin:0 0 4px}
+.hz p{margin:0 0 10px}
+.hz .lead{color:var(--sub);margin:0 0 12px}
+.hz button{font-family:inherit;font-size:16px;color:var(--ink);cursor:pointer}
+.hz button:focus-visible,.hz a:focus-visible{outline:3px solid var(--amb);outline-offset:2px}
+.hz a{color:var(--accent)}
+.hz .chains{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 0}
+.hz .chains a{display:block;min-height:48px;padding:4px 14px;border:1px solid var(--line-strong);border-radius:8px;text-decoration:none;color:var(--ink);line-height:1.4;flex:1 1 160px}
+.hz .chains a b{display:block;font-size:15px}
+.hz .chains a span{display:block;font-size:12.5px;color:var(--sub)}
+.hz .chains a[aria-current="page"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.hz .chains a[aria-current="page"] span{color:var(--on-accent)}
+.hz .layout{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+@media (min-width:900px){.hz .layout{grid-template-columns:330px minmax(0,1fr);align-items:start}
+.hz .mapcol{position:sticky;top:10px}
+.hz .workcol{min-width:0}}
+.hz .mapbox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 10px 8px}
+.hz .mapbox h2{font-size:14px;letter-spacing:.06em;color:var(--accent);margin:0 0 6px}
+.hz .maprow{position:relative}
+.hz .maplist{list-style:none;margin:0;padding:0 70px 0 0}
+.hz .maplist li{margin:0 0 6px}
+.hz .maplist li.grp{font-size:12px;color:var(--faint);letter-spacing:.06em;margin:6px 0 2px;padding-left:2px}
+.hz .maplist button{width:100%;min-height:44px;padding:4px 10px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface2);
+  text-align:left;line-height:1.4;display:flex;align-items:center;gap:8px}
+.hz .maplist button .no{font-size:12px;color:var(--faint);min-width:2.8em;font-weight:700}
+.hz .maplist button .nm{flex:1;font-weight:700;font-size:15px}
+.hz .maplist button .st{font-size:13px;font-weight:700}
+.hz .maplist button[aria-current="step"]{background:var(--accent-soft);border-color:var(--accent)}
+.hz .maplist button:disabled{opacity:.45;cursor:default}
+.hz .maplist button.done .st{color:var(--grn)}
+.hz .maplist .carry{font-size:12.5px;color:var(--sub);line-height:1.55;margin:2px 4px 2px 12px;padding:2px 8px;border-left:3px solid var(--accent)}
+.hz .maplist .carry b{color:var(--accent)}
+.hz .arrows{position:absolute;top:0;right:0;width:68px;height:100%;pointer-events:none;overflow:visible}
+.hz .arrows path.e-v{stroke:var(--accent)}
+.hz .arrows path.e-t{stroke:var(--grn)}
+.hz .arrows path.e-p{stroke:var(--amb);stroke-dasharray:5 4}
+.hz .arrows .head-v{fill:var(--accent)}
+.hz .arrows .head-t{fill:var(--grn)}
+.hz .arrows .head-p{fill:var(--amb)}
+.hz .legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12.5px;color:var(--sub);margin:6px 0 0}
+.hz .legend i{display:inline-block;width:18px;height:0;border-top:3px solid;vertical-align:middle;margin-right:4px}
+.hz .legend .lv{border-color:var(--accent)}
+.hz .legend .lt{border-color:var(--grn)}
+.hz .legend .lp{border-top-style:dashed;border-color:var(--amb)}
+.hz .nolink{margin:8px 0 0;font-size:13.5px;color:var(--sub);border-top:1px solid var(--line);padding-top:6px}
+.hz .problem{border:1px solid var(--line-strong);border-radius:10px;padding:10px 14px;margin:0 0 12px;background:var(--surface)}
+.hz .problem b{display:block;font-size:12px;letter-spacing:.06em;color:var(--accent)}
+.hz .problem p{margin:2px 0 0}
+.hz .figs{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 6px}
+.hz .figbox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px;flex:1 1 300px;min-width:0}
+.hz .figbox h3{font-size:12.5px;letter-spacing:.06em;color:var(--faint);margin:0 0 2px;font-weight:700}
+.hz .figbox svg{display:block;width:100%;height:auto;max-width:440px;margin:0 auto}
+.hz .figcap{margin:4px 6px 12px;font-size:14px;color:var(--faint);line-height:1.6;min-height:1.6em}
+.hz .stepbox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.hz .stepbox .n{font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--accent);margin:0;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.hz .chip{display:inline-block;font-size:12px;border:1px solid var(--line-strong);border-radius:999px;padding:0 9px;line-height:1.7;color:var(--sub);letter-spacing:0;font-weight:400}
+.hz .chip.lv0{border-color:var(--bad);color:var(--bad)}
+.hz .chip.lv1{border-color:var(--amb);color:var(--amb)}
+.hz .chip.lv2{border-color:var(--grn);color:var(--grn)}
+.hz .stepbox h3{font-size:19px;margin:2px 0 6px;line-height:1.5}
+.hz .q{font-weight:700;margin:0 0 6px}
+.hz .opts{display:flex;flex-direction:column;gap:8px;margin:6px 0 8px}
+.hz .opts button{min-height:52px;padding:8px 14px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface2);text-align:left;font-weight:700;line-height:1.5}
+.hz .opts button .mk{display:inline-block;width:1.4em;font-weight:700}
+.hz .opts button.picked{border-color:var(--accent);background:var(--accent-soft)}
+.hz .fb{margin:6px 0 4px;padding:8px 12px;border-left:4px solid var(--line-strong);background:var(--surface2);border-radius:0 8px 8px 0;font-size:15px;line-height:1.7}
+.hz .fb.ok{border-color:var(--grn)}
+.hz .fb.ng{border-color:var(--amb)}
+.hz .fb b{font-weight:700}
+.hz .solve{margin-top:12px;border-top:1px dashed var(--line-strong);padding-top:10px}
+.hz .pre{margin:0 0 6px;color:var(--sub)}
+.hz .qtext{font-size:17px;line-height:2.5;margin:0 0 8px}
+.hz .bx{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;min-width:38px;height:42px;padding:0 4px;margin:0 2px;
+  border:2px solid var(--line-strong);border-radius:6px;background:var(--surface2);font-size:20px;font-weight:700;position:relative;color:var(--ink)}
+.hz .bx .lb{font-size:14px;color:var(--faint);font-weight:400}
+.hz .bx.sel{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft2)}
+.hz .bx.ok{border-color:var(--grn)}
+.hz .bx.ng{border-color:var(--bad)}
+.hz .bx .res{position:absolute;top:-10px;right:-6px;font-size:13px;font-weight:700;border-radius:999px;min-width:18px;height:18px;line-height:18px;background:var(--surface);text-align:center;border:1px solid}
+.hz .bx.ok .res{color:var(--grn)}
+.hz .bx.ng .res{color:var(--bad)}
+.hz .grp-opts{list-style:none;margin:0 0 8px;padding:8px 12px;border:1px solid var(--line-strong);border-radius:8px;display:flex;flex-wrap:wrap;gap:4px 18px}
+.hz .grp-opts li{font-size:15px}
+.hz .grp-opts .gl{font-size:13px;color:var(--faint);width:100%}
+.hz .pad{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:6px 0 8px}
+.hz .pad button{min-height:48px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface2);font-weight:700;font-size:19px}
+.hz .pad button:disabled{opacity:.3;cursor:default}
+.hz .pad button.wide{grid-column:span 2;font-size:15px}
+.hz .ctl{display:flex;gap:10px;margin:10px 0 0}
+.hz .ctl button{flex:1;min-height:52px;border:1px solid var(--line-strong);border-radius:10px;background:transparent;font-weight:700}
+.hz .ctl button.prim{background:var(--accent);border-color:var(--accent);color:var(--on-accent);flex:2}
+.hz .ctl button:disabled{opacity:.4;cursor:default}
+.hz .sum{margin:10px 0 4px;font-weight:700}
+.hz .marks{font-size:15px;margin:4px 0 8px}
+.hz .marks span{display:inline-block;margin:0 10px 0 0;white-space:nowrap}
+.hz .expl{margin:6px 0 8px;padding:8px 14px;border-left:3px solid var(--accent);background:var(--surface2);border-radius:0 8px 8px 0}
+.hz .expl h3{font-size:12.5px;letter-spacing:.06em;color:var(--accent)}
+.hz .expl ol{margin:0;padding-left:1.3em}
+.hz .expl li{margin:2px 0;font-size:16px}
+.hz .shape{margin:6px 0;font-size:15px}
+.hz .shape b{color:var(--accent)}
+.hz .stall{margin:6px 0;font-size:14.5px;color:var(--sub);padding-left:10px;border-left:3px solid var(--amb)}
+.hz .use{margin:8px 0;padding:8px 12px;border:1px solid var(--accent);border-radius:8px;background:var(--accent-soft)}
+.hz .use h3{font-size:13px;letter-spacing:.06em;color:var(--accent)}
+.hz .use ul{list-style:none;margin:0;padding:0}
+.hz .use li{padding:2px 0;font-size:15.5px}
+.hz .use li:before{content:"→ ";color:var(--accent);font-weight:700}
+.hz .rates,.hz .jukko,.hz .limit{margin-top:16px}
+.hz .rates{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.hz .rates h2{font-size:17px;margin:0 0 6px}
+.hz .rtabs{display:flex;gap:6px;margin:0 0 8px;flex-wrap:wrap}
+.hz .rtabs button{min-height:40px;padding:0 14px;border:1px solid var(--line-strong);border-radius:8px;background:transparent;font-weight:700;font-size:15px}
+.hz .rtabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.hz .rrow{display:grid;grid-template-columns:3.6em 1fr 4.4em;gap:8px;align-items:center;margin:0 0 4px;padding:2px 4px;border-radius:6px}
+.hz .rrow.now{background:var(--accent-soft)}
+.hz .rrow .rl{font-weight:700;font-size:15px}
+.hz .rrow .rb{height:14px;border-radius:7px;background:var(--line);overflow:hidden}
+.hz .rrow .rb i{display:block;height:100%;background:var(--accent);border-radius:7px}
+.hz .rrow .rv{font-variant-numeric:tabular-nums;text-align:right;font-weight:700;color:var(--accent);font-size:15px}
+.hz .rsub{grid-column:1 / -1;font-size:12.5px;color:var(--sub);margin:-2px 0 2px 3.9em;line-height:1.5}
+.hz .rsub .dn{color:var(--bad);font-weight:700}
+.hz .rsub .th{color:var(--amb);font-weight:700}
+.hz .srct{display:block;font-size:13px;color:var(--faint);line-height:1.6;margin-top:6px}
+.hz .jukko{border:1px solid var(--line-strong);border-radius:10px;padding:0 14px;background:var(--surface)}
+.hz .jukko summary{cursor:pointer;min-height:48px;display:flex;align-items:center;font-weight:700;font-size:17px}
+.hz .jukko .qa{margin:0 0 10px;padding:6px 0;border-top:1px solid var(--line)}
+.hz .jukko .qa b{display:block;font-size:15px}
+.hz .jukko .qa .my{margin:2px 0;color:var(--sub);font-size:15px}
+.hz .jukko .qa .hon{margin:2px 0;font-size:16px;font-weight:700}
+.hz .jukko .qa .from{font-size:12.5px;color:var(--faint)}
+.hz .limit{color:var(--sub);font-size:15px;border-top:1px solid var(--line);padding-top:10px}
+.hz .s-ink{stroke:var(--ink)}
+.hz .s-faint{stroke:var(--faint)}
+.hz .s-acc{stroke:var(--accent)}
+.hz .s-amb{stroke:var(--amb)}
+.hz .s-grn{stroke:var(--grn)}
+.hz .s-line{stroke:var(--line-strong)}
+.hz .s-bad{stroke:var(--bad)}
+.hz .f-ambs{fill:var(--amb);fill-opacity:.2}
+.hz .f-ink{fill:var(--ink)}
+.hz .f-acc{fill:var(--accent)}
+.hz .f-amb{fill:var(--amb)}
+.hz .f-grn{fill:var(--grn)}
+.hz .f-soft{fill:var(--accent-soft)}
+.hz .f-soft2{fill:var(--accent-soft2)}
+.hz .f-base{fill:var(--base)}
+.hz .f-bad{fill:var(--bad)}
+.hz svg text{font-family:"Times New Roman","Noto Serif JP",serif;font-style:italic}
+.hz svg text.lbl{paint-order:stroke;stroke:var(--halo);stroke-width:4px;stroke-linejoin:round}
+.hz [data-s],.hz [data-dim]{transition:opacity .35s ease}
+.hz .off{opacity:0 !important;pointer-events:none}
+.hz .dim{opacity:.25}
+@media (max-width:480px){.hz h1{font-size:22px}
+.hz .stepbox h3{font-size:18px}
+.hz .qtext{font-size:16px}}
+@media (prefers-reduced-motion: reduce){.hz [data-s],.hz [data-dim]{transition:none}}
+.hz button{font-family:inherit}
+.hz .stepbox,.hz .cardbox{scroll-margin-top:calc(var(--hdr-h,56px) + 12px)}
+@media (min-width:900px){ .hz .mapcol{top:calc(var(--hdr-h,56px) + 10px)} }
+.hz h1,.hz h2,.hz h3{font-family:inherit}
+.hz ul.sets{padding:0}
+.hz .sets li:only-child{grid-column:1 / -1}
+.hz .chains a:hover{color:var(--ink)}
+.hz .chains a[aria-current="page"]:hover{color:var(--on-accent)}
+.hz a:hover{color:var(--accent)}
+.hz .big.prim:hover,.hz .ctl button.prim:hover{color:var(--on-accent)}
+.hz .tips{margin:14px 0 0;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.hz .tips h2{font-size:17px;margin:0 0 6px}
+.hz .tips table{width:100%;border-collapse:collapse;margin:0;font-size:15px}
+.hz .tips th{padding:6px 10px 6px 0;color:var(--faint);font-weight:400;border-bottom:1px solid var(--line);font-size:13px;white-space:nowrap;text-align:left}
+.hz .tips td{padding:7px 10px 7px 0;border-bottom:1px solid var(--line);vertical-align:top;font-weight:400;line-height:1.6}
+.hz .tips td:first-child{font-weight:700;padding-left:0}
+.hz .tips tr:last-child td{border-bottom:0}
+.hz .tips th,.hz .tips td{white-space:normal;overflow-wrap:anywhere}
+@media (max-width:620px){
+  .hz .tips thead{display:none}
+  .hz .tips table,.hz .tips tbody,.hz .tips tr,.hz .tips td{display:block;width:100%}
+  .hz .tips tr{padding:8px 0;border-bottom:1px solid var(--line)}
+  .hz .tips tr:last-child{border-bottom:0}
+  .hz .tips td{border-bottom:0;padding:1px 0}
+  .hz .tips td:first-child{color:var(--ink)}
+  .hz .tips td:last-child{color:var(--sub);font-size:14.5px}
+}
+
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "トップ", "item": "https://hoshitobu.github.io/hoshitobu-survey/"}, {"@type": "ListItem", "position": 2, "name": "知識の整理", "item": "https://hoshitobu.github.io/hoshitobu-survey/seiri/index.html"}, {"@type": "ListItem", "position": 3, "name": "図形の性質", "item": "https://hoshitobu.github.io/hoshitobu-survey/seiri/index.html#zukei"}, {"@type": "ListItem", "position": 4, "name": "誘導の鎖", "item": "https://hoshitobu.github.io/hoshitobu-survey/seiri/kusari.html"}]}</script>
+<script src="../sitemap-nav.js?v=20261124b" defer></script>
+</head>
+<body>
+<header class="hd hd-a">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.1 7.4 7.4 2.1-7.4 2.1L12 21.5l-2.1-7.4L2.5 12l7.4-2.1z" fill="currentColor"/></svg>
+    <div><a class="sitename" href="../index.html">星飛ぶの勉強部屋</a></div>
+  </div>
+  <nav class="hd-nav" aria-label="サイトのメニュー">
+    <div class="hd-item has-kids"><a href="../kakomon.html">解く<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="../kakomon.html">過去問演習<small>時間を計って、1年分を解く</small></a><span class="soon">類題演習<small>Coming soon</small></span></div></div>
+    <div class="hd-item has-kids"><a href="../kakomon.html?view=quick">点数と集計<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="../kakomon.html?view=quick">点数を入れる<small>偏差値と順位が出る</small></a><a href="../kyotsu/index.html">平均点・正答率<small>2021〜2026・年度×科目</small></a><a href="../results.html">サイトの集計<small>送られた点数の分布とランキング</small></a></div></div>
+    <div class="hd-item has-kids"><a href="../seiri/index.html" aria-current="true">知識の整理<i class="cv" aria-hidden="true"></i></a><div class="hd-drop"><a href="../seiri/index.html#muki">無機化学<small>化学｜カード・辞書</small></a><a href="../seiri/index.html#zukei">図形の性質<small>数学ⅠA｜鎖と反射カード・辞書</small></a><a href="../seiri/index.html#keiryo">図形と計量<small>数学ⅠA｜カード・辞書</small></a></div></div>
+    <div class="hd-item"><a href="../videos.html">解説動画</a></div>
+    <button type="button" class="hd-find" data-focus="1" aria-expanded="false" aria-controls="fd"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12.8 12.8L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>検索・地図</span></button>
+  </nav>
+</header>
+<main class="zukei-tool">
+<nav class="crumbs" aria-label="パンくず"><a href="../index.html">トップ</a> › <a href="index.html">知識の整理</a> › <a href="index.html#zukei">図形の性質</a> › <a href="kusari.html">誘導の鎖</a> › <span>2025 第3問の流れ</span></nav>
+<div class="k-title">
+  <h1>誘導の鎖：2025 第3問の流れ</h1>
+  <p class="note">球面を平面で切ると断面は円になる性質を、平面を取りかえながらくり返し使い、最後は三平方の定理の逆で直角を判定します。問題は自作で、2025 第3問と同じ流れです（点の名前は本番と別の文字にしています）。</p>
+</div>
+
+<div class="hz">
+<nav class="chains" aria-label="演習の切りかえ"><a href="kusari-2026.html"><b>演習1</b><span>三角錐（2026 第3問と同じ流れ）</span></a><a href="kusari-2024.html"><b>演習2</b><span>円を描き足す（2024 第5問と同じ流れ）</span></a><a href="kusari-2025.html" aria-current="page"><b>演習3</b><span>平面を取りかえる（2025 第3問と同じ流れ）</span></a></nav>
+
+
+<div class="layout">
+<div class="mapcol">
+  <div class="mapbox">
+    <h2>小問のつながり</h2>
+    <div class="maprow" id="maprow">
+      <ol class="maplist" id="maplist"></ol>
+      <svg class="arrows" id="arrows" aria-hidden="true"></svg>
+    </div>
+    <p class="legend"><span><i class="lv"></i>結果の値を使う</span><span><i class="lt"></i>結果の式を使う</span><span><i class="lp"></i>同じ手順をくり返す</span></p>
+    <p class="nolink">誘導のない小問や、前の小問とつながらない小問もあります。その場合は、前の結果を探さず、問題文の条件の意味から考えます。</p>
+  </div>
+</div>
+
+<div class="workcol">
+  <div class="problem"><b>問題（自作）</b><p>三角形 KLM と三角形 UVW を向かい合う2つの面とし、ほかの3つの面が四角形 KLVU, KMWU, LMWV である五面体を考える。KL＝8、LM＝MK＝10、UV＝16、KU＝13、LV＝19、MW＝41 とし、6つの頂点は1つの球面 S の上にあるとする。ただし、直線 KU と MW は平行でない。比は、最も簡単な整数の比で答える。</p></div>
+  <div class="figs"><div class="figbox" data-fb="fb1"><h3></h3><svg class="fig solid25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 320" role="img" aria-label="五面体 KLM–UVW。辺 KU, LV, MW を延ばすと Q で交わる。"><polygon points="268.2,228.3 256.4,175.3 309.1,30.0 309.1,181.1" class="f-soft" data-s="0-0"/><polygon points="268.2,228.3 190.4,252.9 90.9,101.0 309.1,181.1" class="f-soft2" data-s="0-0"/><polygon points="256.4,175.3 190.4,252.9 90.9,101.0 309.1,30.0" class="f-ambs" data-s="0-0"/><line x1="268.2" y1="228.3" x2="256.4" y2="175.3" class="s-ink" stroke-width="2.2" stroke-linecap="round"/><line x1="256.4" y1="175.3" x2="190.4" y2="252.9" class="s-ink" stroke-width="2.2" stroke-linecap="round"/><line x1="190.4" y1="252.9" x2="268.2" y2="228.3" class="s-ink" stroke-width="2.2" stroke-linecap="round"/><line x1="309.1" y1="181.1" x2="309.1" y2="30.0" class="s-ink" stroke-width="2.2" stroke-linecap="round"/><line x1="309.1" y1="30.0" x2="90.9" y2="101.0" class="s-ink" stroke-width="2.2" stroke-linecap="round"/><line x1="90.9" y1="101.0" x2="309.1" y2="181.1" class="s-faint" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="7 5"/><line x1="268.2" y1="228.3" x2="309.1" y2="181.1" class="s-ink" stroke-width="2.2" stroke-linecap="round"/><line x1="256.4" y1="175.3" x2="309.1" y2="30.0" class="s-ink" stroke-width="2.2" stroke-linecap="round"/><line x1="190.4" y1="252.9" x2="90.9" y2="101.0" class="s-ink" stroke-width="2.2" stroke-linecap="round"/><line x1="214.7" y1="290.0" x2="268.2" y2="228.3" class="s-acc" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="2 5"/><line x1="214.7" y1="290.0" x2="256.4" y2="175.3" class="s-acc" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="2 5"/><line x1="214.7" y1="290.0" x2="190.4" y2="252.9" class="s-acc" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="2 5"/><circle cx="214.7" cy="290.0" r="4.2" class="f-acc"/><circle cx="268.2" cy="228.3" r="4.2" class="f-ink"/><circle cx="256.4" cy="175.3" r="4.2" class="f-ink"/><circle cx="190.4" cy="252.9" r="4.2" class="f-ink"/><circle cx="309.1" cy="181.1" r="4.2" class="f-ink"/><circle cx="309.1" cy="30.0" r="4.2" class="f-ink"/><circle cx="90.9" cy="101.0" r="4.2" class="f-ink"/><text x="280.2" y="246.8" class="f-ink lbl" font-size="19" text-anchor="middle">K</text><text x="239.9" y="177.4" class="f-ink lbl" font-size="19" text-anchor="middle">L</text><text x="175.7" y="267.9" class="f-ink lbl" font-size="19" text-anchor="middle">M</text><text x="323.9" y="196.1" class="f-ink lbl" font-size="19" text-anchor="middle">U</text><text x="323.9" y="28.0" class="f-ink lbl" font-size="19" text-anchor="middle">V</text><text x="76.1" y="115.9" class="f-ink lbl" font-size="19" text-anchor="middle">W</text><text x="223.2" y="311.2" class="f-acc lbl" font-size="19" text-anchor="middle">Q</text></svg></div><div class="figbox" data-fb="fb2"><h3></h3><svg class="fig plane-abed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" role="img" aria-label="平面 KLVU。Q から2本の直線が、球面 S との切り口の円と交わる。" data-fs="1-3"><circle cx="263.4" cy="125.0" r="99.0" class="s-grn" fill="none" stroke-width="2.6"/><polygon points="37.6,201.8 200.9,201.8 164.8,134.0" class="f-soft"/><polygon points="37.6,201.8 325.8,201.8 325.8,48.2" class="f-ambs"/><line x1="37.6" y1="201.8" x2="325.8" y2="201.8" class="s-ink" stroke-width="2.6" stroke-linecap="round"/><line x1="37.6" y1="201.8" x2="325.8" y2="48.2" class="s-ink" stroke-width="2.6" stroke-linecap="round"/><line x1="200.9" y1="201.8" x2="164.8" y2="134.0" class="s-acc" stroke-width="4.6" stroke-linecap="round"/><line x1="325.8" y1="201.8" x2="325.8" y2="48.2" class="s-amb" stroke-width="4.6" stroke-linecap="round"/><circle cx="37.6" cy="201.8" r="4.2" class="f-ink"/><circle cx="200.9" cy="201.8" r="4.2" class="f-ink"/><circle cx="325.8" cy="201.8" r="4.2" class="f-ink"/><circle cx="164.8" cy="134.0" r="4.2" class="f-ink"/><circle cx="325.8" cy="48.2" r="4.2" class="f-ink"/><text x="25.6" y="220.3" class="f-ink lbl" font-size="19" text-anchor="middle">Q</text><text x="196.5" y="224.7" class="f-ink lbl" font-size="19" text-anchor="middle">K</text><text x="337.8" y="220.3" class="f-ink lbl" font-size="19" text-anchor="middle">U</text><text x="150.0" y="132.0" class="f-ink lbl" font-size="19" text-anchor="middle">L</text><text x="337.8" y="42.6" class="f-ink lbl" font-size="19" text-anchor="middle">V</text><text x="194.3" y="166.9" class="f-ink lbl" font-size="15" text-anchor="middle" font-style="normal">8</text><text x="338.8" y="130.1" class="f-ink lbl" font-size="15" text-anchor="middle" font-style="normal">16</text><text x="263.4" y="219.9" class="f-ink lbl" font-size="15" text-anchor="middle" font-style="normal">13</text><text x="251.4" y="107.7" class="f-ink lbl" font-size="15" text-anchor="middle" font-style="normal">19</text></svg><svg class="fig plane-bcfe" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" role="img" aria-label="平面 LMWV。Q から2本の直線が、球面 S との切り口の円と交わる。" data-fs="4-5"><circle cx="209.2" cy="125.0" r="99.0" class="s-grn" fill="none" stroke-width="2.6"/><polygon points="91.8,212.9 163.7,212.9 127.7,181.2" class="f-soft"/><polygon points="91.8,212.9 254.8,212.9 275.2,51.1" class="f-ambs"/><line x1="91.8" y1="212.9" x2="254.8" y2="212.9" class="s-ink" stroke-width="2.6" stroke-linecap="round"/><line x1="91.8" y1="212.9" x2="275.2" y2="51.1" class="s-ink" stroke-width="2.6" stroke-linecap="round"/><line x1="163.7" y1="212.9" x2="127.7" y2="181.2" class="s-acc" stroke-width="4.6" stroke-linecap="round"/><line x1="254.8" y1="212.9" x2="275.2" y2="51.1" class="s-amb" stroke-width="4.6" stroke-linecap="round"/><circle cx="91.8" cy="212.9" r="4.2" class="f-ink"/><circle cx="163.7" cy="212.9" r="4.2" class="f-ink"/><circle cx="254.8" cy="212.9" r="4.2" class="f-ink"/><circle cx="127.7" cy="181.2" r="4.2" class="f-ink"/><circle cx="275.2" cy="51.1" r="4.2" class="f-ink"/><text x="79.7" y="231.4" class="f-ink lbl" font-size="19" text-anchor="middle">Q</text><text x="159.3" y="235.8" class="f-ink lbl" font-size="19" text-anchor="middle">L</text><text x="263.3" y="234.1" class="f-ink lbl" font-size="19" text-anchor="middle">V</text><text x="111.3" y="183.2" class="f-ink lbl" font-size="19" text-anchor="middle">M</text><text x="287.2" y="45.6" class="f-ink lbl" font-size="19" text-anchor="middle">W</text><text x="154.3" y="192.4" class="f-ink lbl" font-size="15" text-anchor="middle" font-style="normal">10</text><text x="209.2" y="231.0" class="f-ink lbl" font-size="15" text-anchor="middle" font-style="normal">19</text><text x="210.0" y="131.0" class="f-ink lbl" font-size="15" text-anchor="middle" font-style="normal">41</text></svg></div><div class="figbox" data-fb="fb3"><h3></h3><svg class="fig plane-acfd" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" role="img" aria-label="平面 KMWU。Q から2本の直線が、球面 S との切り口の円と交わる。" data-fs="5-5"><circle cx="205.9" cy="125.0" r="99.0" class="s-grn" fill="none" stroke-width="2.6"/><polygon points="95.1,219.1 175.2,219.1 135.2,194.3" class="f-soft"/><polygon points="95.1,219.1 236.5,219.1 299.4,92.6" class="f-ambs"/><line x1="95.1" y1="219.1" x2="236.5" y2="219.1" class="s-ink" stroke-width="2.6" stroke-linecap="round"/><line x1="95.1" y1="219.1" x2="299.4" y2="92.6" class="s-ink" stroke-width="2.6" stroke-linecap="round"/><line x1="175.2" y1="219.1" x2="135.2" y2="194.3" class="s-acc" stroke-width="4.6" stroke-linecap="round"/><line x1="236.5" y1="219.1" x2="299.4" y2="92.6" class="s-amb" stroke-width="4.6" stroke-linecap="round"/><circle cx="95.1" cy="219.1" r="4.2" class="f-ink"/><circle cx="175.2" cy="219.1" r="4.2" class="f-ink"/><circle cx="236.5" cy="219.1" r="4.2" class="f-ink"/><circle cx="135.2" cy="194.3" r="4.2" class="f-ink"/><circle cx="299.4" cy="92.6" r="4.2" class="f-ink"/><text x="83.1" y="237.6" class="f-ink lbl" font-size="19" text-anchor="middle">Q</text><text x="170.8" y="242.0" class="f-ink lbl" font-size="19" text-anchor="middle">K</text><text x="240.9" y="242.0" class="f-ink lbl" font-size="19" text-anchor="middle">U</text><text x="139.6" y="184.4" class="f-ink lbl" font-size="19" text-anchor="middle">M</text><text x="315.8" y="94.6" class="f-ink lbl" font-size="19" text-anchor="middle">W</text><text x="162.1" y="200.8" class="f-ink lbl" font-size="15" text-anchor="middle" font-style="normal">10</text><text x="205.9" y="237.2" class="f-ink lbl" font-size="15" text-anchor="middle" font-style="normal">13</text><text x="224.1" y="159.6" class="f-ink lbl" font-size="15" text-anchor="middle" font-style="normal">41</text></svg><svg class="fig d25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" role="img" aria-label="点 U のまわり。UV は UK にも UW にも垂直。∠KUW は直角でない。" data-fs="6-6"><polygon points="291.9,182.9 291.9,51.6 366.0,96.9" class="f-soft"/><polygon points="34.0,198.4 291.9,182.9 291.9,51.6" class="f-ambs"/><line x1="34.0" y1="198.4" x2="291.9" y2="182.9" class="s-ink" stroke-width="2.4" stroke-linecap="round"/><line x1="291.9" y1="182.9" x2="291.9" y2="51.6" class="s-acc" stroke-width="4.4" stroke-linecap="round"/><line x1="291.9" y1="182.9" x2="366.0" y2="96.9" class="s-ink" stroke-width="2.4" stroke-linecap="round"/><line x1="291.9" y1="51.6" x2="366.0" y2="96.9" class="s-ink" stroke-width="2.4" stroke-linecap="round"/><line x1="34.0" y1="198.4" x2="291.9" y2="51.6" class="s-ink" stroke-width="2.4" stroke-linecap="round"/><line x1="34.0" y1="198.4" x2="366.0" y2="96.9" class="s-faint" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 5"/><path d="M280.0,183.6 L280.0,171.6 L291.9,170.9" class="s-faint" fill="none" stroke-width="1.8"/><path d="M291.9,170.9 L299.8,161.8 L299.8,173.8" class="s-faint" fill="none" stroke-width="1.8"/><path d="M262.0,184.7 A30,30 0 0 1 311.5,160.1" class="s-bad" fill="none" stroke-width="3" stroke-linecap="round"/><circle cx="34.0" cy="198.4" r="4.2" class="f-ink"/><circle cx="180.2" cy="189.6" r="4.2" class="f-ink"/><circle cx="291.9" cy="182.9" r="4.2" class="f-ink"/><circle cx="291.9" cy="51.6" r="4.2" class="f-ink"/><circle cx="366.0" cy="96.9" r="4.2" class="f-ink"/><text x="180.2" y="179.1" class="f-ink lbl" font-size="19" text-anchor="middle">K</text><text x="304.0" y="201.3" class="f-ink lbl" font-size="19" text-anchor="middle">U</text><text x="287.5" y="41.6" class="f-ink lbl" font-size="19" text-anchor="middle">V</text><text x="380.7" y="111.9" class="f-ink lbl" font-size="19" text-anchor="middle">W</text><text x="22.0" y="216.9" class="f-ink lbl" font-size="19" text-anchor="middle">Q</text><text x="254.8" y="157.9" class="f-ink lbl" font-size="13" text-anchor="middle" font-style="normal">∠KUV＝90°</text><text x="344.8" y="175.9" class="f-ink lbl" font-size="13" text-anchor="middle" font-style="normal">∠VUW＝90°</text><text x="251.2" y="115.9" class="f-bad lbl" font-size="13" text-anchor="middle" font-style="normal">∠KUW は？</text></svg></div></div>
+  <p class="figcap" id="figcap"></p>
+  <div class="stepbox" aria-live="polite" id="stepbox"></div>
+
+  <div class="rates" id="rates"></div>
+  <details class="jukko" id="jukko">
+    <summary>行き詰まったときの考え方</summary>
+    <div id="jukko-body"></div>
+  </details>
+  <p class="limit">この流れだけで、すべての図形問題が解けるわけではありません。よく出る誘導の一例です。</p>
+</div>
+</div>
+</div>
+
+
+<footer class="src"><p class="note small">過去問の問題・正答率の出典：大学入試センター（<a href="https://www.dnc.ac.jp/" rel="noopener">https://www.dnc.ac.jp/</a>）。</p></footer>
+</main>
+<script>
+var DATA = {"steps": [{"grp": "(1)", "name": "Q はどの直線の上？", "hint": "選択肢あり（直線を選ぶ）", "hintlv": 2, "why": {"q": "この小問は、何のためにありますか。", "opts": [{"t": "3直線が Q で交わることを確かめ、Q を方べきの起点にするため", "ok": true, "r": "Q が KU, LV, MW の3本の共通点だと分かれば、あとで Q から2本の直線を引いて方べきが使える。"}, {"t": "KU の長さを出すため", "ok": false, "r": "KU は最初から与えられている。ここは、点と直線・平面の位置関係の話。"}, {"t": "球面 S の中心を求めるため", "ok": false, "r": "中心は聞かれていない。必要なのは、Q が3直線の上にあることだけ。"}]}, "pre": "(1)　直線 KU と MW は平面 KMWU 上にあり、平行でないので1点で交わる。その交点を Q とする。", "text": [{"s": "点 Q は、次の直線のうち "}, {"b": 0}, {"s": " の上にもある。"}], "expl": ["Q は直線 KU 上の点で、KU は面 KLVU の中の直線。だから Q は平面 KLVU の上にある。", "Q は直線 MW 上の点で、MW は面 LMWV の中の直線。だから Q は平面 LMWV の上にもある。", "平面 KLVU と平面 LMWV の共通部分は直線 LV。よって Q は LV の上にもある（②）。KU, LV, MW は Q で交わる。"], "stall": "つまずきやすい点：解答群が直線の名前だけ。点がどの面の上にあるかを2つ言ってから、その2つの面が交わる直線を探す。立体の図で、面と面の交わりを読む。", "shape": "2つの面の共通部分（交線）→ 3直線が1点で交わる", "card": null, "carry": [{"to": 4, "t": "Q は MW 上（Q を起点に方べき）"}], "blanks": [{"id": "ア", "kind": "choice", "ans": "2", "opts": ["KL", "UV", "LV", "VW"]}]}, {"grp": "(2)(i)", "name": "相似比", "hint": "「球面と平面の切り口」と示される", "hintlv": 1, "why": {"q": "この小問は、何のためにありますか。", "opts": [{"t": "QK, QL, QU, QV を結ぶ式を作るため（相似比）", "ok": true, "r": "相似比が分かれば、QV＝(相似比)×QK、QU＝(相似比)×QL の2つの式が立つ。"}, {"t": "球面 S の半径を出すため", "ok": false, "r": "半径は使わない。必要なのは、4点が同じ円の上という事実だけ。"}, {"t": "UV の長さを出すため", "ok": false, "r": "UV は最初から与えられている。"}]}, "pre": "(2)(i)　平面 KLVU と球面 S の交わりを考える。", "text": [{"s": "平面 KLVU と球面 S の交わりは円で、4点 K, L, V, U はその円周上にある。よって △QKL と △QVU は相似で、その相似比は 1 : "}, {"b": 0}, {"s": " である。"}], "expl": ["球面を平面で切った切り口は円。K, L, V, U はその円の上。Q は円の外で、Q から2本の直線 Q→K→U と Q→L→V。", "方べきから QK·QU＝QL·QV。QK : QV＝QL : QU で、∠Q が共通だから △QKL ∽ △QVU。", "対応する辺は KL と VU。相似比は KL : VU＝8 : 16＝1 : 2。"], "stall": "つまずきやすい点：「球と平面の交わりは円」から、4点が同じ円の上、と読み替える所。相似の対応の順（K と V、L と U）を取りちがえると比が逆になる。", "shape": "同じ円の上 → 方べき → 相似", "card": [{"l": "反射カード・第2回（方べき）", "h": "hansha.html#set-2"}, {"l": "反射カード・第1回（円周角）", "h": "hansha.html#set-1"}], "carry": [{"to": 2, "t": "相似比 → QV＝2QK、QU＝2QL"}, {"to": 5, "t": "同じ形（相似）を、平面を取りかえてもう一度"}], "blanks": [{"id": "イ", "kind": "digit", "ans": "2"}]}, {"grp": "(2)(i)", "name": "2つの式", "hint": "式の形が示される", "hintlv": 2, "why": {"q": "この小問は、何のためにありますか。", "opts": [{"t": "QK と QL を求める連立方程式を立てるため", "ok": true, "r": "QV を QL と LV の和で、QU を QK と KU の和で書く。相似比と合わせると、QK と QL の2つの式になる。"}, {"t": "三角形 QKL の面積を出すため", "ok": false, "r": "面積は聞かれていない。長さの関係式を作る。"}, {"t": "辺 KL の長さを確かめるため", "ok": false, "r": "KL は与えられていて、相似比を出すのに使い終わっている。"}]}, "text": [{"s": "2QK ＝ QL ＋ "}, {"b": 0}, {"b": 1}, {"s": "、2QL ＝ QK ＋ "}, {"b": 2}, {"b": 3}, {"s": " が成り立つ。"}], "expl": ["Q, L, V は一直線で、この順。QV＝QL＋LV＝QL＋19。相似比より QV＝2QK だから 2QK＝QL＋19。", "Q, K, U も一直線で、この順。QU＝QK＋KU＝QK＋13。QU＝2QL だから 2QL＝QK＋13。"], "stall": "つまずきやすい点：Q が円の外にあり、QV は QL と LV の和、QU は QK と KU の和。長い辺・短い辺を取りちがえやすい。", "shape": "線分の和を2通りに表す", "card": null, "carry": [{"to": 3, "t": "2つの式（連立して QK, QL）"}], "blanks": [{"id": "ウ", "kind": "digit", "ans": "1"}, {"id": "エ", "kind": "digit", "ans": "9"}, {"id": "オ", "kind": "digit", "ans": "1"}, {"id": "カ", "kind": "digit", "ans": "3"}]}, {"grp": "(2)(i)", "name": "QK と QL", "hint": "前の結果を使う、と示される（連立）", "hintlv": 1, "why": {"q": "この小問は、何のためにありますか。", "opts": [{"t": "あとの方べき（QL·QV）と、平面の取りかえで使う長さを出すため", "ok": true, "r": "QK と QL が分かると、QL·QV も QU, QV も決まる。(ii) の QM と、VW, UW にも使う。"}, {"t": "直線 MW 上の QM を出すため", "ok": false, "r": "QM は (ii) で、方べきを使って出す。QK, QL だけでは出ない。"}, {"t": "球面の中心を出すため", "ok": false, "r": "中心は必要ない。"}]}, "text": [{"s": "よって QK ＝ "}, {"b": 0}, {"b": 1}, {"s": "、QL ＝ "}, {"b": 2}, {"b": 3}, {"s": " となる。"}], "expl": ["2QK＝QL＋19 から QK＝(QL＋19)/2。これを 2QL＝QK＋13 に入れて 4QL＝QL＋19＋26、3QL＝45、QL＝15。", "QK＝(15＋19)/2＝17。"], "stall": "つまずきやすい点：連立の解き方より、「どの2式を連立するか」。前の小問の2式をそのまま使う。", "shape": "連立方程式", "card": null, "carry": [{"to": 4, "t": "QL·QV＝15×34"}, {"to": 5, "t": "QK, QL, QU（相似比に使う）"}], "blanks": [{"id": "キ", "kind": "digit", "ans": "1"}, {"id": "ク", "kind": "digit", "ans": "7"}, {"id": "ケ", "kind": "digit", "ans": "1"}, {"id": "コ", "kind": "digit", "ans": "5"}]}, {"grp": "(2)(ii)", "name": "QM", "hint": "「平面 LMWV と球面」と示される", "hintlv": 1, "why": {"q": "この小問は、何のためにありますか。", "opts": [{"t": "平面 LMWV の円で、Q から2本の直線に方べきを使うため", "ok": true, "r": "Q は MW 上（(1)）。Q から Q→L→V と Q→M→W の2本で、QL·QV＝QM·QW が書ける。"}, {"t": "三角形 QLM の面積を出すため", "ok": false, "r": "面積は聞かれていない。長さの積の関係を使う。"}, {"t": "UV の長さをたしかめるため", "ok": false, "r": "UV は与えられている。この小問では使わない。"}]}, "pre": "(ii)　平面 LMWV と球面 S が交わる部分に着目する。", "text": [{"s": "方べきの定理より、QM ＝ "}, {"b": 0}, {"b": 1}, {"s": " となる。"}], "expl": ["Q から円へ2本：Q→L→V と Q→M→W。QL·QV＝15×34＝510。", "QW＝QM＋MW＝QM＋41 だから QM(QM＋41)＝510。(QM＋51)(QM−10)＝0、QM＞0 より QM＝10。"], "stall": "つまずきやすい点：積に使う線分の選び方。Q から円周までの長さだけを掛ける（途中の弦 LM は使わない）。「Q は MW 上」という (1) の結果を使う。", "shape": "円の外の点から2本の直線 → 方べき", "card": [{"l": "反射カード・第2回（方べき）", "h": "hansha.html#set-2"}], "carry": [{"to": 5, "t": "QM, QW（平面を取りかえた相似比）"}], "blanks": [{"id": "サ", "kind": "digit", "ans": "1"}, {"id": "シ", "kind": "digit", "ans": "0"}]}, {"grp": "(2)(ii)", "name": "VW と UW", "hint": "「したがって」とだけ書かれている（平面は自分で選ぶ）", "hintlv": 0, "why": {"q": "この小問は、何のためにありますか。", "opts": [{"t": "(iii) で直角かどうかを調べるための辺の長さを出すため", "ok": true, "r": "△UVW の3辺 UV, UW, VW が分かれば、三平方の逆で ∠VUW が直角かどうかが決まる。"}, {"t": "球面の半径を出すため", "ok": false, "r": "半径は使わない。ここで出すのは辺の長さ。"}, {"t": "直線 MW の長さを出し直すため", "ok": false, "r": "MW は最初から与えられている。"}]}, "text": [{"s": "したがって VW ＝ "}, {"b": 0}, {"b": 1}, {"s": "、UW ＝ "}, {"b": 2}, {"b": 3}, {"s": " となる。"}], "expl": ["平面 LMWV の円で △QLM ∽ △QWV（QL·QV＝QM·QW から QL : QW＝QM : QV）。相似比 QL : QW＝15 : 51＝5 : 17。VW＝LM×17/5＝34。", "平面 KMWU でも同じ形。QK·QU＝QM·QW から △QKM ∽ △QWU。QK : QW＝17 : 51＝1 : 3。UW＝KM×3＝30。", "QU＝QK＋KU＝30、QW＝QM＋MW＝51 を使う。"], "stall": "つまずきやすい点：「したがって」だけで、どの平面で見るかは書いてない。(i) と同じ形（円の外の点から2本の直線 → 相似）を、別の平面で自分で見つける。", "shape": "平面を取りかえて同じ形（相似）をもう一度", "card": [{"l": "反射カード・第2回（方べき）", "h": "hansha.html#set-2"}], "carry": [{"to": 6, "t": "VW, UW（と UV, QU, QV）"}], "blanks": [{"id": "ス", "kind": "digit", "ans": "3"}, {"id": "セ", "kind": "digit", "ans": "4"}, {"id": "ソ", "kind": "digit", "ans": "3"}, {"id": "タ", "kind": "digit", "ans": "0"}]}, {"grp": "(2)(iii)", "name": "垂直・直角の判定", "hint": "なし（誘導がない）", "hintlv": 0, "why": {"q": "この小問は、前のどの手順をもう一度使いますか。", "opts": [{"t": "これまでに出した長さ全部（三平方の逆で直角を探す）", "ok": true, "r": "QU, QV, UV、UV, UW, VW、QU, UW, QW の3つの三角形で、2乗の和が等しいかを確かめる。"}, {"t": "相似比だけ", "ok": false, "r": "相似比は長さを出すのに使い終わった。(iii) は、出た長さで直角を調べる。"}, {"t": "(1) の平面の交線だけ", "ok": false, "r": "交線は Q の位置の話。垂直かどうかは、角の大きさで決まる。"}]}, "pre": "(iii)　∠KUV, ∠KUW, ∠VUW の大きさに着目すると、次の命題 (a), (b), (c) の真偽の組合せとして正しいものがある。(a) 平面 KLVU と平面 KMWU は垂直である。(b) 平面 KLVU と平面 UVW は垂直である。(c) 直線 UV と直線 MW は垂直である。", "text": [{"s": "正しいものは "}, {"b": 0}, {"s": " である。"}], "expl": ["△QUV：QU＝30、UV＝16、QV＝34 で 30²＋16²＝34²。∠QUV＝90°。K は直線 QU 上だから ∠KUV＝90°。", "△UVW：UV＝16、UW＝30、VW＝34 で 16²＋30²＝34²。∠VUW＝90°。△QUW：QU＝30、UW＝30、QW＝51 で 30²＋30²＝1800 ≠ 2601。∠KUW は直角でない（鈍角）。", "UV ⊥ UK、UV ⊥ UW だから UV ⊥ 平面 KMWU。(a) KLVU は UV を含む → KMWU と垂直（真）。(c) MW は平面 KMWU 上 → UV ⊥ MW（真）。", "(b) KLVU と UVW のなす角は ∠KUW（交線 UV に垂直な UK と UW）。直角でない → 偽。（真・偽・真）＝②。"], "stall": "つまずきやすい点：∠VUW が直角だから 2 平面も垂直、と思う。測る角は、交線 UV に垂直な2直線 UK と UW のなす ∠KUW。", "shape": "三平方の逆 → 直線と平面の垂直 → 平面と平面の垂直", "card": null, "carry": [], "blanks": [{"id": "チ", "kind": "choice", "ans": "2", "opts": ["(a) 真　(b) 真　(c) 真", "(a) 真　(b) 真　(c) 偽", "(a) 真　(b) 偽　(c) 真", "(a) 真　(b) 偽　(c) 偽", "(a) 偽　(b) 真　(c) 真", "(a) 偽　(b) 真　(c) 偽", "(a) 偽　(b) 偽　(c) 真", "(a) 偽　(b) 偽　(c) 偽"]}]}], "edges": [{"a": 0, "b": 4, "k": "t", "t": "Q は MW 上"}, {"a": 1, "b": 2, "k": "t", "t": "相似比"}, {"a": 2, "b": 3, "k": "v", "t": "2つの式"}, {"a": 3, "b": 4, "k": "v", "t": "QL·QV"}, {"a": 3, "b": 5, "k": "v", "t": "QK, QL"}, {"a": 4, "b": 5, "k": "v", "t": "QM"}, {"a": 1, "b": 5, "k": "p", "t": "同じ形（相似）"}, {"a": 5, "b": 6, "k": "v", "t": "VW, UW"}], "caps": ["3つの側面（四角形 KLVU, KMWU, LMWV）は平面。直線 KU は KLVU と KMWU の交線、MW は KMWU と LMWV の交線。", "平面 KLVU と球面 S の切り口は円。K, L, V, U はその円の上。Q は円の外。", "△QKL と △QVU は相似（相似比は KL : UV）。QV と QU を、QL・QK と LV・KU で表す。", "2つの式を連立する。Q, K, U と Q, L, V は、それぞれ一直線で、この順に並ぶ。", "平面 LMWV と S の切り口の円。Q から2本の直線 Q→L→V と Q→M→W。", "同じ形をもう一度：平面 LMWV で VW、平面 KMWU で UW。どちらも「相似比」で出る。", "U のまわり。三平方の逆で、∠KUV と ∠VUW が直角か、∠KUW はどうかを調べる。"], "figs": {"fb1": ["立体（面は三角形2枚と四角形3枚）", "立体（面は三角形2枚と四角形3枚）", "立体（面は三角形2枚と四角形3枚）", "立体（面は三角形2枚と四角形3枚）", "立体（面は三角形2枚と四角形3枚）", "立体（面は三角形2枚と四角形3枚）", "立体（面は三角形2枚と四角形3枚）"], "fb2": [null, "平面 KLVU（球面 S との切り口の円）", "平面 KLVU（相似な2つの三角形）", "平面 KLVU（連立する2式）", "平面 LMWV（円と Q から2本の直線）", "平面 LMWV（VW）", null], "fb3": [null, null, null, null, null, "平面 KMWU（UW）", "U のまわり（直角の判定）"]}, "rates": {"2026": {"title": "2026 第3問", "rows": [["ア", 76.23], ["イ-ウ", 58.3], ["エ-カ", 39.52], ["キ-ク", 28.21], ["ケ-コ", 22.73], ["サ-シ", 12.3], ["ス-ソ", 6.25]], "notes": {"エ-カ": "条件が図に載っていない", "ケ-コ": "「前の結果に注意」とだけ書かれている", "ス-ソ": "誘導なし"}}, "2025": {"title": "2025 第3問", "rows": [["ア-イ", 85.42], ["ウ", 77.34], ["エ-カ", 73.95], ["キ-ク", 52.97], ["ケ", 49.57], ["コ-ス", 22.41], ["セ", 14.38]], "notes": {"コ-ス": "「したがって」とだけ書かれている", "セ": "誘導なし（真偽の判定）"}}, "2024": {"title": "2024 第5問", "rows": [["ア", 76.17], ["イ-ウ", 64.3], ["エ-オ", 50.04], ["カ", 33.42], ["キ-ケ", 17.32], ["コ-シ", 17.06], ["ス-セ", 16.54]], "notes": {"カ": "円を自分で描き足す", "ス-セ": "解き方の方針が示されない"}}}, "rateYear": "2025", "ratemap": [0, 1, 2, 3, 4, 5, 6], "linkStep": 3, "wrongId": "チ", "wrongVal": "0", "quotes": [{"when": "球が出てきて止まったとき", "my": "球を平面で切った切り口は円。だから、平面の上では「4点が同じ円」の問題になる。", "q": "球を平面で切ると、切り口は円。だから、A、B、E、Dは、1つの円の上にある。", "from": "2025 第3問 解説動画（スライド8）"}, {"when": "平面を取りかえるとき", "my": "ここまでと同じ形が、別の平面でもう一度出る。", "q": "そう。平面を取りかえても同じ形。そこが見どころだぜ。", "from": "2025 第3問 解説動画（スライド4）"}, {"when": "「したがって」とだけ書かれているとき", "my": "前の結果を組み合わせる。問題文にない平面は、自分で選ぶ。", "q": "断定はできないけど、前の結果を組み合わせる所で止まったのかもしれない。コ-スは、したがって、だけで、DFは問題文にない平面で考える。これが要因として考えられる。", "from": "2025 第3問 解説動画（スライド21）"}, {"when": "直角かどうかを数で決める", "my": "三平方の逆。辺の長さの2乗の和が等しいか。", "q": "だから三平方の逆で、直角かどうかを数で決める。そのあと、垂直の決まりに当てはめる。", "from": "2025 第3問 解説動画（スライド18）"}, {"when": "測る角はどれか", "my": "2つの平面が垂直かどうかは、交線に垂直な2直線のなす角で決まる。", "q": "測るのは角ADFで、鈍角。", "from": "2025 第3問 解説動画（スライド20）"}, {"when": "時間と位置", "my": "最後の小問は、前の長さを全部使う。途中で止まると届かない位置にある。", "q": "セは、前の長さを全部使う3つの組合せで、しかも第3問の最後。時間が足りなかった人もいたのではないか、と考えられるぜ。", "from": "2025 第3問 解説動画（スライド21）"}]};
+(function(){
+  "use strict";
+  function $(id){return document.getElementById(id);}
+  var STEPS = DATA.steps, EDGES = DATA.edges, N = STEPS.length, CAPS = DATA.caps;
+  var st = {step:0, first:[], cur:[], perm:[], val:[], chk:[], sel:0, maxStep:0, rateTab:DATA.rateYear};
+  for(var i = 0; i < N; i++){ st.first.push(null); st.cur.push(null); st.perm.push(null); st.val.push({}); st.chk.push(false); }
+
+  function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+  function inRange(spec, n){
+    var m = /^(\d)-(\d)$/.exec(spec); if(!m) return true;
+    return n >= +m[1] && n <= +m[2];
+  }
+  var MARKS = "⓪①②③④⑤⑥⑦⑧⑨";
+  function firstEmpty(k){
+    var bs = STEPS[k].blanks;
+    for(var i = 0; i < bs.length; i++){ if(st.val[k][bs[i].id] === undefined) return i; }
+    return -1;
+  }
+
+  /* ---------- 地図 ---------- */
+  function renderMap(){
+    var h = "", lastG = "";
+    for(var i = 0; i < N; i++){
+      var S = STEPS[i];
+      if(S.grp !== lastG){ h += '<li class="grp">'+S.grp+'</li>'; lastG = S.grp; }
+      var done = st.chk[i];
+      h += '<li><button type="button" data-n="'+i+'" class="'+(done?'done':'')+'"'+(i===st.step?' aria-current="step"':'')+(i>st.maxStep?' disabled':'')+'>'
+        + '<span class="no">小問'+(i+1)+'</span><span class="nm">'+esc(S.name)+'</span><span class="st">'+(done?scoreText(i):(i===st.step?'解答中':''))+'</span></button></li>';
+      if(done && i === st.step && S.carry && S.carry.length){
+        h += '<li class="carry">この結果は、次の小問で使います　' + S.carry.map(function(c){return '<b>→ 小問'+(c.to+1)+'</b> '+esc(c.t);}).join('　') + '</li>';
+      }
+      if(i === 0) h += '<li class="carry">最初の小問です（前の小問はありません）</li>';
+      if(i === N-1) h += '<li class="carry">誘導はありません。前の手順をもう一度使います</li>';
+    }
+    $("maplist").innerHTML = h;
+    drawArrows();
+  }
+  function scoreText(k){
+    var bs = STEPS[k].blanks, n = 0;
+    for(var i = 0; i < bs.length; i++){ if(st.val[k][bs[i].id] === bs[i].ans) n++; }
+    return n === bs.length ? "〇" : (n+"/"+bs.length);
+  }
+  function drawArrows(){
+    var svg = $("arrows"), row = $("maprow");
+    var btns = $("maplist").querySelectorAll("button[data-n]");
+    var pos = {}, base = row.getBoundingClientRect();
+    for(var i = 0; i < btns.length; i++){
+      var r = btns[i].getBoundingClientRect();
+      pos[btns[i].getAttribute("data-n")] = {y: r.top - base.top + r.height/2};
+    }
+    var W = 68, H = row.offsetHeight;
+    svg.setAttribute("viewBox","0 0 "+W+" "+H); svg.setAttribute("height",H);
+    var active = [];
+    for(var e = 0; e < EDGES.length; e++){ if(st.chk[EDGES[e].a]) active.push(EDGES[e]); }
+    var lanes = [];
+    active.sort(function(p,q){ return (Math.abs(q.b-q.a)) - (Math.abs(p.b-p.a)); });
+    var out = "";
+    for(var a = 0; a < active.length; a++){
+      var E = active[a], lo = Math.min(E.a,E.b), hi = Math.max(E.a,E.b), ln = 0;
+      while(true){
+        var clash = false;
+        for(var m = 0; m < lanes.length; m++){ if(lanes[m].ln === ln && !(hi <= lanes[m].lo || lo >= lanes[m].hi)) clash = true; }
+        if(!clash) break; ln++;
+      }
+      lanes.push({ln:ln, lo:lo, hi:hi});
+      var A = pos[E.a], B = pos[E.b]; if(!A || !B) continue;
+      var xs = 4, xl = 16 + ln*13;
+      var d = "M"+xs+","+A.y.toFixed(1)+" H"+xl+" V"+B.y.toFixed(1)+" H"+(xs+6);
+      out += '<path class="e-'+E.k+'" d="'+d+'" fill="none" stroke-width="2.4" stroke-linejoin="round"'+(st.step===E.a && st.chk[E.a] ? '' : ' opacity=".75"')+'/>';
+      out += '<path class="head-'+E.k+'" d="M'+xs+','+B.y.toFixed(1)+' l8,-5 v10 z"/>';
+    }
+    svg.innerHTML = out;
+  }
+
+  /* ---------- 図 ---------- */
+  function renderFigs(){
+    var k = st.step, boxes = document.querySelectorAll(".figbox");
+    for(var b = 0; b < boxes.length; b++){
+      var id = boxes[b].getAttribute("data-fb"), T = DATA.figs[id][k];
+      boxes[b].style.display = T ? "" : "none";
+      boxes[b].querySelector("h3").textContent = T || "";
+      var svgs = boxes[b].querySelectorAll("svg.fig");
+      for(var s = 0; s < svgs.length; s++){
+        var fs = svgs[s].getAttribute("data-fs");
+        svgs[s].style.display = (!fs || inRange(fs, k)) ? "block" : "none";
+        var els = svgs[s].querySelectorAll("[data-s]");
+        for(var i = 0; i < els.length; i++){
+          var e = els[i], on = inRange(e.getAttribute("data-s"), k);
+          e.classList.toggle("off", !on);
+          var d = e.getAttribute("data-dim");
+          e.classList.toggle("dim", !!d && inRange(d, k));
+        }
+      }
+    }
+    $("figcap").textContent = CAPS[k];
+  }
+
+  /* ---------- 小問 ---------- */
+  function rng(k){
+    // 画面確認用（#ハッシュ付き）のときだけ、毎回同じ並びにする。ふだんは毎回ばらばら。
+    if(window.__noscroll){ var s = (k * 977 + 13) >>> 0; return function(){ s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+    return Math.random;
+  }
+  function permOf(k){
+    if(!st.perm[k]){
+      var n = STEPS[k].why.opts.length, a = [], r = rng(k), i, j, t;
+      for(i = 0; i < n; i++) a.push(i);
+      for(i = n - 1; i > 0; i--){ j = Math.floor(r() * (i + 1)); t = a[i]; a[i] = a[j]; a[j] = t; }
+      st.perm[k] = a;
+    }
+    return st.perm[k];
+  }
+  function blankHTML(k, bi, live){
+    var B = STEPS[k].blanks[bi], v = st.val[k][B.id], cls = "bx", res = "";
+    if(st.chk[k]){ var ok = (v === B.ans); cls += ok ? " ok" : " ng"; res = '<span class="res">'+(ok?'〇':'×')+'</span>'; }
+    else if(live && st.sel === bi) cls += " sel";
+    var shown = (v === undefined) ? '<span class="lb">'+B.id+'</span>' : (B.kind==="choice" ? MARKS.charAt(+v) : v);
+    return '<button type="button" class="'+cls+'" data-bi="'+bi+'" aria-label="'+B.id+(v===undefined?' 未入力':' '+v)+'"'+((st.chk[k]||!live)?' disabled':'')+'>'+shown+res+'</button>';
+  }
+  function renderStep(){
+    var k = st.step, S = STEPS[k], box = $("stepbox"), h = "", live = (st.first[k] !== null);
+    h += '<p class="n"><span>'+S.grp+'　小問'+(k+1)+' / '+N+'</span><span class="chip lv'+S.hintlv+'">ヒント：'+esc(S.hint)+'</span></p>';
+    h += '<h3>'+esc(S.name)+'</h3>';
+    // 1. 小問の文を先に読む
+    if(S.pre) h += '<p class="pre">'+esc(S.pre)+'</p>';
+    h += '<p class="qtext">';
+    for(var t = 0; t < S.text.length; t++){
+      var seg = S.text[t];
+      if(seg.s !== undefined) h += esc(seg.s); else h += blankHTML(k, seg.b, live);
+    }
+    h += '</p>';
+    var cbs = [];
+    for(var b = 0; b < S.blanks.length; b++){
+      var B = S.blanks[b];
+      if(B.kind === "choice"){
+        cbs.push(B);
+        h += '<ul class="grp-opts" aria-label="'+B.id+' の解答群"><li class="gl">'+B.id+' の解答群</li>';
+        for(var c = 0; c < B.opts.length; c++) h += '<li>'+MARKS.charAt(c)+' '+esc(B.opts[c])+'</li>';
+        h += '</ul>';
+      }
+    }
+    // 2. 解く前に「何のため？」を選ぶ（並びは毎回ばらばら。最初に選んだものを結果に出す）
+    h += '<p class="q">'+esc(S.why.q)+(live ? '' : '　（先に選ぶと、空欄に入力できます）')+'</p><div class="opts" id="opts">';
+    var pm = permOf(k), pf = st.first[k], pc = st.cur[k];
+    for(var i = 0; i < pm.length; i++){
+      var oi = pm[i], o = S.why.opts[oi], mk = "";
+      if(pf !== null){ if(o.ok) mk = "○"; else if(pf === oi) mk = "×"; }
+      h += '<button type="button" data-o="'+oi+'" class="'+(pc===oi?'picked':'')+'"><span class="mk">'+mk+'</span>'+esc(o.t)+'</button>';
+    }
+    h += '</div><div id="why-fb">';
+    if(pf !== null){
+      var po = S.why.opts[pf], co = null;
+      for(var j = 0; j < S.why.opts.length; j++) if(S.why.opts[j].ok) co = S.why.opts[j];
+      h += '<p class="fb '+(po.ok?'ok':'ng')+'"><b>最初に選んだ答え　'+(po.ok?'○ ':'× ')+'</b>'+esc(po.r)+'</p>';
+      if(!po.ok) h += '<p class="fb ok"><b>○ 正解は　</b>'+esc(co.t)+'。'+esc(co.r)+'</p>';
+      if(pc !== pf) h += '<p class="fb"><b>選び直し</b>　結果に反映されるのは、最初に選んだ答えです。</p>';
+    }
+    h += '</div>';
+    // 3. 解く
+    if(live){
+      h += '<div class="solve">';
+      if(!st.chk[k]){
+        var mo = 0; for(var q2 = 0; q2 < cbs.length; q2++) mo = Math.max(mo, cbs[q2].opts.length);
+        h += '<div class="pad" id="pad"><button type="button" data-d="−">−</button>';
+        for(var d = 0; d <= 9; d++) h += '<button type="button" data-d="'+d+'">'+d+'</button>';
+        h += '<button type="button" data-d="del" class="wide">消す</button></div>';
+        h += '<div class="pad" id="padc">';
+        for(var z = 0; z < Math.max(mo, cbs.length ? 3 : 0); z++) h += '<button type="button" data-c="'+z+'">'+MARKS.charAt(z)+'</button>';
+        h += '</div><div class="ctl"><button type="button" id="check" class="prim">答え合わせ</button></div>';
+      } else {
+        var okN = 0; for(var u = 0; u < S.blanks.length; u++) if(st.val[k][S.blanks[u].id] === S.blanks[u].ans) okN++;
+        h += '<p class="sum">'+(okN===S.blanks.length?'すべて〇':okN+' / '+S.blanks.length+' が〇')+'　（「何のための小問か」は、最初の選択で '+(S.why.opts[pf].ok?'〇':'×')+'）</p>';
+        h += '<p class="marks">正解のマーク　' + S.blanks.map(function(B2){ return '<span>'+B2.id+'＝'+(B2.kind==="choice"?MARKS.charAt(+B2.ans):B2.ans)+'</span>'; }).join('') + '</p>';
+        h += '<div class="expl"><h3>解き方</h3><ol>' + S.expl.map(function(x){return '<li>'+esc(x)+'</li>';}).join('') + '</ol></div>';
+        h += '<p class="shape"><b>着眼点</b>　'+esc(S.shape)+'</p>';
+        if(S.card){ h += '<p class="shape">' + S.card.map(function(c){return '<a href="'+c.h+'">'+esc(c.l)+'</a>';}).join('　') + '</p>'; }
+        h += '<p class="stall">'+esc(S.stall)+'</p>';
+        if(S.carry && S.carry.length){
+          h += '<div class="use"><h3>この結果の使い道</h3><ul>' + S.carry.map(function(c){return '<li>小問'+(c.to+1)+'　'+esc(c.t)+'</li>';}).join('') + '</ul></div>';
+        } else {
+          h += '<div class="use"><h3>最後の小問</h3><ul><li>前の手順をもう一度使います。ここから先の小問はありません。</li></ul></div>';
+        }
+        h += '<div class="ctl"><button type="button" id="retry">解き直す</button>'
+          + (k < N-1 ? '<button type="button" id="next" class="prim">次の小問へ（小問'+(k+2)+'）</button>' : '') + '</div>';
+      }
+      h += '</div>';
+    }
+    box.innerHTML = h;
+    if(live && !st.chk[k]) syncPad();
+    bind();
+  }
+  function syncPad(){
+    var k = st.step, B = STEPS[k].blanks[st.sel], pad = $("pad"), padc = $("padc");
+    if(!pad) return;
+    var isC = B && B.kind === "choice";
+    var pb = pad.querySelectorAll("button"), cb = padc.querySelectorAll("button");
+    for(var i = 0; i < pb.length; i++) pb[i].disabled = !!isC;
+    for(var j = 0; j < cb.length; j++) cb[j].disabled = !isC || (B && j >= B.opts.length);
+    padc.style.display = padc.children.length ? "grid" : "none";
+  }
+  function setVal(v){
+    var k = st.step, B = STEPS[k].blanks[st.sel];
+    if(!B) return;
+    if(v === null){ delete st.val[k][B.id]; } else { st.val[k][B.id] = v; }
+    if(v !== null){
+      var bs = STEPS[k].blanks, nx = -1;
+      for(var i = st.sel + 1; i < bs.length; i++){ if(st.val[k][bs[i].id] === undefined){ nx = i; break; } }
+      if(nx < 0){ for(var i2 = 0; i2 < bs.length; i2++){ if(st.val[k][bs[i2].id] === undefined){ nx = i2; break; } } }
+      if(nx >= 0) st.sel = nx;
+    }
+    renderStep();
+  }
+  function bind(){
+    var k = st.step, opts = $("opts");
+    opts.addEventListener("click", function(ev){
+      var b = ev.target.closest("button[data-o]"); if(!b || st.chk[k]) return;
+      var oi = +b.getAttribute("data-o");
+      if(st.first[k] === null) st.first[k] = oi;
+      st.cur[k] = oi; renderStep();
+    });
+    var bxs = document.querySelectorAll("#stepbox .bx");
+    for(var i = 0; i < bxs.length; i++) bxs[i].addEventListener("click", function(ev){ st.sel = +ev.currentTarget.getAttribute("data-bi"); renderStep(); });
+    var pad = $("pad"), padc = $("padc");
+    if(pad) pad.addEventListener("click", function(ev){
+      var b = ev.target.closest("button[data-d]"); if(!b || b.disabled) return;
+      var d = b.getAttribute("data-d"); setVal(d === "del" ? null : d);
+    });
+    if(padc) padc.addEventListener("click", function(ev){
+      var b = ev.target.closest("button[data-c]"); if(!b || b.disabled) return; setVal(b.getAttribute("data-c"));
+    });
+    var ck = $("check");
+    if(ck) ck.addEventListener("click", function(){
+      st.chk[k] = true; if(k + 1 > st.maxStep && k < N-1) st.maxStep = k + 1; renderAll();
+    });
+    var rt = $("retry");
+    if(rt) rt.addEventListener("click", function(){ st.chk[k] = false; st.val[k] = {}; st.sel = 0; st.perm[k] = null; st.cur[k] = st.first[k]; renderAll(); });
+    var nx = $("next");
+    if(nx) nx.addEventListener("click", function(){ go(k + 1); });
+  }
+  function go(n){
+    n = Math.max(0, Math.min(N-1, n));
+    st.step = n; if(n > st.maxStep) st.maxStep = n;
+    st.sel = Math.max(0, firstEmpty(n));
+    renderAll();
+    var el = $("stepbox"); try{ if(!window.__noscroll) el.scrollIntoView({block:"start", behavior:"smooth"}); }catch(e){}
+  }
+  $("maplist").addEventListener("click", function(ev){
+    var b = ev.target.closest("button[data-n]"); if(!b || b.disabled) return; go(+b.getAttribute("data-n"));
+  });
+  document.addEventListener("keydown", function(ev){
+    if(ev.target && /^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName)) return;   // サイトの検索の箱に打った数字を拾わない
+    if(ev.ctrlKey || ev.metaKey || ev.altKey) return;
+    var k = st.step; if(st.first[k] === null || st.chk[k]) return;
+    var B = STEPS[k].blanks[st.sel]; if(!B) return;
+    if(/^[0-9]$/.test(ev.key)){ if(B.kind === "choice"){ if(+ev.key < B.opts.length) setVal(ev.key); } else setVal(ev.key); }
+    else if(ev.key === "-" && B.kind !== "choice") setVal("−");
+    else if(ev.key === "Backspace" || ev.key === "Delete") setVal(null);
+  });
+
+  /* ---------- 正答率 ---------- */
+  function renderRates(){
+    var T = DATA.rates[st.rateTab], h = '<h2>本番の正答率の推移</h2><p class="srct" style="margin:0 0 6px">下の数値は、本番（'+T.title+'）で同じ位置にある小問の正答率です。この自作問題の正答率ではありません。</p><div class="rtabs" role="tablist">';
+    ["2026","2025","2024"].forEach(function(y){ h += '<button type="button" role="tab" data-y="'+y+'" aria-selected="'+(y===st.rateTab)+'">'+DATA.rates[y].title+'</button>'; });
+    h += '</div>';
+    for(var i = 0; i < T.rows.length; i++){
+      var r = T.rows[i], prev = i ? T.rows[i-1][1] : null;
+      var now = (st.rateTab === DATA.rateYear && DATA.ratemap[st.step] === i);
+      h += '<div class="rrow'+(now?' now':'')+'"><span class="rl">'+r[0]+'</span><span class="rb"><i style="width:'+r[1]+'%"></i></span><span class="rv">'+r[1].toFixed(2)+'%</span>';
+      var sub = "";
+      if(prev !== null) sub += '<span class="dn">前の小問から −'+(prev - r[1]).toFixed(2)+'</span>';
+      if(T.notes[r[0]]) sub += (sub?'　':'')+'<span class="th">ヒントが少なくなる小問：'+esc(T.notes[r[0]])+'</span>';
+      if(now) sub += (sub?'　':'')+'いま解いている小問は、本番ではこの位置にあたります';
+      if(sub) h += '<div class="rsub">'+sub+'</div>';
+      h += '</div>';
+    }
+    h += '<span class="srct">出典：大学入試センター 設問別得点率及び正答率（本試験）。2026・2025 は全員必答、2024 は選択問題のため、選んだ受験者についての値と推定しています。'
+      + 'エ-カ のように範囲で採点される箇所は、その範囲全体の正答率です。最後の小問には、前の小問を解いていない人も含まれます。'
+      + '低下の要因は断定できません。本番の問題文・図・数値は掲載していません。</span>';
+    $("rates").innerHTML = h;
+    var tabs = $("rates").querySelectorAll("button[data-y]");
+    for(var j = 0; j < tabs.length; j++) tabs[j].addEventListener("click", function(ev){ st.rateTab = ev.currentTarget.getAttribute("data-y"); renderRates(); });
+  }
+
+  /* ---------- 熟考 ---------- */
+  function renderJukko(){
+    var h = "";
+    DATA.quotes.forEach(function(q){
+      h += '<div class="qa"><b>'+esc(q.when)+'</b><p class="my">'+esc(q.my)+'</p><p class="hon">「'+esc(q.q)+'」</p><span class="from">出典：'+esc(q.from)+'</span></div>';
+    });
+    h += '<p class="my">誘導のない小問や、前の小問とつながらない小問もあります。その場合は、前の結果を探さず、問題文の条件の意味から考えます。</p>';
+    $("jukko-body").innerHTML = h;
+  }
+
+  function renderAll(){ renderMap(); renderFigs(); renderStep(); renderRates(); }
+
+  /* ---------- 見た目の確認用：#s0、#s1-why、#linked、#s6-done ---------- */
+  function fill(k, wrongId){
+    var bs = STEPS[k].blanks;
+    for(var i = 0; i < bs.length; i++) st.val[k][bs[i].id] = bs[i].ans;
+    if(wrongId){ for(var j = 0; j < bs.length; j++) if(bs[j].id === wrongId) st.val[k][wrongId] = DATA.wrongVal || (bs[j].ans === "3" ? "8" : "3"); }
+    st.chk[k] = true;
+    var o = STEPS[k].why.opts; for(var q = 0; q < o.length; q++) if(o[q].ok){ st.first[k] = q; st.cur[k] = q; }
+  }
+  function fromHash(){
+    var h = (location.hash || "").replace("#","");
+    window.__noscroll = !!h;
+    if(h === "s1-why"){ st.step = 0; st.first[0] = 1; st.cur[0] = 1; }
+    else if(h === "linked"){ for(var i = 0; i <= DATA.linkStep; i++) fill(i); st.step = DATA.linkStep; st.maxStep = DATA.linkStep + 1; }
+    else if(h === "s6-done"){ for(var j = 0; j < N-1; j++) fill(j); fill(N-1, DATA.wrongId); st.step = N-1; st.maxStep = N-1; }
+    st.sel = Math.max(0, firstEmpty(st.step));
+    renderAll();
+  }
+  renderJukko();
+  fromHash();
+  window.addEventListener("hashchange", function(){ location.reload(); });
+  window.addEventListener("resize", function(){ drawArrows(); });
+})();
+</script>
+</body>
+</html>
