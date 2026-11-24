@@ -112,7 +112,7 @@
 .bk .mini p.bq{margin-top:4px}
 .bk .mini-t{font-size:14px;color:var(--sub);line-height:1.6;margin-top:4px}
 .bk .bmore{margin-top:8px;font-size:15px}
-.bk .bnote{font-size:12.5px;font-weight:400;color:var(--faint);margin-left:6px}
+.bk .bhead{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 10px}.bhead h2{margin-right:0}.bnote{font-size:12.5px;font-weight:400;color:var(--faint);margin-left:0}
 .bk .bsrc{margin-top:6px;font-size:12.5px;color:var(--faint);line-height:1.6}
 @media (max-width:380px){.bk h1{font-size:20px}.bk .picks button{font-size:15px}.bk .now{font-size:13px}}
 @media (prefers-reduced-motion:reduce){.bk .p,.bk .p circle,.bk .liq{transition:none}}
@@ -189,7 +189,7 @@ function card(c){
  '<div id="caps"></div>'+
  '<section class="keep"><h2>覚えておくこと</h2><p>'+c.joseki+'</p></section>'+
  (c.extra?'<p class="extra">'+c.extra+'</p>':'')+
- '<section><h2>本番での出題例<span class="bnote"> 出典：<a href="https://www.dnc.ac.jp/" rel="noopener">大学入試センター</a>、設問は要約</span></h2><ul class="use">'+c.use.map(function(u,ui){var seen=c.use.slice(0,ui).some(function(v){return v.href===u.href});return '<li><div class="h"><span>'+u.h+'</span>'+(u.rate?'<span class="r">正答率 '+u.rate+'</span>':'')+'</div><p>'+u.t+'</p>'+(u.href&&!seen?'<p class="bmore" style="margin-top:2px"><a href="'+u.href+'" target="_blank" rel="noopener">'+u.vl+'</a></p>':'')+'</li>'}).join('')+'</ul></section>'+
+ '<section><div class="bhead"><h2>本番での出題例</h2><span class="bnote">出典：<a href="https://www.dnc.ac.jp/" rel="noopener">大学入試センター</a>、設問は要約</span></div><ul class="use">'+c.use.map(function(u,ui){var seen=c.use.slice(0,ui).some(function(v){return v.href===u.href});return '<li><div class="h"><span>'+u.h+'</span>'+(u.rate?'<span class="r">正答率 '+u.rate+'</span>':'')+'</div><p>'+u.t+'</p>'+(u.href&&!seen?'<p class="bmore" style="margin-top:2px"><a href="'+u.href+'" target="_blank" rel="noopener">'+u.vl+'</a></p>':'')+'</li>'}).join('')+'</ul></section>'+
  '<section><h2>同じパターンの反応</h2><div class="same">'+c.tiles.map(function(t,i){return '<button type="button" data-t="'+i+'" aria-expanded="false">'+t.b+'</button>'}).join('')+'</div>'+c.tiles.map(function(t,i){return '<div class="mini" id="mini'+i+'" hidden>'+t.h+'</div>'}).join('')+'</section>'+
  '<p class="bmore">'+(c.link?'<a href="'+(D.base==null?'https://hoshitobu.github.io/hoshitobu-survey/muki/':D.base)+c.link.p+'">くわしく → '+c.link.l+'</a>　':'')+'<a href="#">図鑑の一覧へ</a></p></div>';
  app.innerHTML=h;

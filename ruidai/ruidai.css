@@ -50,7 +50,24 @@
 .thcard header { display: flex; align-items: baseline; gap: 12px; }
 .thcard h3 { margin: 0; font-size: 19px; }
 .c-id { font-size: 13px; font-weight: 700; color: var(--accent); letter-spacing: .06em; }
-.c-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 28px; }
+.c-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 0 28px; }   /* カードが狭いときは1列（1行に十数字の細切れにしない） */
+/* 式の帯：1項目1行。「名前：中身」は名前を左の列にそろえる */
+.fml-rows { display: grid; gap: 6px; font-size: 18px; color: var(--ink); }
+.fml-lab { grid-template-columns: max-content minmax(0, 1fr); gap: 8px 14px; align-items: baseline; }
+.fml-lab .fr { display: contents; }
+.fr-l { font-size: 15px; font-weight: 700; color: var(--accent); white-space: nowrap; }
+.fr-b { min-width: 0; }
+.fr-n { display: block; margin-top: 2px; font-size: .82em; color: var(--sub); line-height: 1.6; }
+.fml-lab .fr-n { grid-column: 2; margin-top: -4px; }
+.fml-rows:not(.fml-lab) .fr + .fr { padding-top: 6px; border-top: 1px dashed var(--line-strong); }
+/* 道具カードの動く図 */
+.cgif { margin: 4px 0 10px; }
+.cgif img { display: block; width: 100%; max-width: 720px; height: auto; border-radius: 6px; border: 1px solid var(--line-strong); }
+.cgif figcaption { margin-top: 4px; font-size: 14px; color: var(--sub); }
+/* 酸化数：化学式の上に小さく */
+.ox { position: relative; display: inline-block; padding-top: 1.15em; }      /* 化学式の基準線を、→ と同じ高さにそろえる */
+.ox-n { position: absolute; top: 0; left: 50%; transform: translateX(-50%); font-size: 12px; line-height: 1.2; font-weight: 700; color: var(--accent); letter-spacing: .02em; white-space: nowrap; }
+.ox-k { display: block; font-size: 12px; color: var(--sub); margin-top: 2px; }
 .c-k { margin: 10px 0 4px !important; font-size: 13px; font-weight: 700; letter-spacing: .06em; color: var(--accent); }
 .c-trap { color: var(--sub); }
 .thcard ul { margin: 0; padding-left: 1.3em; }
@@ -83,13 +100,6 @@ details.fold[open] > summary::before { content: "－ "; }
 .mk[aria-pressed="true"].mk-again { background: var(--ink); border-color: var(--ink); color: var(--bg); }
 .mk[aria-pressed="true"]::before { content: "✓ "; }
 .prog { color: var(--faint); font-size: 15px; }
-
-/* ---------- タイマー ---------- */
-.timer { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 12px; padding: 10px 14px; border: 1px solid var(--line-strong); border-radius: 8px; }
-.t-goal { font-weight: 700; }
-.t-now { font-size: 26px; font-weight: 300; font-variant-numeric: tabular-nums; min-width: 3.2em; }
-.timer.is-over .t-now { color: var(--accent); font-weight: 700; }
-.timer.is-over .t-now::after { content: "（目標を超えた）"; font-size: 13px; font-weight: 400; margin-left: 6px; }
 
 /* ---------- 組み合わせ ---------- */
 ol.flow { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px 30px; }
@@ -143,6 +153,10 @@ blockquote.kimete p { margin: 0; }
   .eq-ion .eqf { font-size: 16px; }
   .eq-chem .eqf { font-size: 17px; }
   .thcard { padding: 14px 14px 12px; }
+  .fml-rows { font-size: 16px; }
+  .fml-lab { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .fml-lab .fr-b { margin-bottom: 8px; }
+  .fml-lab .fr-n { grid-column: 1; margin: -4px 0 8px; }
   .q-body { font-size: 17px; }
   .fold-b { padding-left: .6em; }
   ol.flow { flex-direction: column; gap: 26px; }
@@ -218,8 +232,6 @@ blockquote.kimete p { margin: 0; }
 .ap-act { margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
 .ap-check { font-weight: 800; }
 .ap-msg { font-size: 14px; color: var(--sub); }
-.qitem.is-locked .folds { display: none; }
-.qitem.is-locked .folds-note { display: block; }
 @media (max-width: 560px) {
   .ap-row { grid-template-columns: auto minmax(0, 1fr); }
   .ap-r { grid-column: 2; text-align: left; min-height: 0; }
@@ -323,3 +335,89 @@ a.tbadge:hover { border-color: var(--accent); }
 .ruidai .q-sum { flex: 1 1 100%; font-size: 14.5px; color: var(--muted, #8a8f98); line-height: 1.7; }
 .ruidai .qfold[open] > summary .q-sum { display: none; }
 .ruidai .qfold > summary .mini { font-size: 13px; color: var(--muted, #8a8f98); }
+
+
+/* ================= 解く画面（2026-11-25）：いつも見える時計・記録・道具カード ================= */
+/* 左に時計の板（広い画面）。節は右の列に、見出しを上に置く */
+.ruidai .rd-wrap { display: grid; grid-template-columns: 196px minmax(0, 1fr); column-gap: 32px; align-items: start; }
+.ruidai .rd-secs { min-width: 0; }
+.ruidai .rd-secs .card { grid-template-columns: minmax(0, 1fr); }
+.ruidai .rd-secs .card > *, .ruidai .rd-secs .card > h2 { grid-column: 1; grid-row: auto; }
+.ruidai .rd-secs .card > h2 { margin-bottom: 14px; }
+.ruidai .rd-side { position: sticky; top: calc(var(--hdr-h, 56px) + 24px); margin-top: 40px; padding: 0; min-width: 0; }
+body:has(> .sub) .ruidai .rd-side { top: calc(var(--hdr-h, 56px) + 64px); }
+.ruidai .rd-eyebrow { margin: 0 0 4px; font-size: 12px; font-weight: 700; letter-spacing: .08em; color: var(--faint); }
+.ruidai .rd-now { margin: 0; font-size: 16px; font-weight: 700; line-height: 1.5; }
+.ruidai .rd-clock { margin: 10px 0 2px; font-size: 44px; font-weight: 300; line-height: 1.1; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.ruidai .rd-goal { margin: 0 0 10px; font-size: 14px; color: var(--sub); }
+.ruidai .rd-goal[hidden] { display: none; }
+.ruidai .rd-side.is-over .rd-clock, .ruidai .rd-dock.is-over .rd-clock { color: var(--accent); font-weight: 600; }
+.ruidai .rd-side.is-run .rd-clock::after { content: ""; display: inline-block; width: 7px; height: 7px; margin-left: 8px; border-radius: 50%; background: var(--accent); vertical-align: middle; }
+.ruidai .rd-btns { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin: 10px 0 12px; }
+.ruidai .rd-btns .rd-start { background: var(--accent-fill); border-color: var(--accent-fill); color: var(--on-accent); padding: 0 12px; }
+.ruidai .rd-btns .rd-start:disabled, .ruidai .rd-btns .rd-reset:disabled { opacity: .45; cursor: default; }
+.ruidai .rd-btns .rd-reset { padding: 0 14px; font-weight: 400; color: var(--sub); }
+.ruidai .rd-help { margin: 0; font-size: 13px; line-height: 1.7; color: var(--faint); }
+.ruidai .rd-dock { display: none; }
+
+/* 問題の横の記録：1回目 1:12 ×　2回目 0:48 ○ */
+.ruidai .q-log { margin-left: auto; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0 14px; font-size: 13px; color: var(--faint); font-variant-numeric: tabular-nums; }
+.ruidai .q-log:empty { display: none; }
+.ruidai .lg { white-space: nowrap; }
+.ruidai .lg-t { color: var(--sub); }
+.ruidai .lg-in .lg-t { color: var(--accent); font-weight: 700; }
+.ruidai .lg-r { font-weight: 700; }
+.ruidai .lg-ok { color: var(--ok); }
+.ruidai .lg-ng { color: var(--warn); }
+.ruidai .is-pool .q-log { display: none; }
+
+/* 分からないときは：道具カード */
+.ruidai .folds-help { margin: 0 0 6px; }
+.ruidai .folds-help:empty { display: none; }
+.ruidai .fold-cards .thcard { margin: 0 0 12px; }
+.ruidai .cp-h { margin: 8px 0 6px !important; font-size: 13px; font-weight: 700; letter-spacing: .04em; color: var(--accent); }
+.ruidai .qitem.is-locked .folds:not(.folds-help) { display: none; }
+
+/* 結果の欄：自分で ○／× をつけるのは、答えを開いたあとだけ */
+.ruidai .mark .mk, .ruidai .mark .t-retry, .ruidai .mark .mk-h { display: none; }
+.ruidai .qitem.self-judge.is-ans-open .mark .mk, .ruidai .qitem.self-judge.is-done .mark .mk { display: inline-block; }
+.ruidai .qitem.self-judge.is-wrote:not(.is-ans-open):not(.is-done) .mark .mk-h { display: inline; }
+.ruidai .qitem.is-done .mark .t-retry { display: inline-block; }
+.ruidai .mk-h { font-size: 14px; color: var(--sub); }
+.ruidai .ap-self .ap-s { margin-bottom: 8px !important; }
+.ruidai .ap-self .ap-act { margin-top: 4px; }
+.ruidai .t-retry { color: var(--sub); font-weight: 400; }
+
+/* 道具カードの一覧（ページの最後） */
+.ruidai .cl-list { display: grid; gap: 8px; }
+.ruidai details.cl-item { border: 1px solid var(--line-strong); border-radius: 8px; scroll-margin-top: calc(var(--hdr-h, 56px) + 16px); }
+.ruidai details.cl-item > summary { cursor: pointer; list-style: none; padding: 12px 16px; font-weight: 700; font-size: 16px; }
+.ruidai details.cl-item > summary::-webkit-details-marker { display: none; }
+.ruidai details.cl-item > summary::before { content: "＋ "; color: var(--accent); }
+.ruidai details.cl-item[open] > summary::before { content: "－ "; }
+.ruidai .cl-body { padding: 0 16px 16px; min-width: 0; }
+.ruidai .cl-body .thcard { border: 0; padding: 0; }
+.ruidai .cl-body .thcard > header { display: none; }
+.ruidai .cl-use { margin: 12px 0 0; padding-top: 10px; border-top: 1px dashed var(--line-strong); font-size: 14px; color: var(--sub); line-height: 1.9; }
+.ruidai .cl-use a { margin-right: 2px; }
+.ruidai .qitem { scroll-margin-top: calc(var(--hdr-h, 56px) + 16px); }
+
+@media (max-width: 960px) {
+  .ruidai .rd-wrap { grid-template-columns: 164px minmax(0, 1fr); column-gap: 22px; }
+  .ruidai .rd-clock { font-size: 38px; }
+}
+/* スマホ：板は出さず、画面の下に固定の帯 */
+@media (max-width: 760px) {
+  .ruidai .rd-wrap { display: block; }
+  .ruidai .rd-side { display: none; }
+  .ruidai .rd-secs .card { padding: 32px 0; }
+  .ruidai .rd-dock { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; align-items: center; gap: 12px;
+    padding: 8px 16px calc(8px + env(safe-area-inset-bottom)); background: var(--bg); color: var(--ink); border-top: 1px solid var(--line-strong); }
+  .ruidai .rd-dock.is-off { display: none; }
+  .ruidai .rd-dock .rd-clock { margin: 0; font-size: 30px; }
+  .ruidai .rd-dock .rd-now { flex: 1; min-width: 0; font-size: 14px; font-weight: 400; color: var(--sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ruidai .rd-dock .rd-start { background: var(--accent-fill); border-color: var(--accent-fill); color: var(--on-accent); min-width: 104px; padding: 0 14px; }
+  .ruidai .rd-dock .rd-start:disabled { opacity: .45; }
+  main.ruidai { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+  .ruidai .q-log { margin-left: 0; justify-content: flex-start; flex-basis: 100%; }
+}
