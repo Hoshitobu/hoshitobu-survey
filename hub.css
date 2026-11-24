@@ -69,6 +69,8 @@
 .tier .fld-frame { margin: 8px 0; }
 .tier .fld-frame > div { min-height: 56px; padding: 8px 12px; }
 .tier .hub-btns a { background: var(--bg); }
+/* 段の中の主ボタンは背景を --bg に戻すので、文字も地の色（ライトは黒・ダークは白）にして枠で主ボタンと分かるようにする */
+.tier .hub-btns a.is-main { color: var(--ink); border-color: var(--accent); }
 .tier-rui { font-size: 15px; color: var(--sub); }
 @media (max-width: 760px) { .tier .fld-frame { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .pk-other { margin-top: 18px; }
