@@ -17,7 +17,7 @@
     var rel = decodeURIComponent(location.pathname);
     rel = rel.indexOf(bp) === 0 ? rel.slice(bp.length) : rel.replace(/^\//, "");
     if (rel === "" || /\/$/.test(rel) && !/^(muki|seiri|kyotsu|ruidai|enshu)\/$/.test(rel)) rel = rel + "index.html";
-    if (/^(muki|seiri|kyotsu|ruidai|enshu)\/$/.test(rel)) rel += "index.html";
+    if (/^(muki|seiri|kyotsu|ruidai|enshu|hayaoshi)\/$/.test(rel)) rel += "index.html";
     if (rel === "index.html") return ["top", null];
     if (rel === "kakomon.html") return /[?&]view=quick/.test(location.search) ? ["score", "quick"] : ["solve", "kakomon"];
     if (rel === "enshu/index.html") return ["solve", "kakomon"];
@@ -28,6 +28,10 @@
     if (/^muki\//.test(rel)) return ["seiri", "muki"];
     if (rel === "seiri/zukei.html" || /^seiri\/(hansha|kusari)/.test(rel)) return ["seiri", "zukei"];
     if (/^seiri\/keiryo/.test(rel)) return ["seiri", "keiryo"];
+    if (/^hayaoshi\/muki/.test(rel)) return ["seiri", "muki"];
+    if (/^hayaoshi\/zukei/.test(rel)) return ["seiri", "zukei"];
+    if (/^hayaoshi\/keiryo/.test(rel)) return ["seiri", "keiryo"];
+    if (/^hayaoshi\//.test(rel)) return ["seiri", "today"];
     if (/^seiri\//.test(rel)) return ["seiri", null];
     return [null, null];
   }
@@ -88,6 +92,10 @@
     if (/^seiri\/hansha/.test(u)) return "知識の整理 › 図形の性質 › 早押し";
     if (/^seiri\/kusari/.test(u)) return "知識の整理 › 図形の性質 › 誘導をたどる";
     if (/^seiri\/keiryo/.test(u)) return "知識の整理 › 図形と計量 › 早押し";
+    if (/^hayaoshi\/muki/.test(u)) return "知識の整理 › 無機化学 › 早押し";
+    if (/^hayaoshi\/zukei/.test(u)) return "知識の整理 › 図形の性質 › 早押し";
+    if (/^hayaoshi\/keiryo/.test(u)) return "知識の整理 › 図形と計量 › 早押し";
+    if (/^hayaoshi\//.test(u)) return "知識の整理 › 早押し";
     if (/^ruidai\//.test(u)) return "解く › 類題演習";
     if (/^seiri\//.test(u)) return "知識の整理";
     if (/^kyotsu\//.test(u)) return "点数と集計 › 平均点・正答率";
