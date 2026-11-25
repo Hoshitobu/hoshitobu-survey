@@ -294,8 +294,7 @@
 .kk .kk-brow .kk-btrack .is-lost { background: var(--kk-warn); }
 .kk .kk-brow .kk-btrack .is-why { background: var(--kk-warn); }
 .kk .kk-brow .kk-bval { text-align: right; font-size: 14px; font-variant-numeric: tabular-nums; color: var(--kk-faint); white-space: nowrap; }
-.kk .kk-brow .kk-bval b { color: var(--kk-ink); font-size: 16px; }
-.kk .kk-brow.is-top .kk-bname { color: inherit; }   /* いちばん落とした項目も色は変えない（棒の長さで分かる） */
+.kk .kk-brow .kk-bval b { color: var(--kk-ink); font-size: 16px; }.kk .kk-brow.is-top .kk-bname { color: inherit; }   /* いちばん落とした項目も色は変えない（棒の長さで分かる） */
 .kk .kk-split { display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; }
 
 .kk .kk-miss { list-style: none; margin: 8px 0 0; padding: 0; }
@@ -393,7 +392,7 @@
   .kk .kk-item { grid-template-columns: 56px minmax(0, 1fr) auto; gap: 4px 8px; }
   .kk .kk-item .kk-pts { display: none; }
   .kk .kk-why { padding-left: 0; }
-  .kk .kk-brow { grid-template-columns: 92px minmax(0, 1fr) 76px; gap: 8px; }
+  .kk .kk-brow { grid-template-columns: minmax(0, 92px) minmax(40px, 1fr) max-content; gap: 8px; }   /* 右の数値（「−27（100%）」など）が 76px に入らず、ページが横にはみ出していた。数値の列は中身の幅に */
   .kk .kk-ox button { width: 44px; height: 38px; }
   .kk .kk-qlist { grid-template-columns: 1fr; }
   .kk .kk-meta { display: grid; gap: 2px; }
