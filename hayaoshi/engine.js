@@ -1,6 +1,6 @@
 /* 早押しのエンジン（公開サイト用・手元の版）。科目を知らない。
  * 問題データ（window.HAYAOSHI_PACKS[名前]）を差しかえれば、どの科目でも動く。形は 設計_早押しの問題データ.md。
- * ページ側の指定（window.HAYAOSHI_PAGE）：{ packs: ['muki'], root: 'hy-root' }
+ * ページ側の指定（window.HAYAOSHI_PAGE）：{ packs: ['muki'], root: 'hy-root', online: true }　online は入口のページだけ（ほかの人との対戦の欄を出す）
  *
  * 端末の記録（localStorage、どれも送らない）：
  *   hoshitobu-hayaoshi:wrong   まちがえた問い  { <問題id>: { due: 次に混ぜる回, n: まちがえた回数, guess: 勘だったか, last: 'YYYY-MM-DD' } }
@@ -18,9 +18,10 @@ window.onerror = function (m, u, l) {
 };
 
 /* ============================================================ 設定（ここだけ書きかえる） */
-var FIREBASE_CONFIG = null;          // null のあいだは、作り物のゴースト＋練習相手（CPU）で動く
+var FIREBASE_CONFIG = (window.HOSHITOBU_FIREBASE && window.HOSHITOBU_FIREBASE.apiKey) ? window.HOSHITOBU_FIREBASE : null;   // apiKey が空（または設定ファイルが無い）あいだは null：Firebase にはつながず、練習相手だけで動く
+var GHOSTS_ON = false;               // ゴースト（段階1）。送る文の決定を待っているため、false のあいだは読まない・送らない・結果の「記録を送る」欄と「ランキングに名前が…」も出さない
 var DISCORD_URL = '';
-var PHRASES = ['よろしく', 'ナイス！', 'おしい', 'もう1戦', 'ありがとう'];
+var PHRASES = ['よろしく', 'ナイス！', 'おしい', 'またやろう', 'ありがとう'];
 var BASE = 100, BONUS_MAX = 100, BONUS_ZERO_MS = 8000, WRONG_WAIT = 2500, LIMIT = 15000;
 var T_LIMIT = 60000, T_AFTER_ME = 3000, FIRST_BONUS = 30, NAME_MIN_RATE = 0.8;
 var WRONG_MAX_TODAY = 5;             // 今日の10分の1段目に出す、前にまちがえた問いの数の上限
@@ -330,7 +331,7 @@ function resultView(host, d) {
   if (ng) box.appendChild(el('p', 'stat', 'うち勘だった ' + ng + ' 問'));
   box.appendChild(el('p', 'stat', '平均解答時間 ' + fmtS(d.avg) + ' 秒' + (d.avgOk != null ? '（正解のみ ' + fmtS(d.avgOk) + ' 秒）' : '')));
   var dots = el('div', 'dots'); d.res.forEach(function (r) { dots.appendChild(el('i', r.ok ? 'on' : 'miss')); }); box.appendChild(dots);
-  if (Net.ready && !d.flow) { box.appendChild(el('p', 'elig', eligLine(d.correct, d.total))); box.appendChild(sendBox(d)); }
+  if (GHOSTS_ON && Net.ready && !d.flow) { box.appendChild(el('p', 'elig', eligLine(d.correct, d.total))); box.appendChild(sendBox(d)); }
   host.appendChild(box);
   var wrong = d.res.filter(function (r) { return !r.ok; });
   if (wrong.length) {
@@ -459,82 +460,90 @@ function nickShown(raw) {
   return n;
 }
 function sendBox(d) {
+  // GHOSTS_ON が true のときだけ出る。ニックネームは送らない（規則の形に nick は入れない）
   var w = el('div', 'nick');
-  var ok = d.correct >= Math.ceil(d.total * NAME_MIN_RATE);
-  var inp = document.createElement('input'); inp.type = 'text'; inp.maxLength = 10; inp.placeholder = 'ニックネーム（任意・10文字まで）'; inp.value = LSget('nick', '');
   var b = el('button', 'big', '記録を送る'); b.type = 'button'; b.style.marginTop = '0'; b.style.width = 'auto'; b.style.padding = '0 16px';
   b.addEventListener('click', function () {
-    LSset('nick', inp.value);
     var per = d.res.map(function (r) { return [r.ok ? 1 : 0, r.ms]; });
-    Net.subject = SETS[d.set] ? SETS[d.set].subject : null;
-    Net.submitRecord(d.set, { set: d.set, correct: d.correct, score: d.score, avg_ms: d.avg, per: per, at: Date.now(), nick: ok ? nickShown(inp.value) : '', code: Net.code() })
-      .then(function () { b.textContent = '送信しました'; b.disabled = true; });
+    Net.submitGhost(d.set, { score: d.score, avg_ms: d.avg, per: per })
+      .then(function () { b.textContent = '送信しました'; b.disabled = true; }, function () { b.textContent = '送れませんでした'; });
   });
-  w.appendChild(inp); w.appendChild(b); return w;
+  w.appendChild(b); return w;
 }
 
 /* ============================================================ つなぐ部分（Firebase Realtime Database） */
-// 置き場所は科目と組で分ける：
-//   /scores/<subject>/<set>/<code>   最初の1回   /best/<subject>/<set>/<code>   自己ベスト
-//   /stats/<subject>/<set>           集計        /rooms/<subject>/<roomId>      部屋（終わったら消す）
-// ※ SDK は FIREBASE_CONFIG があるときだけ読みこむ。ここは配線の形だけで、まだ動かして確かめていない。
+// 設定は window.HOSHITOBU_FIREBASE（survey/public/firebase-config.js）。apiKey が空のあいだは FIREBASE_CONFIG が null で、Firebase にはつながない。
+// 読みこむのは、入口のページを開いたときと、オンラインの欄を使うときだけ。匿名ログイン（タブごとに別の人）で、部屋の道は rooms/<部屋の番号>。
+// 時刻は、書くときはすべて ServerValue.TIMESTAMP（規則が now との一致を見ている）。読むときは Net.now()（端末の時計＋サーバーとのずれ）。
+// ゴースト（ghosts/<組>/<uid>）は GHOSTS_ON が false のあいだ、呼ばない。
 var Net = {
-  ready: false, db: null, fb: null, offset: 0, roomId: null, seat: null, subject: null,
+  ready: false, db: null, fb: null, offset: 0, uid: null, _init: null,
   loadScript: function (url) {
-    return new Promise(function (ok, ng) { var s = document.createElement('script'); s.src = url; s.onload = ok; s.onerror = ng; document.head.appendChild(s); });
+    return new Promise(function (ok, ng) { var s = document.createElement('script'); s.src = url; s.onload = ok; s.onerror = function () { ng(new Error('script')); }; document.head.appendChild(s); });
   },
   init: function () {
     if (!FIREBASE_CONFIG) return Promise.resolve(false);
+    if (Net._init) return Net._init;
     var base = 'https://www.gstatic.com/firebasejs/10.12.2/';
-    return Net.loadScript(base + 'firebase-app-compat.js').then(function () { return Net.loadScript(base + 'firebase-database-compat.js'); })
+    Net._init = Net.loadScript(base + 'firebase-app-compat.js')
+      .then(function () { return Net.loadScript(base + 'firebase-auth-compat.js'); })
+      .then(function () { return Net.loadScript(base + 'firebase-database-compat.js'); })
       .then(function () {
-        Net.fb = window.firebase; Net.fb.initializeApp(FIREBASE_CONFIG); Net.db = Net.fb.database();
-        Net.db.ref('.info/serverTimeOffset').on('value', function (s) { Net.offset = s.val() || 0; });
-        Net.ready = true; return true;
-      });
+        Net.fb = window.firebase;
+        if (!Net.fb.apps.length) Net.fb.initializeApp(FIREBASE_CONFIG);
+        var au = Net.fb.auth();
+        return au.setPersistence(Net.fb.auth.Auth.Persistence.SESSION).then(function () { return au.signInAnonymously(); });
+      })
+      .then(function (cred) {
+        Net.uid = cred.user.uid; Net.db = Net.fb.database();
+        return new Promise(function (ok) {
+          var done = false, fin = function () { if (!done) { done = true; ok(); } };
+          Net.db.ref('.info/serverTimeOffset').on('value', function (s) { Net.offset = s.val() || 0; fin(); });
+          setTimeout(fin, 4000);
+        });
+      })
+      .then(function () { Net.ready = true; return true; })
+      .catch(function (e) { Net._init = null; throw e; });
+    return Net._init;
   },
   now: function () { return Date.now() + Net.offset; },
-  code: function () {
-    var c = null; try { c = localStorage.getItem('hoshitobu-survey:code'); } catch (e) {}
-    if (!c) { c = 'q' + Math.random().toString(36).slice(2, 12); try { localStorage.setItem('hoshitobu-survey:code', c); } catch (e) {} }
+  ts: function () { return Net.fb.database.ServerValue.TIMESTAMP; },
+  roomRef: function (id, sub) { return Net.db.ref('rooms/' + id + (sub ? '/' + sub : '')); },
+  // ---- ゴースト（段階1）。GHOSTS_ON が true のときだけ使う。規則：ghosts/{set}/{uid} に1回だけ。nick は入れない
+  ghostCode: function () {
+    var A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', re = /^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/, c = rawGet('hoshitobu-survey:code');
+    if (!c || !re.test(c)) {
+      c = rawGet(KEY + 'gcode');
+      if (!c || !re.test(c)) { c = ''; for (var i = 0; i < 6; i++) c += A.charAt(Math.floor(Math.random() * A.length)); try { localStorage.setItem(KEY + 'gcode', c); } catch (e) {} }
+    }
     return c;
   },
-  path: function (kind, id) { return kind + '/' + (Net.subject || (PACKS[0] && PACKS[0].subject)) + '/' + id; },
-  submitRecord: function (setId, rec) {
+  submitGhost: function (setId, rec) {
     if (!Net.ready) return Promise.reject(new Error('未接続'));
-    if (rec.avg_ms < 300) return Promise.resolve({ skipped: true });
-    var ref = Net.db.ref(Net.path('scores', setId + '/' + rec.code));
-    return ref.transaction(function (cur) { return cur === null ? rec : undefined; }).then(function (r) {
-      if (r.committed) return r;
-      return Net.db.ref(Net.path('best', setId + '/' + rec.code)).transaction(function (cur) { return cur && cur.score >= rec.score ? undefined : rec; });
-    });
+    if (!rec.per || rec.per.length !== 10 || rec.avg_ms < 300) return Promise.resolve({ skipped: true });
+    var per = {}, ok = 0;
+    rec.per.forEach(function (p, i) { per[i] = { ok: !!p[0], ms: Math.max(0, Math.min(30000, Math.round(p[1]))) }; if (p[0]) ok++; });
+    var data = { correct: ok, score: Math.max(0, Math.min(10000, Math.round(rec.score))), avg_ms: Math.max(0, Math.min(30000, Math.round(rec.avg_ms))), per: per, at: Net.ts(), code: Net.ghostCode() };
+    return Net.db.ref('ghosts/' + setId + '/' + Net.uid).transaction(function (cur) { return cur === null ? data : undefined; });
   },
   fetchGhosts: function (setId, n) {
     if (!Net.ready) return Promise.resolve([]);
-    return Net.db.ref(Net.path('scores', setId)).limitToFirst(60).once('value').then(function (s) {
-      var v = s.val() || {}, a = Object.keys(v).map(function (k) { return v[k]; }).filter(function (r) { return r.per && r.avg_ms >= 300; });
+    return Net.db.ref('ghosts/' + setId).orderByChild('score').limitToLast(50).once('value').then(function (s) {
+      var best = {};
+      s.forEach(function (c) {
+        var v = c.val();
+        if (!v || !v.per || !(v.avg_ms >= 300) || c.key === Net.uid) return;
+        if (!best[v.code] || v.at < best[v.code].at) best[v.code] = v;           // 同じ回答者コードは、いちばん早い1件だけ
+      });
+      var a = Object.keys(best).map(function (k) {
+        var v = best[k], per = [];
+        for (var i = 0; i < 10; i++) per.push(v.per[i] ? [v.per[i].ok ? 1 : 0, v.per[i].ms] : [0, 30000]);
+        return { avg_ms: v.avg_ms, per: per };
+      });
       for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
-      return a.slice(0, n || 10);
+      return a.slice(0, n || 1);
     });
-  },
-  fetchStats: function (setId) { return Net.ready ? Net.db.ref(Net.path('stats', setId)).once('value').then(function (s) { return s.val(); }) : Promise.resolve(null); },
-  joinRoom: function (roomId, nick) {
-    if (!Net.ready) return Promise.reject(new Error('未接続'));
-    Net.roomId = roomId || 'public';
-    var tryseat = function (i) {
-      if (i > 3) return Promise.reject(new Error('満席'));
-      return Net.db.ref(Net.path('rooms', Net.roomId + '/seats/' + i)).transaction(function (cur) { return cur === null ? { nick: nickShown(nick), code: Net.code(), at: Net.fb.database.ServerValue.TIMESTAMP } : undefined; })
-        .then(function (r) { if (r.committed) { Net.seat = i; return i; } return tryseat(i + 1); });
-    };
-    return tryseat(0);
-  },
-  sendPress: function (qi, choice) {
-    if (!Net.ready || Net.seat == null) return Promise.reject(new Error('未接続'));
-    return Net.db.ref(Net.path('rooms', Net.roomId + '/press/' + qi + '/' + Net.seat)).set({ choice: choice, t: Net.fb.database.ServerValue.TIMESTAMP });
-  },
-  markShown: function (qi) { return Net.db.ref(Net.path('rooms', Net.roomId + '/shown/' + qi)).set(Net.fb.database.ServerValue.TIMESTAMP); },
-  watchPresses: function (cb) { var ref = Net.db.ref(Net.path('rooms', Net.roomId)); ref.on('value', function (s) { cb(s.val() || {}); }); return function () { ref.off(); }; },
-  sendChat: function (idx) { return Net.ready && Net.seat != null ? Net.db.ref(Net.path('rooms', Net.roomId + '/chat')).push({ seat: Net.seat, p: idx, t: Net.fb.database.ServerValue.TIMESTAMP }) : Promise.resolve(); }
+  }
 };
 
 /* ============================================================ 相手の口（opponent source） */
@@ -598,18 +607,6 @@ function fakeGhost(items, seedKey) {
     return [ok ? 1 : 0, Math.round(Math.max(1500, Math.min(tlimit(q) - 2500, ms)) / 100) * 100];
   });
 }
-function onlineSource(seat, nick) {
-  var o = { seat: seat, name: nick, sub: 'オンライン', kind: 'online', stop: null };
-  o.onQuestion = function (tb, qi, q) {
-    if (o.stop) return;
-    o.stop = Net.watchPresses(function (room) {
-      var pr = room.press && room.press[tb.qi] && room.press[tb.qi][seat], sh = room.shown && room.shown[tb.qi];
-      if (pr && sh) tb.onPress({ seat: seat, qi: tb.qi, ms: pr.t - sh, ok: pr.choice === tb.q.answer, choice: pr.choice });
-    });
-  };
-  o.cancel = function () { if (o.stop) o.stop(); o.stop = null; };
-  return o;
-}
 function makeOpponents(seedKey, lv2, lv3, per, real) {
   // real：Firebase から取ってきた、ほかの人の本物の記録のときだけ。作り物（fakeGhost）は練習相手として出す
   return [real ? ghostSource(1, 'ほかの人の記録', per) : ghostSource(1, LV.normal.label, per, '練習相手'), cpuSource(2, lv2, 'cpu2:' + seedKey), cpuSource(3, lv3, 'cpu3:' + seedKey)];
@@ -618,15 +615,18 @@ function makeOpponents(seedKey, lv2, lv3, per, real) {
  * そのページの全部の問題から、毎回ちがう10問。ページに分野が2つ以上あれば、分野を順にまわして選ぶ。前の対戦に出た問いは、できるだけ避ける。
  * 組を指定したときも、出す順を毎回まぜる。 */
 var RANDOM_SET = '*おまかせ*', RANDOM_N = 10, TB_GAME = 0, TB_LAST = {};
-function randomSet() {
-  var rng = Math.random, pools = PACKS.map(function (pk) {
-    var a = pk.items.map(function (q) { return q.id; }), fresh = a.filter(function (id) { return !TB_LAST[id]; });
-    if (fresh.length >= Math.ceil(RANDOM_N / PACKS.length)) a = fresh;
+function pickMix(rng, avoid) {
+  var pools = PACKS.map(function (pk) {
+    var a = pk.items.map(function (q) { return q.id; }), fresh = avoid ? a.filter(function (id) { return !avoid[id]; }) : a;
+    if (avoid && fresh.length >= Math.ceil(RANDOM_N / PACKS.length)) a = fresh;
     for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(rng() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
     return a;
   }), items = [], k = 0;
   while (items.length < RANDOM_N && pools.some(function (a) { return a.length; })) { var a = pools[k++ % pools.length]; if (a.length) items.push(a.pop()); }
-  return { set: RANDOM_SET, title: 'おまかせの10問', subject: PACKS.length === 1 ? PACKS[0].subject : null, items: items };
+  return items;
+}
+function randomSet() {
+  return { set: RANDOM_SET, title: 'おまかせの10問', subject: PACKS.length === 1 ? PACKS[0].subject : null, items: pickMix(Math.random, TB_LAST) };
 }
 function mixOrder(ids) { var a = ids.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
 
@@ -637,15 +637,10 @@ function scoreQ(pr, q) {
   pr.forEach(function (p, s) { if (p && p.ok && p.ms < best) { best = p.ms; first = s; } });
   return { first: first, pts: [0, 1, 2, 3].map(function (s) { var p = pr[s]; if (!p) return 0; if (p.ok) return pts(p.ms, q) + (s === first ? FIRST_BONUS : 0); return p.timeout || p.ms == null ? 0 : -((q && q.penalty) ? q.penalty.points : 0); }) };
 }
-function tableHome() {
-  var host = $('table'); clear(host);
-  var n = el('div', 'night');
-  n.appendChild(el('h2', '', '対戦'));
-  n.appendChild(el('p', 'lead', Net.ready
-    ? '同じ組を、あなたを含む4人で同時に解きます。相手は、ゴースト（ほかの人の記録）1人と練習相手2人です。記録がまだ無い組では、練習相手が代わりに入ります。'
-    : '同じ組を、あなたを含む4人で同時に解きます。相手は練習相手3人です。'));
+function tlOf(q) { return (T && T.online) ? Math.min(tlimit(q), ONLINE_TL_MAX) : tlimit(q); }
+function setField(id) {
   var f1 = el('div', 'field'); f1.appendChild(el('label', '', '組'));
-  var sel = document.createElement('select'); sel.id = 'tbset';
+  var sel = document.createElement('select'); sel.id = id;
   var o0 = document.createElement('option'); o0.value = RANDOM_SET; o0.textContent = 'おまかせ（毎回ちがう10問）'; o0.selected = true; sel.appendChild(o0);
   PACKS.forEach(function (pk) {
     pk.kinds.forEach(function (k) {
@@ -654,13 +649,28 @@ function tableHome() {
       sel.appendChild(g);
     });
   });
-  f1.appendChild(sel); n.appendChild(f1);
-  function lvSel(id, label, def) {
-    var f = el('div', 'field'); f.appendChild(el('label', '', label)); var s = document.createElement('select'); s.id = id;
-    ['easy', 'normal', 'strong'].forEach(function (k) { var o = document.createElement('option'); o.value = k; o.textContent = LV[k].label; if (k === def) o.selected = true; s.appendChild(o); });
-    f.appendChild(s); n.appendChild(f);
+  f1.appendChild(sel); return f1;
+}
+function lvField(parent, id, label, def) {
+  var f = el('div', 'field'); f.appendChild(el('label', '', label)); var s = document.createElement('select'); s.id = id;
+  ['easy', 'normal', 'strong'].forEach(function (k) { var o = document.createElement('option'); o.value = k; o.textContent = LV[k].label; if (k === def) o.selected = true; s.appendChild(o); });
+  f.appendChild(s); parent.appendChild(f);
+}
+function tableHome() {
+  lobbyStop();
+  var host = $('table'); clear(host);
+  var n = el('div', 'night');
+  n.appendChild(el('h2', '', '対戦'));
+  if (FIREBASE_CONFIG && PAGE.online) { onlineSection(n); n.appendChild(el('h3', 'prh', '練習相手と対戦')); }
+  else if (FIREBASE_CONFIG) {
+    var lk = el('p', 'ormore', 'ほかの人との対戦は、'); var la = el('a', 'hlink', '早押しの入口のページ'); la.href = 'index.html'; lk.appendChild(la); lk.appendChild(document.createTextNode('から。'));
+    n.appendChild(lk);
   }
-  lvSel('tblv2', '練習相手1の強さ', 'easy'); lvSel('tblv3', '練習相手2の強さ', 'strong');
+  n.appendChild(el('p', 'lead', GHOSTS_ON && Net.ready
+    ? '同じ組を、あなたを含む4人で同時に解きます。相手は、ゴースト（ほかの人の記録）1人と練習相手2人です。記録がまだ無い組では、練習相手が代わりに入ります。'
+    : '同じ組を、あなたを含む4人で同時に解きます。相手は練習相手3人です。'));
+  n.appendChild(setField('tbset'));
+  lvField(n, 'tblv2', '練習相手1の強さ', 'easy'); lvField(n, 'tblv3', '練習相手2の強さ', 'strong');
   var go = el('button', 'big primary', '対戦をはじめる'); go.type = 'button';
   go.addEventListener('click', function () { tableStart($('tbset').value, $('tblv2').value, $('tblv3').value); });
   n.appendChild(go); host.appendChild(n);
@@ -669,14 +679,13 @@ function tableStart(setId, lv2, lv3) {
   var random = setId === RANDOM_SET, set = random ? randomSet() : SETS[setId], order = random ? set.items : mixOrder(set.items);
   var seedKey = setId + ':' + NONCE + ':' + (++TB_GAME);
   TB_LAST = {}; order.forEach(function (id) { TB_LAST[id] = 1; });
-  Net.subject = set.subject;
   var fake = function () { return { per: perById(set.items, fakeGhost(set.items, seedKey)), real: false }; };
   // ほかの人の記録は組ごと（その組の元の順の per）。おまかせには記録が無いので、練習相手が入る
-  var load = Net.ready && !random ? Net.fetchGhosts(setId, 1).then(function (a) { return a.length ? { per: perById(set.items, a[0].per), real: true } : fake(); }).catch(fake) : Promise.resolve(fake());
+  var load = GHOSTS_ON && Net.ready && !random ? Net.fetchGhosts(setId, 1).then(function (a) { return a.length ? { per: perById(set.items, a[0].per), real: true } : fake(); }).catch(fake) : Promise.resolve(fake());
   load.then(function (g) {
     var opp = makeOpponents(seedKey, lv2, lv3, g.per, g.real);
     T = {
-      set: set, qs: order.map(function (id) { return BYID[id]; }), qi: -1, presses: [], tot: [0, 0, 0, 0], corr: [0, 0, 0, 0], firsts: [], closed: true,
+      set: set, qs: order.map(function (id) { return BYID[id]; }), qi: -1, presses: [], tot: [0, 0, 0, 0], corr: [0, 0, 0, 0], firsts: [], closed: true, me: 0,
       seats: [{ seat: 0, name: 'あなた', sub: '', kind: 'self' }].concat(opp.map(function (o) { return { seat: o.seat, name: o.name, sub: o.sub, kind: o.kind }; })),
       opp: opp, say: ''
     };
@@ -702,7 +711,7 @@ function tableShow() {
   bar.appendChild(el('span', 'cnt', '問 ' + (T.qi + 1) + ' / ' + T.qs.length));
   T.clockEl = el('span', 'clock', '0.0 秒'); bar.appendChild(T.clockEl); n.appendChild(bar);
   var lanes = el('div', 'lanes'); n.appendChild(lanes);
-  var tl = tlimit(T.q), tsec = tl / 1000, step = tsec / 4;
+  var tl = tlOf(T.q), tsec = tl / 1000, step = tsec / 4;
   var sc = el('div', 'scale'); sc.appendChild(el('span')); var sci = el('div', 'sc');
   [0, 1, 2, 3, 4].forEach(function (k) { var s = Math.round(step * k); var sp = el('span', k === 4 ? 'last' : '', s + '秒'); sp.style.left = (k / 4 * 100) + '%'; sci.appendChild(sp); });
   sc.appendChild(sci); sc.appendChild(el('span')); lanes.appendChild(sc);
@@ -712,25 +721,31 @@ function tableShow() {
     row.appendChild(nm); row.appendChild(tr); row.appendChild(rs); lanes.appendChild(row);
     return { row: row, track: tr, cur: cur, res: rs };
   });
-  T.sheet = buildSheet(T.q, T.qi + 1); T.sheet._pick = tbSelf; n.appendChild(T.sheet);
+  T.sheet = buildSheet(T.q, T.qi + 1); T.sheet._pick = T.online ? orSelf : tbSelf; n.appendChild(T.sheet);
   T.fbHost = el('div'); n.appendChild(T.fbHost);
-  T.next = el('button', 'big primary', T.qi + 1 < T.qs.length ? '次の問題へ' : '結果を見る'); T.next.type = 'button'; T.next.hidden = true;
-  T.next.addEventListener('click', function () { tableNext(); window.scrollTo(0, 0); }); n.appendChild(T.next);
-  var chat = el('div', 'chat'); PHRASES.forEach(function (p, i) {
-    var b = el('button', '', p); b.type = 'button';
-    b.addEventListener('click', function () { T.say = 'あなた：' + p; T.sayEl.textContent = T.say; Net.sendChat(i).catch(function () {}); });
-    chat.appendChild(b);
-  });
-  n.appendChild(chat); T.sayEl = el('p', 'say', T.say); n.appendChild(T.sayEl);
-  var qb = el('button', 'quit', '対戦をやめる'); qb.type = 'button'; qb.addEventListener('click', tableLeave); n.appendChild(qb);
+  if (T.online) {
+    T.cdEl = el('p', 'stat orcd', ''); n.appendChild(T.cdEl);                 // 「次の問題へ」ボタンは出さない（進めるのは host）
+    n.appendChild(orChatRow()); T.sayEl = el('p', 'say', ''); n.appendChild(T.sayEl);
+    var oq = el('button', 'quit', '対戦を抜ける'); oq.type = 'button'; oq.addEventListener('click', function () { orBack(false); }); n.appendChild(oq);
+  } else {
+    T.next = el('button', 'big primary', T.qi + 1 < T.qs.length ? '次の問題へ' : '結果を見る'); T.next.type = 'button'; T.next.hidden = true;
+    T.next.addEventListener('click', function () { tableNext(); window.scrollTo(0, 0); }); n.appendChild(T.next);
+    var chat = el('div', 'chat'); PHRASES.forEach(function (p, i) {
+      var b = el('button', '', p); b.type = 'button';
+      b.addEventListener('click', function () { T.say = 'あなた：' + p; T.sayEl.textContent = T.say; });
+      chat.appendChild(b);
+    });
+    n.appendChild(chat); T.sayEl = el('p', 'say', T.say); n.appendChild(T.sayEl);
+    var qb = el('button', 'quit', '対戦をやめる'); qb.type = 'button'; qb.addEventListener('click', tableLeave); n.appendChild(qb);
+  }
   for (var s = 0; s < 4; s++) if (T.presses[T.qi][s]) laneUpdate(s);
 }
 function tableLeave() { clearInterval(tbTick); if (T) T.opp.forEach(function (o) { o.cancel(); }); T = null; tableHome(); }
 function tbChips() {
   clear(T.chipsEl);
   T.seats.forEach(function (s) {
-    var c = el('div', 'chip' + (s.seat === 0 ? ' me' : '')); c.appendChild(el('span', '', s.name));
-    c.appendChild(el('span', 'sub', s.sub || ' '));
+    var c = el('div', 'chip' + (s.seat === T.me ? ' me' : '')); c.appendChild(el('span', '', s.name));
+    c.appendChild(el('span', 'sub', (s.gone && T.online ? '退出' : s.sub) || ' '));
     c.appendChild(el('b', '', T.tot[s.seat] + ' 点')); T.chipsEl.appendChild(c);
   });
 }
@@ -739,14 +754,13 @@ function laneUpdate(seat) {
   var old = L.track.querySelector('.mk'); if (old) old.remove();
   if (p.ms == null) { L.res.textContent = '時間切れ'; return; }
   var m = el('span', 'mk ' + (p.ok ? 'ok' : 'ng') + (T.first === seat ? ' first' : ''), p.ok ? '○' : '×');
-  m.style.left = Math.max(2, Math.min(98, p.ms / tlimit(T.q) * 100)) + '%'; L.track.appendChild(m);
+  m.style.left = Math.max(2, Math.min(98, p.ms / tlOf(T.q) * 100)) + '%'; L.track.appendChild(m);
   L.res.textContent = fmtS(p.ms) + ' 秒 ' + (p.ok ? '正解' : '不正解');
 }
 function tbSelf(i) {
   if (!T || T.closed) return; var pr = T.presses[T.qi]; if (pr[0]) return;
   var ms = clk(); if (ms < 250) return;
   markSheet(T.sheet, i, T.q.answer, false);
-  Net.sendPress(T.qi, i).catch(function () {});
   T.onPress({ seat: 0, qi: T.qi, ms: ms, ok: i === T.q.answer, choice: i });
 }
 function tbPress(e) {
@@ -799,7 +813,7 @@ function tableResult() {
   var rk = 0, prev = null;
   rows.forEach(function (r, i) {
     if (prev === null || r.pts !== prev) rk = i + 1; prev = r.pts;
-    var tr = document.createElement('tr'); if (r.s.seat === 0) tr.className = 'me';
+    var tr = document.createElement('tr'); if (r.s.seat === T.me) tr.className = 'me';
     [rk, r.s.name + (r.s.sub ? '・' + r.s.sub : ''), r.pts, r.corr + '/' + T.qs.length, r.avg == null ? '—' : fmtS(r.avg) + '秒'].forEach(function (v, j) {
       var td = document.createElement('td'); td.textContent = v; if (j > 1) td.className = 'n'; tr.appendChild(td);
     }); tb.appendChild(tr);
@@ -812,24 +826,508 @@ function tableResult() {
     T.qs.forEach(function (q, i) { var p = T.presses[i][s.seat]; g.appendChild(el('div', 'c' + (p ? (p.ok ? ' ok' : ' ng') : ''), p ? (p.ok ? '○' : '×') : '—')); });
   });
   n.appendChild(g);
-  var correct = T.corr[0];
-  if (Net.ready) n.appendChild(el('p', 'elig', eligLine(correct, T.qs.length)));
+  var correct = T.corr[T.me];
+  if (GHOSTS_ON && Net.ready && !T.online) n.appendChild(el('p', 'elig', eligLine(correct, T.qs.length)));
   var wrong = [];
-  T.qs.forEach(function (q, i) { var p = T.presses[i][0]; if (!p || !p.ok) wrong.push({ q: q, p: p || { ms: null, ok: false, timeout: true }, pt: 0 }); });
+  T.qs.forEach(function (q, i) { var p = T.presses[i][T.me]; if (!p || !p.ok) wrong.push({ q: q, p: p || { ms: null, ok: false, timeout: true }, pt: 0 }); });
   var rounds = getRounds(), w = getWrong(), day = jstDate();
-  T.qs.forEach(function (q, i) { var p = T.presses[i][0]; if (p && p.ok) delete w[q.id]; else w[q.id] = { due: rounds + 1, n: (w[q.id] ? w[q.id].n : 0) + 1, guess: false, last: day }; });
+  T.qs.forEach(function (q, i) { var p = T.presses[i][T.me]; if (p && p.ok) delete w[q.id]; else w[q.id] = { due: rounds + 1, n: (w[q.id] ? w[q.id].n : 0) + 1, guess: false, last: day }; });
   LSset('wrong', w); LSset('rounds', rounds + 1);
   if (wrong.length) {
     n.appendChild(el('h2', '', '間違えた問題（' + wrong.length + ' 問）'));
     wrong.forEach(function (x) { var c = el('div', 'kind'); c.appendChild(elh(x.q, 'p', '', x.q.q)); c.appendChild(feedback(x.q, { ok: false, ms: x.p.ms, pt: 0, timeout: !!x.p.timeout, pick: x.p.choice })); n.appendChild(c); });
   }
-  var chat = el('div', 'chat'); PHRASES.forEach(function (p, i) { var b = el('button', '', p); b.type = 'button'; b.addEventListener('click', function () { say.textContent = 'あなた：' + p; Net.sendChat(i).catch(function () {}); }); chat.appendChild(b); });
-  n.appendChild(chat); var say = el('p', 'say'); n.appendChild(say);
   var two = el('div', 'two');
-  var b1 = el('button', 'big primary', 'もう1戦'); b1.type = 'button'; b1.addEventListener('click', function () { var s = T.set.set, l2 = T.seats[2].sub, l3 = T.seats[3].sub; var k = { 'やさしい': 'easy', 'ふつう': 'normal', 'つよい': 'strong' }; tableStart(s, k[l2], k[l3]); });
-  var b2 = el('button', 'big', '対戦を終える'); b2.type = 'button'; b2.addEventListener('click', tableLeave);
-  two.appendChild(b1); two.appendChild(b2); n.appendChild(two);
+  if (T.online) {
+    var o1 = el('button', 'big primary', '募集中の部屋へ'); o1.type = 'button'; o1.addEventListener('click', function () { orBack(false); });
+    var o2 = el('button', 'big', '対戦を終える'); o2.type = 'button'; o2.addEventListener('click', function () { orBack(true); });
+    two.appendChild(o1); two.appendChild(o2); n.appendChild(two);
+  } else {
+    var chat = el('div', 'chat'); PHRASES.forEach(function (p) { var b = el('button', '', p); b.type = 'button'; b.addEventListener('click', function () { say.textContent = 'あなた：' + p; }); chat.appendChild(b); });
+    n.appendChild(chat); var say = el('p', 'say'); n.appendChild(say);
+    var b1 = el('button', 'big primary', 'もう1戦'); b1.type = 'button'; b1.addEventListener('click', function () { var s = T.set.set, l2 = T.seats[2].sub, l3 = T.seats[3].sub; var k = { 'やさしい': 'easy', 'ふつう': 'normal', 'つよい': 'strong' }; tableStart(s, k[l2], k[l3]); });
+    var b2 = el('button', 'big', '対戦を終える'); b2.type = 'button'; b2.addEventListener('click', tableLeave);
+    two.appendChild(b1); two.appendChild(b2); n.appendChild(two);
+  }
   var dc = discordEl(); if (dc) n.appendChild(dc);
+}
+
+/* ============================================================ 人どうしの対戦（部屋） */
+// 設計：_横断/サイト_対戦/設計_人どうしの対戦.md。規則：_横断/サイト_対戦/database.rules.json（変えない）。
+// 部屋は pub-1〜pub-12 だけ。部屋の一覧は読めないので、12個の meta と seats を見て並べる。
+// 全員が同じ部屋のデータ（meta・seats・qAt・presses・words）を見て描く。進めるのは host だけ（qAt を書く・練習相手の答えを書く・done にする）。
+// ※ rooms/<部屋> 全体には読む権限がないので、5つの道に分けて読む（席に座ってから）。
+var STAR_NAMES = ['シリウス', 'ベガ', 'アルタイル', 'デネブ', 'スピカ', 'リゲル', 'カペラ', 'プロキオン', 'ポラリス', 'アンタレス', 'レグルス', 'ミラ', 'カストル', 'ポルックス', 'アルデバラン', 'ベテルギウス'];
+var ROOM_IDS = []; for (var ri = 1; ri <= 12; ri++) ROOM_IDS.push('pub-' + ri);
+var ROOM_GAP_MS = 4000, ROOM_START_MS = 3000, ROOM_STALL_MS = 20000, ROOM_LIST_MS = 30 * 60000, ROOM_OLD_MS = 2 * 3600000, ROOM_DONE_MS = 30000;
+var ONLINE_TL_MAX = 58000;               // 規則は「出題から60秒以内」。通信のおくれを見て、1問の制限は 58 秒までにする
+var OR = null, orTimer = null, LOBBY = null, lobbyTok = 0;
+
+function myName() {
+  var k = KEY + 'myname', v = null;
+  try { v = sessionStorage.getItem(k); } catch (e) {}
+  if (!v || v.length > 12) {
+    var n = Math.floor(Math.random() * 100);
+    v = STAR_NAMES[Math.floor(Math.random() * STAR_NAMES.length)] + (n < 10 ? '0' : '') + n;
+    try { sessionStorage.setItem(k, v); } catch (e) {}
+  }
+  return v;
+}
+function otl(q) { return Math.min(tlimit(q), ONLINE_TL_MAX); }
+function idx(v, i) { return v ? v[i] : undefined; }
+function rand6() { var s = '', c = 'abcdefghijklmnopqrstuvwxyz0123456789'; for (var i = 0; i < 6; i++) s += c.charAt(Math.floor(Math.random() * c.length)); return s; }
+function setTitleOf(id) {
+  if (/^mix-/.test(id)) return 'おまかせの10問';
+  var st = SETS[id]; if (!st) return id;
+  // 無機の組は「第1回」だけなので、分野と種類を前につける（例：無機化学 物質と色 第1回）。図形の組は題に分野が入っている
+  var pk = st._pack, k = pk && (pk.kinds || []).filter(function (x) { return x.kind === st.kind; })[0];
+  if (!k || st.title.indexOf(k.title) === 0) return st.title;
+  return (PACKS.length > 1 ? pk.title + ' ' : '') + k.title + ' ' + st.title;
+}
+function roomItems(setId, created) {
+  var items;
+  if (/^mix-/.test(setId)) items = pickMix(mulberry(hash(setId)), null);
+  else if (SETS[setId]) items = shuffleSeed(SETS[setId].items.slice(), setId + ':' + created);
+  else return null;
+  items = items.slice(0, 10);
+  for (var i = 0; i < items.length; i++) if (!BYID[items[i]]) return null;
+  return items.length ? items : null;
+}
+function netErr(e, what) {
+  var c = (e && e.code) || '', m = (e && e.message) || '';
+  if (/permission/i.test(c + m)) return what + 'ができませんでした。部屋が閉じられたか、すでに始まっているかもしれません。';
+  return what + 'ができませんでした。通信を確かめて、もう一度お試しください。';
+}
+function lvOfName(nm) { var l = (nm || '').split('・')[1]; for (var k in LV) if (LV[k].label === l) return k; return 'normal'; }
+function noop() {}
+
+/* ---------------- 募集中の部屋（入口のページ） */
+function lobbyStop() {
+  lobbyTok++;
+  if (LOBBY) { LOBBY.offs.forEach(function (f) { try { f(); } catch (e) {} }); clearInterval(LOBBY.timer); LOBBY = null; }
+}
+function onlineSection(n) {
+  var sec = el('div', 'orsec');
+  sec.appendChild(el('h3', '', 'ほかの人と対戦'));
+  sec.appendChild(el('p', 'lead', 'ほかの人と、同じ10問を同時に解きます。名前は自動でつき、話せるのは決まった言葉だけです。'));
+  var nm = el('p', 'orname'); nm.appendChild(document.createTextNode('あなたの名前：')); nm.appendChild(el('b', '', myName())); nm.appendChild(document.createTextNode('（自動でつきます）'));
+  sec.appendChild(nm);
+  sec.appendChild(el('h4', 'orh', '募集中の部屋'));
+  var msg = el('p', 'ormsg', 'つないでいます…'); sec.appendChild(msg);
+  var list = el('div', 'orlist'); sec.appendChild(list);
+  var st = el('p', 'orstat', ''); sec.appendChild(st);
+  sec.appendChild(el('h4', 'orh', '部屋を作る'));
+  sec.appendChild(setField('orset'));
+  var mk = el('button', 'big', '部屋を作る'); mk.type = 'button'; mk.disabled = true; mk.id = 'ormake';
+  mk.addEventListener('click', function () { orCreate($('orset'), st); });
+  sec.appendChild(mk);
+  n.appendChild(sec);
+  var tok = lobbyTok;
+  Net.init().then(function () {
+    if (tok !== lobbyTok) return;
+    lobbyStart(msg, list, st, tok);
+  }).catch(function () {
+    if (tok !== lobbyTok) return;
+    msg.textContent = 'オンライン対戦につなげませんでした。練習相手との対戦は、下から始められます。';
+  });
+}
+function lobbyStart(msgEl, listEl, stEl, tok) {
+  var L = LOBBY = { offs: [], data: {}, timer: null, busy: false, msgEl: msgEl, listEl: listEl, stEl: stEl };
+  var mk = $('ormake'); if (mk) mk.disabled = false;
+  ROOM_IDS.forEach(function (id) { L.data[id] = {}; });     // 先に全部用意する（手元の控えがあると .on はすぐ呼ばれ、まだ無い部屋を描こうとして落ちていた）
+  ROOM_IDS.forEach(function (id) {
+    ['meta', 'seats'].forEach(function (k) {
+      var ref = Net.roomRef(id, k);
+      var cb = ref.on('value', function (s) { if (LOBBY !== L) return; L.data[id][k] = s.val(); lobbyPaint(); },
+        function () { if (LOBBY === L) msgEl.textContent = '部屋の一覧を読めませんでした。'; });
+      L.offs.push(function () { ref.off('value', cb); });
+    });
+  });
+  L.timer = setInterval(lobbyPaint, 15000);
+  lobbyPaint();
+}
+function lobbyBusy(on) { if (!LOBBY) return; LOBBY.busy = on; var mk = $('ormake'); if (mk) mk.disabled = on; lobbyPaint(); }
+function lobbyPaint() {
+  var L = LOBBY; if (!L) return;
+  var rows = [], now = Net.now(), loaded = 0;
+  ROOM_IDS.forEach(function (id) {
+    var d = L.data[id] || {}; if (d.meta !== undefined && d.seats !== undefined) loaded++;
+    var m = d.meta;
+    if (!m || m.state !== 'waiting' || m.host === Net.uid || typeof m.created !== 'number' || now - m.created > ROOM_LIST_MS) return;
+    var cnt = 0; for (var i = 0; i < 4; i++) if (idx(d.seats, i)) cnt++;
+    rows.push({ id: id, m: m, cnt: cnt });
+  });
+  rows.sort(function (a, b) { return b.m.created - a.m.created; });
+  clear(L.listEl);
+  L.msgEl.textContent = loaded < ROOM_IDS.length ? '募集中の部屋を探しています…' : (rows.length ? '' : 'いま募集中の部屋はありません。部屋を作ると、ここに載ります。');
+  rows.forEach(function (r) {
+    var row = el('div', 'orrow');
+    row.appendChild(el('span', 'orset', setTitleOf(r.m.set)));
+    row.appendChild(el('span', 'orcnt', r.cnt + ' / 4 人'));
+    var mins = Math.floor((now - r.m.created) / 60000);
+    row.appendChild(el('span', 'orago', mins < 1 ? '1分以内' : mins + ' 分前'));
+    var b = el('button', '', r.cnt >= 4 ? '満席' : '参加する'); b.type = 'button'; b.disabled = r.cnt >= 4 || L.busy;
+    b.addEventListener('click', function () { orJoin(r.id, L.stEl); });
+    row.appendChild(b); L.listEl.appendChild(row);
+  });
+}
+function orJoin(id, st) {
+  if (!LOBBY || LOBBY.busy) return;
+  lobbyBusy(true); st.textContent = '入っています…';
+  var name = myName();
+  var fail = function () { lobbyBusy(false); st.textContent = 'この部屋には入れませんでした。'; };
+  var tryseat = function (n) {
+    if (n > 3) return Promise.resolve(-1);
+    return Net.roomRef(id, 'seats/' + n).transaction(function (cur) { return cur === null ? { kind: 'online', uid: Net.uid, name: name } : undefined; }, undefined, false)
+      .then(function (r) { return r.committed ? n : tryseat(n + 1); });
+  };
+  tryseat(0).then(function (n) {
+    if (n < 0) return fail();
+    Net.roomRef(id, 'seats/' + n).onDisconnect().remove().catch(noop);
+    orEnter(id, false, n);
+  }).catch(fail);
+}
+function orCreate(selEl, st) {
+  if (!LOBBY || LOBBY.busy) return;
+  lobbyBusy(true); st.textContent = '部屋を作っています…';
+  var setId = selEl.value === RANDOM_SET ? 'mix-' + rand6() : selEl.value, name = myName(), now = Net.now();
+  var full = function () { lobbyBusy(false); st.textContent = 'いまは部屋がいっぱいです。少し待ってからもう一度お試しください。'; };
+  var reads = ROOM_IDS.map(function (id) { return Net.roomRef(id, 'meta').once('value').then(function (s) { return s.val(); }); });
+  Promise.all(reads).then(function (metas) {
+    var cands = [];
+    ROOM_IDS.forEach(function (id, i) {
+      var m = metas[i];
+      if (!m) cands.push({ id: id, stale: false });
+      else if (typeof m.created === 'number' && now - m.created > ROOM_OLD_MS) cands.push({ id: id, stale: true });   // 2時間より古い部屋は、消してから使ってよい
+    });
+    var attempt = function (k) {
+      if (k >= cands.length) return full();
+      var c = cands[k], rr = Net.roomRef(c.id);
+      var pre = c.stale ? rr.remove().catch(noop) : Promise.resolve();
+      return pre.then(function () { return rr.onDisconnect().remove().then(function () { return true; }, function () { return false; }); })
+        .then(function (reg) {
+          return Net.roomRef(c.id, 'meta').set({ host: Net.uid, created: Net.ts(), set: setId, state: 'waiting', kind: 'public' })
+            .then(function () { return 'ok'; }, function () { rr.onDisconnect().cancel().catch(noop); return 'next'; })
+            .then(function (r) {
+              if (r === 'next') return attempt(k + 1);
+              return Net.roomRef(c.id, 'seats/0').set({ kind: 'online', uid: Net.uid, name: name }).then(function () {
+                if (!reg) rr.onDisconnect().remove().catch(noop);
+                orEnter(c.id, true, 0);
+              }, function (e) { rr.remove().catch(noop); lobbyBusy(false); st.textContent = netErr(e, '部屋を作ること'); });
+            });
+        });
+    };
+    if (!cands.length) return full();
+    return attempt(0);
+  }).catch(function (e) { lobbyBusy(false); st.textContent = netErr(e, '部屋を作ること'); });
+}
+
+/* ---------------- 部屋に入ったあと */
+function orEnter(id, host, seat) {
+  lobbyStop();
+  var o = OR = { id: id, host: host, seat: seat, got: {}, offs: [], timers: [], dead: false, adv: {}, wordAt: 0, state: null };
+  var box = $('table'); clear(box);
+  var n = el('div', 'night'); box.appendChild(n); n.appendChild(el('p', 'lead', '部屋に入っています…'));
+  ['meta', 'seats', 'qAt', 'presses', 'words'].forEach(function (k) {
+    var ref = Net.roomRef(id, k);
+    var cb = ref.on('value', function (s) { if (OR !== o || o.dead) return; o[k] = s.val(); o.got[k] = true; orUpdate(); },
+      function () { if (OR !== o || o.dead || o.leaving) return; orDenied(o); });
+    o.offs.push(function () { ref.off('value', cb); });
+  });
+}
+// 読み出しが断られたとき：部屋が消えた（host が閉じた・切れた）なら席も消えて読めなくなるので、meta を見て言い分ける
+function orDenied(o) {
+  if (o.denied) return; o.denied = true;
+  // 拒否が meta の変化より先に届くことがある。手元の控えの古い meta を読まないよう、少し待ってからサーバーに聞き直す（meta が消えていれば、その前に orUpdate が「閉じられました」を出している）
+  setTimeout(function () {
+  if (OR !== o || o.dead || o.leaving || o.result) return;
+  Net.roomRef(o.id, 'meta').get().then(function (s) {
+    if (OR !== o || o.dead || o.leaving || o.result) return;
+    var m = s.val();
+    if (!m || m.created !== (o.meta && o.meta.created)) { if (o.state === 'done') return orFinish(); return orEnd('部屋が閉じられました。', true); }
+    orEnd('部屋の情報を読めませんでした。');
+  }, function () { if (OR === o && !o.dead && !o.result) orEnd('部屋の情報を読めませんでした。'); });
+  }, 1500);
+}
+function orCleanup(o) {
+  o.dead = true;
+  clearInterval(orTimer); orTimer = null;
+  o.timers.forEach(function (t) { clearInterval(t); clearTimeout(t); }); o.timers = [];
+  if (T && T.online && T.cpuT) T.cpuT.forEach(clearTimeout);
+  o.offs.forEach(function (f) { try { f(); } catch (e) {} }); o.offs = [];
+}
+function orLeave() {
+  var o = OR; if (!o) return;
+  o.leaving = true; orCleanup(o); clearTimeout(o.doneTimer);
+  if (Net.db) {
+    var rr = Net.roomRef(o.id);
+    if (o.host) { rr.remove().catch(noop); rr.onDisconnect().cancel().catch(noop); }
+    else if (!o.gone) { var sr = Net.roomRef(o.id, 'seats/' + o.seat); sr.remove().catch(noop); sr.onDisconnect().cancel().catch(noop); }
+  }
+  OR = null; T = null;
+}
+function orBack(toSolo) { orLeave(); tableHome(); if (toSolo) showTab('solo'); }
+function orEnd(msg, gone) {
+  var o = OR; if (!o) return;
+  orCleanup(o); if (gone) o.gone = true;
+  if (T) T.closed = true;
+  var box = $('table'); clear(box); window.scrollTo(0, 0);
+  var n = el('div', 'night'); box.appendChild(n);
+  n.appendChild(el('h2', '', msg));
+  var b = el('button', 'big primary', '募集中の部屋へ'); b.type = 'button'; b.addEventListener('click', function () { orBack(false); });
+  n.appendChild(b);
+}
+function orUpdate() {
+  var o = OR; if (!o || o.dead || !o.got.meta || !o.got.seats) return;
+  var m = o.meta;
+  if (!m) {
+    if (o.result) return;
+    if (o.state === 'done') return orFinish();
+    return orEnd('部屋が閉じられました。', true);
+  }
+  o.state = m.state;
+  if (m.state === 'waiting') return orWaitUpdate();
+  if (m.state === 'playing') { if (!o.playing) orPlayInit(); return; }
+  if (m.state === 'done' && !o.result) orFinish();
+}
+
+/* ---------------- 待合 */
+function orChatRow() {
+  var chat = el('div', 'chat');
+  PHRASES.forEach(function (p, i) {
+    var b = el('button', '', p); b.type = 'button'; b.addEventListener('click', function () { orWord(i); });
+    chat.appendChild(b);
+  });
+  return chat;
+}
+function orWord(i) {
+  var o = OR; if (!o || o.dead || Net.now() - o.wordAt < 1200) return;      // 規則は、同じ席が1秒あけて次を書ける
+  o.wordAt = Net.now();
+  Net.roomRef(o.id, 'words/' + o.seat).set({ w: i, t: Net.ts() }).catch(noop);
+}
+function orWordOf(s) {
+  var o = OR, w = idx(o.words, s);
+  if (w && typeof w.t === 'number' && Net.now() - w.t < 5000 && PHRASES[w.w] != null) return PHRASES[w.w];
+  return '';
+}
+function orSayText() {
+  var out = [];
+  for (var s = 0; s < 4; s++) { var w = orWordOf(s), st = idx(OR.seats, s); if (w && st) out.push(st.name + '：' + w); }
+  return out.join('　');
+}
+function orWaitFrame() {
+  var o = OR, box = $('table'); clear(box);
+  var n = el('div', 'night'); box.appendChild(n); o.waitEl = n;
+  n.appendChild(el('h2', '', '待合'));
+  n.appendChild(el('p', 'lead', '組：' + setTitleOf(o.meta.set)));
+  o.seatBox = el('div', 'orseats'); n.appendChild(o.seatBox);
+  n.appendChild(orChatRow());
+  if (o.host) {
+    n.appendChild(el('p', 'lead', '人が集まらないときは、空いた席を練習相手で埋めて始められます。'));
+    lvField(n, 'orlv2', '練習相手1の強さ', 'easy'); lvField(n, 'orlv3', '練習相手2の強さ', 'strong');
+    n.appendChild(el('p', 'ormore', '練習相手が3人入るときは、3人目は「ふつう」です。'));
+    o.goBtn = el('button', 'big primary', '始める（空いた席は練習相手）'); o.goBtn.type = 'button';
+    o.goBtn.addEventListener('click', orStart); n.appendChild(o.goBtn);
+  }
+  var q = el('button', 'quit', o.host ? '部屋を閉じる' : '部屋を出る'); q.type = 'button'; q.addEventListener('click', function () { orBack(false); });
+  n.appendChild(q);
+  o.timers.push(setInterval(orWaitSeats, 500));
+}
+function orWaitUpdate() {
+  var o = OR;
+  if (!o.waitEl) orWaitFrame();
+  orWaitSeats();
+}
+function orWaitSeats() {
+  var o = OR; if (!o || o.dead || !o.seatBox || !o.meta) return;
+  clear(o.seatBox);
+  for (var s = 0; s < 4; s++) {
+    var st = idx(o.seats, s), row = el('div', 'orseat' + (st ? '' : ' empty') + (s === o.seat ? ' me' : ''));
+    row.appendChild(el('b', '', st ? st.name : '空き'));
+    if (st && s === o.seat) row.appendChild(el('span', 'orbadge', 'あなた'));
+    if (st && st.uid && st.uid === o.meta.host) row.appendChild(el('span', 'orbadge', '部屋を作った人'));
+    var w = st ? orWordOf(s) : ''; if (w) row.appendChild(el('span', 'orsay', w));
+    o.seatBox.appendChild(row);
+  }
+}
+function orStart() {
+  var o = OR; if (!o || !o.host || o.starting || o.dead) return;
+  o.starting = true; o.goBtn.disabled = true; o.goBtn.textContent = '始めています…';
+  var lvs = [$('orlv2').value, $('orlv3').value, 'normal'], k = 0, chain = Promise.resolve();
+  [0, 1, 2, 3].forEach(function (s) {
+    if (idx(o.seats, s)) return;
+    var lv = lvs[Math.min(k++, 2)];
+    chain = chain.then(function () { return Net.roomRef(o.id, 'seats/' + s).set({ kind: 'cpu', name: '練習相手・' + LV[lv].label }).catch(noop); });   // 同時に誰かが座った席は、断られてよい
+  });
+  chain.then(function () { return Net.roomRef(o.id, 'meta/state').set('playing'); })
+    .then(function () { return Net.roomRef(o.id, 'meta/startAt').set(Net.ts()); })
+    .catch(function (e) { orEnd(netErr(e, '対戦を始めること')); });
+}
+
+/* ---------------- 対戦 */
+function orSeatInfo(s, st) {
+  if (!st) return { seat: s, name: '空き', sub: '', kind: 'none', gone: true };
+  var nm = st.name || '';
+  if (st.kind === 'cpu') { var p = nm.split('・'); return { seat: s, name: p[0], sub: p[1] || '', kind: 'cpu' }; }
+  return { seat: s, name: nm, sub: s === OR.seat ? 'あなた' : '', kind: 'online' };
+}
+function orPlayInit() {
+  var o = OR;
+  var items = roomItems(o.meta.set, o.meta.created);
+  if (!items) return orEnd('この組を読みこめませんでした。');
+  o.playing = true; o.timers.forEach(function (t) { clearInterval(t); }); o.timers = [];
+  var seats = []; for (var s = 0; s < 4; s++) seats.push(orSeatInfo(s, idx(o.seats, s)));
+  T = {
+    online: true, set: { set: o.meta.set, title: setTitleOf(o.meta.set), items: items }, qs: items.map(function (id) { return BYID[id]; }),
+    qi: -1, presses: [], tot: [0, 0, 0, 0], corr: [0, 0, 0, 0], firsts: [], closed: true, me: o.seat, seats: seats, opp: [], say: '',
+    myChoice: {}, mine: {}, shown: {}, cpuT: [], totSig: ''
+  };
+  var box = $('table'); clear(box);
+  var n = el('div', 'night'); box.appendChild(n);
+  n.appendChild(el('h2', '', T.set.title));
+  T.preEl = el('p', 'lead', 'まもなく始まります'); n.appendChild(T.preEl);
+  clearInterval(orTimer); orTimer = setInterval(orTick, 50);
+}
+// 問い qi の、締めの時刻と点。全員が同じ式で、同じデータから出す
+function orInfo(qi) {
+  var q = T.qs[qi], tl = otl(q), qa = idx(OR.qAt, qi), after = q.after_ms || T_AFTER_ME, raw = [null, null, null, null], s;
+  for (s = 0; s < 4; s++) {
+    var pr = idx(OR.presses, qi), p = pr ? pr[s] : null;
+    if (p && typeof p.t === 'number') raw[s] = { ms: p.t - qa, ok: !!p.ok, choice: s === T.me ? T.myChoice[qi] : null };
+    else if (s === T.me && T.mine[qi]) raw[s] = { ms: T.mine[qi].ms, ok: T.mine[qi].ok, choice: T.myChoice[qi] };
+  }
+  var first = Infinity, close = tl, all = true, last = 0, cnt = 0;
+  raw.forEach(function (p) { if (p && p.ms < tl && p.ok && p.ms < first) first = p.ms; });
+  if (first < Infinity) close = Math.min(close, first + after);                        // 最初の正解のあと after(q) まで
+  for (s = 0; s < 4; s++) {                                                            // 席が全部押した時刻（退出した席は数えない。押していれば数える）
+    if (!(idx(OR.seats, s) || raw[s])) continue;
+    cnt++; if (!raw[s]) all = false; else last = Math.max(last, raw[s].ms);
+  }
+  if (all && cnt) close = Math.min(close, Math.max(0, last));
+  var valid = raw.map(function (p) { return p && p.ms <= close && p.ms < tl ? { ms: Math.max(0, p.ms), ok: p.ok, choice: p.choice } : null; });
+  var r = scoreQ(valid, q);
+  return { raw: raw, valid: valid, close: close, closeAt: qa + close, first: r.first, pts: r.pts };
+}
+function orTotals(upto) {
+  var tot = [0, 0, 0, 0], corr = [0, 0, 0, 0];
+  for (var q = 0; q <= upto && q < T.qs.length; q++) {
+    if (typeof idx(OR.qAt, q) !== 'number') continue;
+    var inf = orInfo(q); T.firsts[q] = inf.first;
+    for (var s = 0; s < 4; s++) { tot[s] += inf.pts[s]; if (inf.valid[s] && inf.valid[s].ok) corr[s]++; }
+  }
+  T.tot = tot; T.corr = corr;
+}
+function orQuestion(qi) {
+  var o = OR;
+  T.qi = qi; T.q = T.qs[qi]; T.presses[qi] = [null, null, null, null]; T.closed = false; T.first = -1; T.shown = {}; T.totSig = ''; T.shownAt = performance.now();
+  T.cpuT.forEach(clearTimeout); T.cpuT = [];
+  tableShow();
+  if (!o.host) return;
+  for (var s = 0; s < 4; s++) (function (s) {                                          // 練習相手の答えは host が書く（種は 組・問い・席）
+    var st = idx(o.seats, s); if (!st || st.kind !== 'cpu') return;
+    var plan = cpuPlan(T.q, lvOfName(st.name), o.meta.set + ':' + qi + ':' + s);
+    if (plan.ms >= otl(T.q)) return;
+    var wait = plan.ms - Math.max(0, Net.now() - idx(o.qAt, qi));
+    T.cpuT.push(setTimeout(function () {
+      if (OR !== o || o.dead || !T || T.qi !== qi || T.closed) return;
+      if (Net.now() >= orInfo(qi).closeAt) return;                                     // 締めを過ぎていたら書かない
+      Net.roomRef(o.id, 'presses/' + qi + '/' + s).set({ t: Net.ts(), ok: plan.ok }).catch(function (e) { orEnd(netErr(e, '練習相手の答えを送ること')); });
+    }, Math.max(0, wait)));
+  })(s);
+}
+function orAdvance(n) {
+  var o = OR; o.adv[n] = true;
+  var p = n < T.qs.length ? Net.roomRef(o.id, 'qAt/' + n).set(Net.ts()) : Net.roomRef(o.id, 'meta/state').set('done');
+  p.catch(function (e) { orEnd(netErr(e, '次の問題へ進むこと')); });
+}
+function orSelf(i) {
+  var o = OR; if (!o || o.dead || !T || !T.online || T.closed || T.mine[T.qi]) return;
+  if (performance.now() - T.shownAt < 250) return;
+  var qi = T.qi, qa = idx(o.qAt, qi); if (typeof qa !== 'number') return;
+  var ms = Math.max(0, Net.now() - qa); if (ms >= otl(T.q)) return;
+  var ok = i === T.q.answer;
+  T.mine[qi] = { ms: ms, ok: ok }; T.myChoice[qi] = i;                                   // 選んだ番号は端末だけに置く（送るのは 時刻と正誤）
+  markSheet(T.sheet, i, T.q.answer, false);
+  Net.roomRef(o.id, 'presses/' + qi + '/' + T.me).set({ t: Net.ts(), ok: ok }).catch(function (e) { orEnd(netErr(e, '答えを送ること')); });
+  orTick();
+}
+function orPaint(info) {
+  var qi = T.qi, arr = T.closed ? info.valid : info.raw, s;
+  T.presses[qi] = arr;
+  for (s = 0; s < 4; s++) {
+    var p = arr[s], gone = !idx(OR.seats, s), k = (T.closed ? 'c' : 'o') + (p ? p.ms + ':' + p.ok : '-') + (gone ? 'g' : '');
+    if (T.shown[s] === k) continue;
+    T.shown[s] = k;
+    if (p) laneUpdate(s);
+    else {
+      var L = T.laneEls[s], old = L.track.querySelector('.mk'); if (old) old.remove();
+      L.res.textContent = gone ? '退出' : (T.closed ? '—' : '考え中');
+    }
+  }
+  orTotals(T.closed ? qi : qi - 1);
+  var g = []; for (s = 0; s < 4; s++) { T.seats[s].gone = !idx(OR.seats, s); g.push(T.seats[s].gone ? 1 : 0); }
+  var sig = T.tot.join(',') + '|' + T.first + '|' + g.join(''); if (sig !== T.totSig) { T.totSig = sig; tbChips(); }
+}
+function orClose(qi, info) {
+  T.closed = true; T.first = info.first;
+  T.cpuT.forEach(clearTimeout); T.cpuT = [];
+  T.shown = {}; T.totSig = '';
+  T.laneEls.forEach(function (L) { L.cur.style.display = 'none'; });
+  orPaint(info);
+  var me = info.valid[T.me], choice = T.myChoice[qi];
+  markSheet(T.sheet, choice == null ? -1 : choice, T.q.answer, true);
+  T.fbHost.appendChild(feedback(T.q, { ok: !!(me && me.ok), ms: me ? me.ms : null, pt: info.pts[T.me], timeout: !me, noLink: true, pick: choice }));
+}
+function orTick() {
+  var o = OR; if (!o || o.dead || !T || !T.online || o.result) return;
+  var now = Net.now(), N = T.qs.length, cur = -1, i, m = o.meta || {};
+  for (i = N - 1; i >= 0; i--) if (typeof idx(o.qAt, i) === 'number') { cur = i; break; }
+  if (cur < 0) {                                                                         // 最初の問いの前
+    var sa = m.startAt, ready = typeof sa === 'number';
+    if (T.preEl) T.preEl.textContent = ready ? 'まもなく始まります（あと ' + Math.max(0, Math.ceil((sa + ROOM_START_MS - now) / 1000)) + ' 秒）' : 'まもなく始まります';
+    if (ready && now >= sa + ROOM_START_MS) {
+      if (o.host && !o.adv[0]) orAdvance(0);
+      else if (!o.host && now >= sa + ROOM_START_MS + ROOM_STALL_MS) orEnd('部屋の進行が止まりました。');
+    }
+    return;
+  }
+  if (cur > T.qi) orQuestion(cur);
+  var qi = T.qi, tl = otl(T.q), info = orInfo(qi), el0 = now - idx(o.qAt, qi);
+  orPaint(info);
+  if (!T.closed) {
+    var shown = Math.max(0, Math.min(el0, tl));
+    T.clockEl.textContent = fmtS(shown) + ' 秒';
+    T.laneEls.forEach(function (L) { L.cur.style.left = Math.min(100, shown / tl * 100) + '%'; });
+    if (now >= info.closeAt) orClose(qi, info);
+  } else {
+    var left = Math.max(0, Math.ceil((info.closeAt + ROOM_GAP_MS - now) / 1000));
+    T.cdEl.textContent = (qi + 1 < N ? '次の問題まで ' : '結果まで ') + left + ' 秒';
+    if (o.host) { if (now >= info.closeAt + ROOM_GAP_MS && !o.adv[qi + 1]) orAdvance(qi + 1); }
+    else if (now >= info.closeAt + ROOM_STALL_MS) return orEnd('部屋の進行が止まりました。');
+  }
+  if (T.sayEl) { var sx = orSayText(); if (T.sayEl.textContent !== sx) T.sayEl.textContent = sx; }
+}
+function orFinish() {
+  var o = OR; if (!o || o.result) return;
+  if (!o.got.qAt || !o.got.presses) return;
+  if (!o.playing) { orPlayInit(); if (!T || !T.online) return; }
+  clearInterval(orTimer); orTimer = null;
+  o.result = true;
+  T.cpuT.forEach(clearTimeout);
+  var N = T.qs.length, q;
+  for (q = 0; q < N; q++) {
+    if (typeof idx(o.qAt, q) === 'number') T.presses[q] = orInfo(q).valid; else T.presses[q] = [null, null, null, null];
+  }
+  orTotals(N - 1);
+  tableResult();
+  o.offs.forEach(function (f) { try { f(); } catch (e) {} }); o.offs = [];
+  o.timers.forEach(function (t) { clearInterval(t); clearTimeout(t); }); o.timers = [];
+  if (o.host) {                                                                          // host は done の30秒後に部屋を消す（同じ番号の別の部屋を消さないよう、created を見る）
+    var created = o.meta.created;
+    o.doneTimer = setTimeout(function () {
+      Net.roomRef(o.id, 'meta/created').once('value').then(function (s) { if (s.val() === created) return Net.roomRef(o.id).remove(); }).catch(noop);
+    }, ROOM_DONE_MS);
+  }
 }
 
 /* ============================================================ 画面の切りかえ */
@@ -838,11 +1336,11 @@ function showTab(name) {
   $('solo').hidden = name !== 'solo'; $('table').hidden = name !== 'table';
 }
 $('tab-solo').addEventListener('click', function () { showTab('solo'); });
-$('tab-table').addEventListener('click', function () { showTab('table'); if (!T) tableHome(); });
+$('tab-table').addEventListener('click', function () { showTab('table'); if (!T && !OR) tableHome(); });
 
 /* ============================================================ はじまり */
 soloHome();
-Net.init().catch(function () {});
+if (PAGE.online && FIREBASE_CONFIG) Net.init().catch(function () {});   // 入口のページだけ。分野のページでは Firebase を読みこまない
 if (QS.today === '1') {
   var avail = []; PACKS.forEach(function (p) { if (avail.indexOf(p.group) < 0) avail.push(p.group); });
   var f = QS.f || (avail.length === 1 ? avail[0] : 'mix');

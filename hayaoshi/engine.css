@@ -168,6 +168,30 @@
 .hy .fb .why{margin:8px 0}
 .hy .fb .adoc .akey{font-size:16px}
 .hy .fb .ln{font-size:16px}
+/* 人どうしの対戦（部屋）：入口のページの対戦タブ・待合・対戦中 */
+.hy .night h3{font-size:18px;margin:14px 0 4px}
+.hy .night h4.orh{font-size:15px;margin:12px 0 2px;color:var(--sub)}
+.hy .orsec{margin:4px 0 16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.hy .orname{margin:4px 0 8px;font-size:15px;color:var(--sub)}
+.hy .orname b{color:var(--ink);font-size:17px}
+.hy .ormsg,.hy .orstat{margin:6px 0;font-size:14px;color:var(--sub);min-height:1.4em}
+.hy .orstat{color:var(--amb)}
+.hy .ormore{font-size:14px;color:var(--sub);margin:6px 0}
+.hy .orlist{display:flex;flex-direction:column;gap:6px;margin:6px 0}
+.hy .orrow{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.hy .orrow .orset{flex:1 1 11em;min-width:0;font-weight:700;overflow-wrap:anywhere}
+.hy .orrow .orcnt,.hy .orrow .orago{color:var(--sub);font-size:14px;white-space:nowrap}
+.hy .orrow button{min-height:44px;padding:0 16px;border:1px solid var(--accent);border-radius:8px;background:var(--surface2);color:var(--ink);font-family:inherit;font-weight:700;margin-left:auto}
+.hy .orrow button:disabled{opacity:.5}
+.hy .orseats{display:flex;flex-direction:column;gap:6px;margin:8px 0}
+.hy .orseat{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;min-height:44px;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.hy .orseat.me{border-color:var(--accent)}
+.hy .orseat.empty{color:var(--faint);border-style:dashed}
+.hy .orseat b{font-size:16px;overflow-wrap:anywhere}
+.hy .orbadge{font-size:12px;padding:1px 8px;border-radius:99px;background:var(--accent-soft);color:var(--ink)}
+.hy .orsay{margin-left:auto;padding:2px 10px;border-radius:99px;background:var(--surface2);border:1px solid var(--line-strong);font-size:14px}
+.hy .orcd{text-align:center;color:var(--sub);margin:10px 0}
+.hy .lname b{overflow-wrap:anywhere}
 .hy math{font-size:1.08em;font-family:"STIX Two Math","Cambria Math","Latin Modern Math","Noto Sans Math","Noto Serif",serif}
 .hy .ln{display:block;margin:.12em 0;max-width:100%;overflow-x:auto;overflow-y:hidden}
 .hy .ln+.ln{margin-top:.28em}
