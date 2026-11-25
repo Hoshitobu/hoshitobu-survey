@@ -48,6 +48,11 @@
 .sg .sg-custom-h { flex: 0 0 100%; margin-top: 8px; font-size: 13px; color: var(--sg-sub); }
 .sg .sg-custom { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 14px 0 0; }
 
+/* ニックネームとランキング：マス目のすぐ上、たたまない */
+.sg .sg-nick { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: flex-end; margin-top: 20px; }
+.sg .sg-nick > .sg-f { flex: 0 1 16em; }
+.sg .sg-nick > .sg-chk { padding-bottom: 9px; }
+
 /* マス目：枠の中で横にスクロールする。ページ自体は横に動かない。左の列（試験）は固定 */
 .sg .sg-scroll { margin-top: 16px; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .sg .sg-table { border-collapse: separate; border-spacing: 0; width: max-content; min-width: 100%; margin: 0; font-size: 16px; }
@@ -125,6 +130,9 @@
   .sg .sg-ctl > .sg-chk { margin-left: 0; width: 100%; padding-bottom: 0; }
   .sg .sg-f, .sg .sg-sel { width: 100%; }
   .sg .sg-ctl > .sg-f, .sg .sg-slots > .sg-f { flex: 1 1 100%; }
+  .sg .sg-nick > .sg-f { flex: 1 1 100%; }
+  .sg .sg-nick > .sg-chk { padding-bottom: 0; align-items: flex-start; }
+  .sg .sg-nick > .sg-chk input { margin-top: 5px; }
   .sg .sg-table .sg-rh { padding-right: 10px; }
   .sg .sg-cell { width: 58px; }
   .sg .sg-btn { width: 100%; }

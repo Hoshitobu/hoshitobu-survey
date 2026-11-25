@@ -431,6 +431,7 @@
       el.append(ui.custom);
 
       if (!embedded) { ui.power = h("section", {class: "sg-power", "aria-label": "いまの実力"}); el.append(ui.power); }
+      el.append(nickBox());
       ui.scroll = h("div", {class: "sg-scroll", tabindex: "-1"});
       el.append(ui.scroll);
 
@@ -447,6 +448,19 @@
       return h("label", {class: "sg-f"}, h("span", {text: label}), h("div", {class: "sg-sel"}, control));
     }
 
+    // ---- ニックネームとランキング：たたまず、マス目のすぐ上に出す（保存は profileBox の save で行う）
+    function nickBox() {
+      var cfg = S.cfg;
+      var nick = sget("nickname"); if (nick === null) nick = lget("nickname") || "";
+      ui.nick = h("input", {type: "text", maxlength: cfg.nickname.maxLength, autocomplete: "off", placeholder: "例: ほしのこ", "aria-label": "ニックネーム"});
+      ui.nick.value = nick;
+      var rk = sget("ranking"); if (rk === null) rk = lget("ranking");
+      ui.rank = h("input", {type: "checkbox"}); ui.rank.checked = rk === "1";
+      return h("div", {class: "sg-nick"},
+        h("label", {class: "sg-f"}, h("span", {text: "ニックネーム（" + cfg.nickname.maxLength + "文字まで・" + (cfg.nickname.required ? "必須" : "任意") + "）"}), ui.nick),
+        h("label", {class: "sg-chk"}, ui.rank, h("span", {text: "得点率7割以上なら、ニックネームを集計ページのランキングに載せる"})));
+    }
+
     // ---- 送る人の情報（登録ずみならたたむ）
     function profileBox() {
       var cfg = S.cfg;
@@ -460,11 +474,6 @@
       ui.band = h("select", {"aria-label": "学力帯"}, option("", "選んでください"));
       cfg.bands.forEach(function (b) { ui.band.append(option(b.id, b.label)); });
       ui.band.value = band;
-      var nick = sget("nickname"); if (nick === null) nick = lget("nickname") || "";
-      ui.nick = h("input", {type: "text", maxlength: cfg.nickname.maxLength, autocomplete: "off", placeholder: "例: ほしのこ", "aria-label": "ニックネーム"});
-      ui.nick.value = nick;
-      var rk = sget("ranking"); if (rk === null) rk = lget("ranking");
-      ui.rank = h("input", {type: "checkbox"}); ui.rank.checked = rk === "1";
       ui.pass = cfg.passphraseRequired ? h("input", {type: "text", autocomplete: "off", "aria-label": "合言葉"}) : null;
       if (ui.pass) ui.pass.value = sget("passphrase") || "";
       ui.hp = h("input", {tabindex: "-1", autocomplete: "off", "aria-hidden": "true"});
@@ -496,9 +505,7 @@
         h("div", {class: "sg-prof-body"},
           consentLine,
           h("div", {class: "sg-two"},
-            h("label", {class: "sg-f"}, h("span", {text: "学力帯（直近の模試の偏差値）"}), h("div", {class: "sg-sel"}, ui.band)),
-            h("label", {class: "sg-f"}, h("span", {text: "ニックネーム（" + cfg.nickname.maxLength + "文字まで・" + (cfg.nickname.required ? "必須" : "任意") + "）"}), ui.nick)),
-          h("label", {class: "sg-chk"}, ui.rank, h("span", {text: "80点以上（100点満点のとき。得点率80%以上）なら、ニックネームを集計ページのランキングに載せる"})),
+            h("label", {class: "sg-f"}, h("span", {text: "学力帯（直近の模試の偏差値）"}), h("div", {class: "sg-sel"}, ui.band))),
           ui.pass ? h("label", {class: "sg-f"}, h("span", {text: "合言葉"}), ui.pass) : null,
           h("div", {class: "sg-codeline"}, h("span", {class: "sg-k", text: "回答者コード"}), ui.codeView, ui.copy,
             h("button", {type: "button", class: "sg-link", on: {click: function () { ui.codeWrap.hidden = !ui.codeWrap.hidden; }}}, "別のコードを入力")),
@@ -772,7 +779,7 @@
       if (!ui.consent.checked) { ui.prof.open = true; return void problem("送るには、匿名で集計して動画で使うことへの同意が必要です。「送る人の情報」にチェックを入れてください", ui.consent); }
       if (!ui.band.value) { ui.prof.open = true; return void problem("学力帯（直近の模試の偏差値）を選んでください", ui.band); }
       var nick = ui.nick.value.trim();
-      if (!nick && (cfg.nickname.required || ui.rank.checked)) { ui.prof.open = true; return void problem(ui.rank.checked ? "ランキングに載せるには、ニックネームを入れてください" : "ニックネームを入れてください", ui.nick); }
+      if (!nick && (cfg.nickname.required || ui.rank.checked)) { return void problem(ui.rank.checked ? "ランキングに載せるには、ニックネームを入れてください" : "ニックネームを入れてください", ui.nick); }
       var base = {mode: "practice", code: ui.code, band: ui.band.value, ranking: ui.rank.checked, website: ui.hp.value};
       if (nick) base.nickname = nick;
       if (cfg.passphraseRequired) base.passphrase = ui.pass.value;

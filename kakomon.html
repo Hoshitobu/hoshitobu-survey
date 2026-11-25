@@ -381,7 +381,7 @@
         BANDS.map(([id, label]) => `<option value="${id}"${p.band === id ? " selected" : ""}>${esc(label)}</option>`).join("") + `</select>` +
         `<label class="kk-opt" style="margin:0"><input type="checkbox" id="kk-consent"${p.consent ? " checked" : ""}>匿名で集計し、YouTube『星飛ぶ』の動画で使用することに同意する</label>` +
         `<span>ニックネーム（任意・12文字まで）</span><input type="text" id="kk-nick" maxlength="12" autocomplete="off" placeholder="例: ほしのこ" value="${esc(p.nickname)}">` +
-        `<label class="kk-opt" style="margin:0"><input type="checkbox" id="kk-ranking"${p.ranking ? " checked" : ""}>80点以上（100点満点のとき。得点率80%以上）なら、ニックネームを集計ページのランキングに載せる</label>` +
+        `<label class="kk-opt" style="margin:0"><input type="checkbox" id="kk-ranking"${p.ranking ? " checked" : ""}>得点率7割以上なら、ニックネームを集計ページのランキングに載せる</label>` +
         `<span class="kk-faint">回答者コード：${p.code ? esc(p.code) : "初めて送るときに作ります"}</span></div></div>`;
     },
     readSaveOptions(root) {
