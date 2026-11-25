@@ -192,7 +192,20 @@
         '<p class="ft-src">' + esc(N.src) + '（<a href="https://www.dnc.ac.jp/" rel="noopener">大学入試センター</a>）。名前やメールアドレスは聞きません。<a href="' + base + 'kakomon.html?view=quick">送る内容について</a></p></div>';
       document.body.appendChild(f);
     }
+    mountOfuse();
     mountFind();
+  }
+
+  // 応援（OFUSE）の欄：全ページのフッター（地図）の下に、小さく。外のスクリプト（OFUSE の widget.js）は読まず、ふつうのリンクにする。
+  // 文は本人の言葉（言いかえない）。時間を計って解いている最中（html.kk-running）は style.css で隠す
+  function mountOfuse() {
+    var f = $("footer.ft");
+    if (!f || $(".ft-ofuse", f)) return;
+    var d = document.createElement("div"); d.className = "ft-ofuse";
+    d.innerHTML = '<div class="ft-in"><p>このサイトには広告がないため、サイトからの収益はありません。YouTube の動画からは収益がありますが、過去問解説の動画は、集中を切らさないよう、大問の区切りにだけ広告を入れています。そのため、収益は多くありません。</p>' +
+      "<p>このサイトを続けていくためにも、ぜひ応援をお願いします。</p>" +
+      '<p><a class="ft-ofuse-go" href="https://ofuse.me/hoshitobu" target="_blank" rel="noopener">OFUSEで応援する ↗</a></p></div>';
+    f.appendChild(d);
   }
 
   function start() {

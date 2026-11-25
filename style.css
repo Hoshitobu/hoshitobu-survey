@@ -348,6 +348,15 @@ body > header.hd :focus-visible { outline-color: #fff; }
 @media (max-width: 760px) { .ft .tree { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ft .tree li li > a, .ft .tree li li > span { padding: 6px 0; } }
 .ft-src { margin: 24px 0 0; padding-top: 16px; border-top: 1px solid var(--line-strong); font-size: 13px; line-height: 1.7; color: var(--sub); }
 .ft-src a { color: var(--sub); }
+/* 応援（OFUSE）：フッターの地図の下に、小さく控えめに。解いている最中は出さない */
+.ft-ofuse { border-top: 1px solid var(--line); }
+.ft-ofuse .ft-in { padding-top: 18px; padding-bottom: 28px; }
+.ft-ofuse p { margin: 0 0 6px; max-width: 46em; font-size: 13px; line-height: 1.7; color: var(--sub); }
+.ft-ofuse p:last-child { margin: 10px 0 0; }
+.ft-ofuse-go { display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border: 1px solid var(--line-strong); border-radius: 6px;
+  font-size: 13px; font-weight: 700; color: var(--ink); text-decoration: none; background: var(--bg); }
+.ft-ofuse-go:hover { border-color: var(--ink); }
+html.kk-running .ft-ofuse { display: none; }
 main { padding-bottom: 64px; }
 
 /* ================= 年度と科目を選ぶ所 ================= */

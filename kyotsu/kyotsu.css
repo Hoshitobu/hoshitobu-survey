@@ -191,3 +191,18 @@ main .sg[data-score-grid] .sg-in { height: 48px; font-size: 22px; font-weight: 7
 .send1 a { display: inline-flex; align-items: center; min-height: 46px; padding: 0 18px; border: 1px solid var(--line-strong); border-radius: 8px; font-weight: 700; text-decoration: none; background: var(--surface-2); }
 details.mx > summary { cursor: pointer; font-weight: 700; color: var(--accent); min-height: 44px; display: flex; align-items: center; }
 
+
+/* 解説動画のチャプター：大問（数学IAは中問）ごとに、その始まりへ飛ぶ。時刻・大問・分野を1行に */
+.chs { list-style: none; margin: 8px 0 12px; padding: 0; max-width: 40em; }
+.chs li { border-bottom: 1px solid var(--line); }
+.chs li:last-child { border-bottom: 0; }
+.chs a { display: grid; grid-template-columns: 4.2em auto minmax(0, 1fr); column-gap: 12px; align-items: baseline;
+         padding: 10px 0; min-height: 44px; box-sizing: border-box; text-decoration: none; color: var(--ink); }
+.chs a:hover .ch-q, .chs a:hover .ch-n { color: var(--accent); }
+.chs .ch-t { color: var(--accent); font-variant-numeric: tabular-nums; font-weight: 700; }
+.chs .ch-q { font-weight: 700; white-space: nowrap; }
+.chs .ch-n { color: var(--sub); min-width: 0; }
+@media (max-width: 480px) {
+  .chs a { grid-template-columns: 4.2em minmax(0, 1fr); }
+  .chs .ch-n { grid-column: 2; font-size: 15px; }
+}

@@ -183,6 +183,7 @@
   <div class="kk-sec">
     <h4>大問ごと</h4>
     <div class="kk-examvid" id="kk-examvid" hidden></div>
+    <p class="kk-qreview" id="kk-qreview" hidden></p>
     <div class="kk-scroll"><table class="kk-table" id="kk-qtable"></table></div>
     <div class="kk-legend"><span><i></i>取れた点</span><span><i class="is-avg"></i><span id="kk-avglegend">全国平均（選択問題は、その大問を選んだ人の平均）</span></span></div>
   </div>
@@ -1041,8 +1042,21 @@
         drawPeer();
       }
       const natQ = hasNatQ();
-      // 解説動画のある試験（数学・理科）だけ「解説」の列を出す。国語・英語・社会などは、著作権の都合で解説を出さない
-      const vid = !!E.part || Object.keys(E.videos || {}).length > 0;
+      // 解説動画：全問解説の動画のある試験（数学・理科の本試験）だけ、大問の名前の下に「解説（m:ssから）」を出す。
+      // 数学IAは中問（〔1〕〔2〕）ごと。得点率7割未満の大問は目立たせ、満点の大問は控えめに。表は横に動くので、右端の列にはしない
+      const hms = s => s >= 3600 ? `${Math.floor(s / 3600)}:${String(Math.floor(s / 60) % 60).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+      const vidOf = r => {
+        const url = (E.videos || {})[r.q];
+        if (!url) return "";
+        const rate = r.done && r.max ? r.got / r.max : null;
+        const cls = rate === null ? "" : rate < 0.7 ? " is-weak" : rate >= 1 ? " is-full" : "";
+        const chs = (E.chapters || {})[r.q];
+        const a = (href, label) => `<a class="kk-vid${cls}" href="${esc(href)}" target="_blank" rel="noopener">${label}</a>`;
+        if (!chs || !E.vid) return `<div class="kk-qvid">${a(url, "▶ 解説動画")}</div>`;
+        const at = s => `https://www.youtube.com/watch?v=${E.vid}` + (s ? `&t=${s}s` : "");
+        return `<div class="kk-qvid">` + chs.map(c => a(at(c[0]), `▶ 解説${esc(c[1] || "")}<span class="kk-nw">（${hms(c[0])}から）</span>`)).join("") + `</div>`;
+      };
+      const weak = on ? R.per.filter(r => r.done && r.max && r.got / r.max < 0.7 && (E.videos || {})[r.q]) : [];
       const refTxt = r => natQ ? (r.avg === null || r.avg === undefined ? "—" : r.avg.toFixed(1)) : (siteRate(rp, r.q) === null ? "—" : siteRate(rp, r.q).toFixed(1) + "%");
 
       // 前回
@@ -1062,20 +1076,22 @@
 
       // 大問ごと
       q("#kk-qtable").innerHTML = `<thead><tr><th>大問</th><th style="width:34%">点数</th><th class="r"></th><th class="r">${natQ ? "全国平均" : "みんなの得点率"}</th>` +
-        (prev ? `<th class="r">前回</th>` : "") + `<th class="r">時間 / 目安</th>${vid ? "<th>解説</th>" : ""}</tr></thead><tbody>` +
+        (prev ? `<th class="r">前回</th>` : "") + `<th class="r">時間 / 目安</th></tr></thead><tbody>` +
         R.per.map(r => {
-          const url = (E.videos || {})[r.q];
           const p = prev && prev.per ? prev.per.find(x => x.q === r.q) : null;
           const ref = refPct(rp, r);
-          return `<tr><td><b>第${r.q}問</b><div class="kk-faint">${esc(r.name)}</div></td>` +
+          return `<tr><td><b>第${r.q}問</b><div class="kk-faint">${esc(r.name)}</div>${vidOf(r)}</td>` +
             `<td><div class="kk-sbar"><i style="width:${r.done && r.max ? r.got / r.max * 100 : 0}%"></i>${ref === null ? "" : `<b style="left:calc(${ref}% - 1px)"></b>`}</div></td>` +
             `<td class="r"><b>${r.done ? r.got : "—"}</b> / ${r.max || "?"}</td><td class="r">${refTxt(r)}</td>` +
             (prev ? `<td class="r">${p ? p.got : "—"}</td>` : "") +
-            `<td class="r ${r.ms > r.goal * 60000 ? "kk-over" : ""}">${qTime(r.ms, totalMs() > 0)} / ${r.goal}分</td>` +
-            (vid ? `<td>${url ? `<a class="kk-vid" href="${esc(url)}" target="_blank" rel="noopener">解説動画</a>` : `<span class="kk-vid-none">—</span>`}</td>` : "") + `</tr>`;
+            `<td class="r ${r.ms > r.goal * 60000 ? "kk-over" : ""}">${qTime(r.ms, totalMs() > 0)} / ${r.goal}分</td>` + `</tr>`;
         }).join("") +
         `<tr class="kk-total"><td>合計</td><td></td><td class="r">${on ? R.total : "—"} / ${E.full}</td><td class="r">${natQ || NAT() ? (E.mean ?? "—") : (rp && rp.ok ? rp.siteMean.toFixed(1) : "—")}</td>` +
-        (prev ? `<td class="r">${prev.total}</td>` : "") + `<td class="r">${fmt(totalMs())} / ${E.minutes}分</td>${vid ? "<td></td>" : ""}</tr></tbody>`;
+        (prev ? `<td class="r">${prev.total}</td>` : "") + `<td class="r">${fmt(totalMs())} / ${E.minutes}分</td></tr></tbody>`;
+      // 7割に届かなかった大問は、表の上にも並べる（解説動画のその大問の始まりへ）
+      q("#kk-qreview").hidden = !weak.length;
+      q("#kk-qreview").innerHTML = weak.length ? `<span class="kk-faint">7割に届かなかった大問の解説：</span>` +
+        weak.map(r => { const c = ((E.chapters || {})[r.q] || [])[0]; return `<a href="${esc(c && E.vid ? `https://www.youtube.com/watch?v=${E.vid}` + (c[0] ? `&t=${c[0]}s` : "") : E.videos[r.q])}" target="_blank" rel="noopener">第${r.q}問${c ? `（${hms(c[0])}から）` : ""}</a>`; }).join("") : "";
 
       // 力の種類
       if (!q("#kk-stagesec").hidden) {
