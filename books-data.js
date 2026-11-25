@@ -1,4 +1,4 @@
-// _横断/サイト_紹介リンク/build_books.py が links.json から作る。手で直さない。
+// _横断/サイト_紹介リンク/build_books.py が links.json・packs.json から作る。手で直さない。
 window.HOSHITOBU_BOOKS = {
  "eng_r": {
   "sundai": {
@@ -239,5 +239,19 @@ window.HOSHITOBU_BOOKS = {
    "title": "2027年用 共通テスト実戦模試 情報Ⅰ",
    "url": "https://link.amazon/B06vVSDUy"
   }
+ }
+};
+window.HOSHITOBU_PACKS = {
+ "sundai": {
+  "title": "2027-共通テスト実戦パッケージ問題 青パック",
+  "url": "https://link.amazon/B07HJJa9E"
+ },
+ "kawai": {
+  "title": "2027共通テスト対策問題パック",
+  "url": "https://link.amazon/B0dVEhl4F"
+ },
+ "zkai": {
+  "title": "2027年用 共通テスト予想問題パック",
+  "url": "https://link.amazon/B02cR9Ym4"
  }
 };

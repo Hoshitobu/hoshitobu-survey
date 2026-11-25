@@ -465,3 +465,15 @@ html.kk-running body:not(.is-quick) > .sub { display: none; }
   body > header.hd-a nav .hd-item > a[aria-current]::after { left: 4px; right: 4px; }
   .hd-a .hd-find { width: 32px; min-height: 32px; }
 }
+
+/* ヘッダーの短い名前（site_header.py の SHORT）。スマホでは「予想問題集」→「問題集」、320px 前後では「点数と集計」→「点数」「知識の整理」→「整理」 */
+@media (max-width: 760px) {
+  body > header.hd nav .hd-item > a .nl { display: none; }
+  body > header.hd nav .hd-item > a .ns { display: inline !important; }
+  body > header.hd-a nav .hd-item > a { padding: 0 4px; }
+  body > header.hd-a nav .hd-item > a[aria-current]::after { left: 4px; right: 4px; }
+}
+@media (max-width: 359px) {
+  body > header.hd nav .hd-item > a .nm { display: none; }
+  body > header.hd nav .hd-item > a .nx { display: inline !important; }
+}
