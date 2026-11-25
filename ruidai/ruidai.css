@@ -44,7 +44,7 @@
 .card > div { min-width: 0; }
 .ruidai .note { margin: 0 0 12px; }
 
-/* ---------- 定理カード ---------- */
+/* ---------- 道具カード ---------- */
 .thcards { display: grid; gap: 18px; }
 .thcard { border: 1px solid var(--line-strong); border-radius: 8px; padding: 16px 18px 14px; min-width: 0; }
 .thcard header { display: flex; align-items: baseline; gap: 12px; }
@@ -187,7 +187,25 @@ blockquote.kimete p { margin: 0; }
 /* 図形の性質の図（seishitsu_geom.py の SVG） */
 .fig { display: block; margin: 12px 0 2px; }
 .fig svg.zfig { max-width: 100%; height: auto; }
-.q-body .fig svg text { font-size: 14px; }
+.q-body .fig svg:not(.card-fig) text { font-size: 14px; }
+
+/* 早押しから移した A の問いの図（反射カードの SVG。2026-11-25）：線と文字の色は class で付いている。
+   黒＝ink、点線＝faint、円＝sub、印（角・「？」）＝accent・琥珀・緑。文字はふちどり（背景の色）で線の上でも読める。 */
+.fig-card svg.card-fig { display: block; width: 100%; max-width: 340px; height: auto;
+  --cf-amb: #a85a00; --cf-grn: #0a7a52; }
+@media (prefers-color-scheme: dark) { .fig-card svg.card-fig { --cf-amb: #ffb454; --cf-grn: #5fd0a0; } }
+.card-fig .s-ink { stroke: var(--ink); }
+.card-fig .s-faint { stroke: var(--faint); }
+.card-fig .s-line { stroke: var(--sub); }
+.card-fig .s-acc { stroke: var(--accent); }
+.card-fig .s-amb { stroke: var(--cf-amb); }
+.card-fig .s-grn { stroke: var(--cf-grn); }
+.card-fig .f-ink { fill: var(--ink); }
+.card-fig .f-acc { fill: var(--accent); }
+.card-fig .f-amb { fill: var(--cf-amb); }
+.card-fig .f-grn { fill: var(--cf-grn); }
+.card-fig text.up { font-style: normal; }
+.card-fig text.lbl { paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
 
 /* ---------- 共通テストの紙面：空欄の四角・分数・解答群（2026-11-24） ---------- */
 .ruidai .bx { display: inline-flex; align-items: center; vertical-align: middle; margin: 0 .12em; padding: 0 .35em; min-width: 2.1em; height: 1.55em; box-sizing: border-box;
@@ -197,6 +215,7 @@ blockquote.kimete p { margin: 0; }
 .ruidai .bx-n i { min-width: 1.5em; }
 .ruidai .kg-dig .kg-o { display: flex; flex-wrap: wrap; gap: 6px 20px; }
 .ruidai .kg-dig .kg-o li { gap: 5px; }
+.ruidai .kg-1col .kg-o { grid-template-columns: minmax(0, 1fr); }
 .ruidai .bx-c { border-width: 1.6px; outline: 1.6px solid var(--ink); outline-offset: -5px; padding: 0 .55em; }
 .ruidai .bx i.has-v { color: var(--accent); }
 .ruidai .bx i.is-ok { color: var(--ok, #1a7f45); }
@@ -240,7 +259,7 @@ blockquote.kimete p { margin: 0; }
   .ruidai .kg-o li > span { min-width: 0; overflow-x: auto; }
 }
 
-/* 定理カードの図（式の帯の下・落とし穴のそば）。2026-11-24 */
+/* 道具カードの図（式の帯の下・落とし穴のそば）。2026-11-24 */
 .cfigs { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; margin: 4px 0 12px; }
 .cfig { margin: 0; flex: 0 1 300px; min-width: 0; text-align: center; }
 .cfig .fig { margin: 0; display: block; }
@@ -354,6 +373,8 @@ body:has(> .sub) .ruidai .rd-side { top: calc(var(--hdr-h, 56px) + 64px); }
 .ruidai .rd-side.is-over .rd-clock, .ruidai .rd-dock.is-over .rd-clock { color: var(--accent); font-weight: 600; }
 .ruidai .rd-side.is-run .rd-clock::after { content: ""; display: inline-block; width: 7px; height: 7px; margin-left: 8px; border-radius: 50%; background: var(--accent); vertical-align: middle; }
 .ruidai .rd-btns { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin: 10px 0 12px; }
+.ruidai .rd-btns .tb { white-space: nowrap; }      /* 狭い板で「はじめ／る」と折れない */
+@media (max-width: 1000px) { .ruidai .rd-btns { grid-template-columns: minmax(0, 1fr); } }
 .ruidai .rd-btns .rd-start { background: var(--accent-fill); border-color: var(--accent-fill); color: var(--on-accent); padding: 0 12px; }
 .ruidai .rd-btns .rd-start:disabled, .ruidai .rd-btns .rd-reset:disabled { opacity: .45; cursor: default; }
 .ruidai .rd-btns .rd-reset { padding: 0 14px; font-weight: 400; color: var(--sub); }
@@ -421,3 +442,32 @@ body:has(> .sub) .ruidai .rd-side { top: calc(var(--hdr-h, 56px) + 64px); }
   main.ruidai { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
   .ruidai .q-log { margin-left: 0; justify-content: flex-start; flex-basis: 100%; }
 }
+
+/* 熟考：考え直す3つを箇条書きに（見出しは太字） */
+.jk3 { margin: 4px 0 10px; padding-left: 1.3em; }
+.jk3 li { margin: 4px 0; }
+.jk3 b { color: var(--ink); }
+/* 解説の書き方（2026-11-24）：見出しの下に「ラベル：文」の箇条書き、計算は番号つきの手順 */
+.xsteps .xs { margin: 0 0 14px; }
+.xsteps .xs + .xs { padding-top: 10px; border-top: 1px dotted var(--line-strong); }
+.fold-b .xh { margin: 8px 0 4px; font-size: 15px; font-weight: 700; color: var(--accent); letter-spacing: .02em; }
+.xsteps .xs > .xh:first-child { margin-top: 0; }
+ul.xl { margin: 0 0 4px; padding-left: 1.2em; }
+ul.xl > li { margin: 0 0 6px; line-height: 1.8; }
+ul.xl > li::marker { color: var(--accent); }
+ul.xl.after { margin-top: 10px; color: var(--sub); }
+.xk { font-weight: 700; color: var(--ink); }
+ol.xc { margin: 0 0 4px; padding: 0; list-style: none; counter-reset: xc; }
+ol.xc > li { counter-increment: xc; position: relative; margin: 0 0 6px; padding-left: 1.9em; line-height: 1.8; }
+ol.xc > li::before { content: counter(xc) "."; position: absolute; left: .2em; top: 0; font-weight: 700; color: var(--accent); }
+.xe { overflow-wrap: anywhere; }
+ol.flow li .xk { color: var(--accent); }
+/* 段送りの図（電気透析の解説。2026-11-24） */
+.stepfig { margin: 12px 0 4px; }
+.stepfig .stepbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 8px 0 4px; }
+.stepfig .stepbar .mini { min-height: 36px; padding: 0 14px; font-size: 14px; font-weight: 700; cursor: pointer; background: transparent; }
+.stepfig .stepbar .stepnext { border-color: var(--accent); color: var(--accent); }
+.stepfig .stepbar .mini:disabled { opacity: .45; cursor: default; }
+.stepfig .stepno { font-size: 13px; color: var(--sub); }
+.stepfig .stepcap { margin: 0; font-size: 15px; line-height: 1.8; }
+.stepfig g.st { transition: opacity .25s; }

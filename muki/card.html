@@ -141,7 +141,7 @@
 <nav class="crumbs" aria-label="パンくず"><a href="../index.html">トップ</a> › <a href="../seiri/index.html">知識の整理</a> › <a href="../seiri/index.html#muki">無機化学</a> › <span>粒で見る</span></nav>
 <div class="k-title">
   <h1>粒で見る：無機化学</h1>
-  <p class="note">「何が移動するか」に注目すると、反応の仕組みが見えてきます。パターンごとのルールに従って化学反応式を組み立てましょう。</p>
+  <p class="note">反応を「何が移動するか」で5つに分けます。1枚ごとに、生成物を予想してから粒の動きを見て、反応式につなげます。</p>
 </div>
 <div id="app" class="bk"></div>
 <footer class="src"><p class="note small">過去問の問題・正答率の出典：大学入試センター（<a href="https://www.dnc.ac.jp/" rel="noopener">https://www.dnc.ac.jp/</a>）。</p></footer>
@@ -165,7 +165,7 @@ function go(id){location.hash=id?('#'+id):'#';}
 window.addEventListener('hashchange',function(){location.reload()});
 /* ---------- 一覧 ---------- */
 function list(){
- var h=D.site?'':'<h1>粒で見る：無機化学</h1><p class="lead">「何が移動するか」に注目すると、反応の仕組みが見えてきます。パターンごとのルールに従って化学反応式を組み立てましょう。</p>';
+ var h=D.site?'':'<h1>粒で見る：無機化学</h1><p class="lead">反応を「何が移動するか」で5つに分けます。1枚ごとに、生成物を予想してから粒の動きを見て、反応式につなげます。</p>';
  D.groups.forEach(function(g){
   h+='<div class="gp"><h2>'+g.name+'</h2><p class="gs">'+g.sub+'</p>';
   D.cards.filter(function(c){return c.fam===g.id}).forEach(function(c){

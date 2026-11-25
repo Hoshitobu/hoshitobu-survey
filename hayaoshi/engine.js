@@ -22,7 +22,7 @@ var FIREBASE_CONFIG = null;          // null のあいだは、作り物のゴ�
 var DISCORD_URL = '';
 var PHRASES = ['よろしく', 'ナイス！', 'おしい', 'もう1戦', 'ありがとう'];
 var BASE = 100, BONUS_MAX = 100, BONUS_ZERO_MS = 8000, WRONG_WAIT = 2500, LIMIT = 15000;
-var T_LIMIT = 12000, T_AFTER_ME = 3000, FIRST_BONUS = 30, NAME_MIN_RATE = 0.8;
+var T_LIMIT = 60000, T_AFTER_ME = 3000, FIRST_BONUS = 30, NAME_MIN_RATE = 0.8;
 var WRONG_MAX_TODAY = 5;             // 今日の10分の1段目に出す、前にまちがえた問いの数の上限
 var RUIDAI_DIR = '../ruidai/';       // 類題演習のページの置き場所
 var GROUP_LABEL = { muki: '無機化学', zukei: '図形' };
@@ -296,10 +296,10 @@ function soloPick(i) {
   S.clockEl.textContent = fmtS(ms) + ' 秒';
   S.next.hidden = false;
   if (!ok) {
-    var left = pen.wait_ms; S.next.disabled = true;
+    var left = pen.wait_ms, nx = S.next; nx.disabled = true;   // 待ちのあいだに「中断する」で S が消えても止まるよう、ボタンを手元に持つ
     var lab = S.i + 1 < S.list.length ? '次の問題へ' : '結果を見る';
-    var t = setInterval(function () { left -= 100; S.next.textContent = left > 0 ? 'あと ' + (left / 1000).toFixed(1) + ' 秒' : lab; if (left <= 0) { S.next.disabled = false; clearInterval(t); } }, 100);
-    S.next.textContent = 'あと ' + (left / 1000).toFixed(1) + ' 秒';
+    var t = setInterval(function () { if (!nx.isConnected) { clearInterval(t); return; } left -= 100; nx.textContent = left > 0 ? 'あと ' + (left / 1000).toFixed(1) + ' 秒' : lab; if (left <= 0) { nx.disabled = false; clearInterval(t); } }, 100);
+    nx.textContent = 'あと ' + (left / 1000).toFixed(1) + ' 秒';
   }
 }
 function soloNext() { S.i++; if (S.i >= S.list.length) soloFinish(S.res, S.set); else soloShow(); window.scrollTo(0, 0); }
@@ -538,13 +538,39 @@ var Net = {
 };
 
 /* ============================================================ 相手の口（opponent source） */
-var LV = { easy: { label: 'やさしい', k: 1.4, mu: 5200 }, normal: { label: 'ふつう', k: 1.0, mu: 3700 }, strong: { label: 'つよい', k: 0.55, mu: 2500 } };
+/* 答えるまでの時間＝読む時間＋考える時間（2026-11-25 本人「AIが速すぎます」で作り直し。前は最低 0.9 秒で、問題文を読む時間に届いていなかった）。
+ *   読む時間：問いの文と選択肢を、1秒に cps 文字で読む。選択肢は 0.75 倍（正解が見えたら残りは流し読み）。図があれば +1.5 秒、色見本の選択肢は +0.8 秒、見て構える 0.5 秒。
+ *             「つよい」の 12 文字/秒は、よくできる受験生が問題文をふつうに読む速さ。読む時間の 0.85 倍より速くは答えない。
+ *   考える時間：think × 問いの重さ（図形は bonus_ms で長い）× 難しさ（正答率の低い問いほど長い）。
+ *   ばらつき：合計に exp(sd × 正規乱数) をかける。
+ *   目安（本人 2026-11-25「合わせて20秒ぐらいあってもいい」「やさしいは40秒±20秒ぐらい」）：図形の問いの中央が やさしい 約40〜45秒・ふつう 約20〜23秒・つよい 約10〜12秒。
+ *   無機は文が短いので、やさしい 約20秒・ふつう 約11秒・つよい 約7秒。対戦の制限時間 T_LIMIT も、遅い相手が答えられるよう 60 秒（図形と同じ）にした。 */
+var LV = { easy: { label: 'やさしい', k: 1.4, cps: 5, think: 9000, sd: 0.4 }, normal: { label: 'ふつう', k: 1.0, cps: 8, think: 4000, sd: 0.3 }, strong: { label: 'つよい', k: 0.55, cps: 12, think: 1500, sd: 0.2 } };
+function textLen(q, s) {
+  if (s == null) return 0;
+  if (typeof s === 'object') s = s.text || s.label || '';
+  var t = String(s);
+  if (q && q.html) { var d = document.createElement('div'); d.innerHTML = t; Array.prototype.forEach.call(d.querySelectorAll('annotation, annotation-xml'), function (a) { a.parentNode.removeChild(a); }); t = d.textContent; }
+  return t.replace(/\s+/g, '').length;
+}
+var READ_CHARS = {};
+function readChars(q) {
+  if (READ_CHARS[q.id] == null) {
+    var n = textLen(q, q.prompt) + textLen(q, q.q);
+    (q.choices || []).forEach(function (c) { n += 0.75 * textLen(q, c); });
+    READ_CHARS[q.id] = n;
+  }
+  return READ_CHARS[q.id];
+}
+function readMs(q, cps) { return 500 + readChars(q) * 1000 / cps + (q.media ? 1500 : 0) + (q.choice_media ? 800 : 0); }
+function thinkMs(q, think) { return think * slowOf(q) * (0.6 + 0.8 * (1 - q.difficulty)); }
+function answerMs(q, L, r) { var rd = readMs(q, L.cps); return Math.max(rd * 0.85, (rd + thinkMs(q, L.think)) * Math.exp(L.sd * gauss(r))); }
 function wrongChoice(q, r) { var a = []; for (var i = 0; i < q.choices.length; i++) if (i !== q.answer) a.push(i); return a[Math.floor(r() * a.length)]; }
 function cpuPlan(q, lv, seed) {
   var r = mulberry(hash(seed)), L = LV[lv], pq = q.difficulty;
   var pc = Math.max(0.1, Math.min(0.98, 1 - (1 - pq) * L.k)), ok = r() < pc;
-  var ms = L.mu * slowOf(q) * (0.7 + 0.7 * (1 - pq)) * Math.exp(0.35 * gauss(r));
-  ms = Math.round(Math.max(900, Math.min(tlimit(q) - 500, ms)) / 100) * 100;
+  var ms = answerMs(q, L, r);
+  ms = Math.round(Math.max(1500, Math.min(tlimit(q) - 500, ms)) / 100) * 100;
   return { ms: ms, ok: ok, choice: ok ? q.answer : wrongChoice(q, r) };
 }
 function srcBase(o) {
@@ -560,14 +586,16 @@ function cpuSource(seat, lv, seedBase) {
   return srcBase({ seat: seat, name: '練習相手', sub: LV[lv].label, kind: 'cpu', plan: function (qi, q) { return cpuPlan(q, lv, seedBase + ':' + qi); } });
 }
 function ghostSource(seat, label, per, name) {
-  return srcBase({ seat: seat, name: name || 'ゴースト', sub: label, kind: 'ghost', plan: function (qi) { var p = per[qi]; return { ms: p[1], ok: !!p[0], choice: null }; } });
+  // per：{ <問題id>: [正解か, ms] }。出す順をまぜても、問いごとに同じ記録を使う
+  return srcBase({ seat: seat, name: name || 'ゴースト', sub: label, kind: 'ghost', plan: function (qi, q) { var p = per[q.id] || [0, tlimit(q) - 2500]; return { ms: p[1], ok: !!p[0], choice: null }; } });
 }
-function fakeGhost(setId) {
-  var r = mulberry(hash('ghost:' + setId)), set = SETS[setId];
-  return set.items.map(function (id) {
+function perById(items, per) { var m = {}; items.forEach(function (id, i) { if (per[i]) m[id] = per[i]; }); return m; }
+function fakeGhost(items, seedKey) {
+  var r = mulberry(hash('ghost:' + seedKey));
+  return items.map(function (id) {
     var q = BYID[id], ok = r() < Math.min(0.95, q.difficulty + 0.12);
-    var ms = 3300 * slowOf(q) * (0.7 + 0.7 * (1 - q.difficulty)) * Math.exp(0.35 * gauss(r));
-    return [ok ? 1 : 0, Math.round(Math.max(1200, Math.min(tlimit(q) - 2500, ms)) / 100) * 100];
+    var ms = answerMs(q, LV.normal, r);         // 記録の無い組の代わり：「ふつう」と同じ読み方・考え方
+    return [ok ? 1 : 0, Math.round(Math.max(1500, Math.min(tlimit(q) - 2500, ms)) / 100) * 100];
   });
 }
 function onlineSource(seat, nick) {
@@ -582,10 +610,25 @@ function onlineSource(seat, nick) {
   o.cancel = function () { if (o.stop) o.stop(); o.stop = null; };
   return o;
 }
-function makeOpponents(setId, lv2, lv3, per, real) {
+function makeOpponents(seedKey, lv2, lv3, per, real) {
   // real：Firebase から取ってきた、ほかの人の本物の記録のときだけ。作り物（fakeGhost）は練習相手として出す
-  return [real ? ghostSource(1, 'ほかの人の記録', per) : ghostSource(1, LV.normal.label, per, '練習相手'), cpuSource(2, lv2, 'cpu2:' + setId + ':' + NONCE), cpuSource(3, lv3, 'cpu3:' + setId + ':' + NONCE)];
+  return [real ? ghostSource(1, 'ほかの人の記録', per) : ghostSource(1, LV.normal.label, per, '練習相手'), cpuSource(2, lv2, 'cpu2:' + seedKey), cpuSource(3, lv3, 'cpu3:' + seedKey)];
 }
+/* おまかせ（2026-11-25 本人「同じ問題しか出なくね？せっかく問題セットたくさんあるのに」）：
+ * そのページの全部の問題から、毎回ちがう10問。ページに分野が2つ以上あれば、分野を順にまわして選ぶ。前の対戦に出た問いは、できるだけ避ける。
+ * 組を指定したときも、出す順を毎回まぜる。 */
+var RANDOM_SET = '*おまかせ*', RANDOM_N = 10, TB_GAME = 0, TB_LAST = {};
+function randomSet() {
+  var rng = Math.random, pools = PACKS.map(function (pk) {
+    var a = pk.items.map(function (q) { return q.id; }), fresh = a.filter(function (id) { return !TB_LAST[id]; });
+    if (fresh.length >= Math.ceil(RANDOM_N / PACKS.length)) a = fresh;
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(rng() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }), items = [], k = 0;
+  while (items.length < RANDOM_N && pools.some(function (a) { return a.length; })) { var a = pools[k++ % pools.length]; if (a.length) items.push(a.pop()); }
+  return { set: RANDOM_SET, title: 'おまかせの10問', subject: PACKS.length === 1 ? PACKS[0].subject : null, items: items };
+}
+function mixOrder(ids) { var a = ids.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
 
 /* ============================================================ 対戦（4人で同時に解く） */
 var T = null, tbTick = null;
@@ -603,6 +646,7 @@ function tableHome() {
     : '同じ組を、あなたを含む4人で同時に解きます。相手は練習相手3人です。'));
   var f1 = el('div', 'field'); f1.appendChild(el('label', '', '組'));
   var sel = document.createElement('select'); sel.id = 'tbset';
+  var o0 = document.createElement('option'); o0.value = RANDOM_SET; o0.textContent = 'おまかせ（毎回ちがう10問）'; o0.selected = true; sel.appendChild(o0);
   PACKS.forEach(function (pk) {
     pk.kinds.forEach(function (k) {
       var g = document.createElement('optgroup'); g.label = (PACKS.length > 1 ? pk.title + '　' : '') + k.title;
@@ -622,14 +666,17 @@ function tableHome() {
   n.appendChild(go); host.appendChild(n);
 }
 function tableStart(setId, lv2, lv3) {
-  var set = SETS[setId];
+  var random = setId === RANDOM_SET, set = random ? randomSet() : SETS[setId], order = random ? set.items : mixOrder(set.items);
+  var seedKey = setId + ':' + NONCE + ':' + (++TB_GAME);
+  TB_LAST = {}; order.forEach(function (id) { TB_LAST[id] = 1; });
   Net.subject = set.subject;
-  var fake = function () { return { per: fakeGhost(setId), real: false }; };
-  var load = Net.ready ? Net.fetchGhosts(setId, 1).then(function (a) { return a.length ? { per: a[0].per, real: true } : fake(); }).catch(fake) : Promise.resolve(fake());
+  var fake = function () { return { per: perById(set.items, fakeGhost(set.items, seedKey)), real: false }; };
+  // ほかの人の記録は組ごと（その組の元の順の per）。おまかせには記録が無いので、練習相手が入る
+  var load = Net.ready && !random ? Net.fetchGhosts(setId, 1).then(function (a) { return a.length ? { per: perById(set.items, a[0].per), real: true } : fake(); }).catch(fake) : Promise.resolve(fake());
   load.then(function (g) {
-    var opp = makeOpponents(setId, lv2, lv3, g.per, g.real);
+    var opp = makeOpponents(seedKey, lv2, lv3, g.per, g.real);
     T = {
-      set: set, qs: set.items.map(function (id) { return BYID[id]; }), qi: -1, presses: [], tot: [0, 0, 0, 0], corr: [0, 0, 0, 0], firsts: [], closed: true,
+      set: set, qs: order.map(function (id) { return BYID[id]; }), qi: -1, presses: [], tot: [0, 0, 0, 0], corr: [0, 0, 0, 0], firsts: [], closed: true,
       seats: [{ seat: 0, name: 'あなた', sub: '', kind: 'self' }].concat(opp.map(function (o) { return { seat: o.seat, name: o.name, sub: o.sub, kind: o.kind }; })),
       opp: opp, say: ''
     };
@@ -733,9 +780,9 @@ function tableClose() {
   T.fbHost.appendChild(feedback(T.q, { ok: me.ok, ms: me.ms, pt: r.pts[0], timeout: !!me.timeout, noLink: true, pick: me.choice }));
   T.next.hidden = false;
   if (!me.ok) {
-    var left = (T.q.penalty ? T.q.penalty.wait_ms : WRONG_WAIT); T.next.disabled = true; var lab = T.qi + 1 < T.qs.length ? '次の問題へ' : '結果を見る';
-    T.next.textContent = 'あと ' + (left / 1000).toFixed(1) + ' 秒';
-    var t = setInterval(function () { left -= 100; T.next.textContent = left > 0 ? 'あと ' + (left / 1000).toFixed(1) + ' 秒' : lab; if (left <= 0) { T.next.disabled = false; clearInterval(t); } }, 100);
+    var left = (T.q.penalty ? T.q.penalty.wait_ms : WRONG_WAIT), nx = T.next; nx.disabled = true; var lab = T.qi + 1 < T.qs.length ? '次の問題へ' : '結果を見る';
+    nx.textContent = 'あと ' + (left / 1000).toFixed(1) + ' 秒';
+    var t = setInterval(function () { if (!nx.isConnected) { clearInterval(t); return; } left -= 100; nx.textContent = left > 0 ? 'あと ' + (left / 1000).toFixed(1) + ' 秒' : lab; if (left <= 0) { nx.disabled = false; clearInterval(t); } }, 100);
   }
 }
 function tableResult() {

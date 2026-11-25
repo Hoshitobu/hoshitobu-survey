@@ -5,7 +5,7 @@
  *   ページに埋めこんだ window.RUIDAI_EXAMS（kakomon-data.js の survey）。読むだけで、送信はしない。
  * ・結果（○／×）：localStorage["ruidai.<テーマid>.<問題>"] = "ok" | "ok+t"（目標時間内）| "again"（最新の結果）
  * ・回ごとの記録：localStorage["ruidai.<テーマid>.@log.<問題id>"] = [{sec: 秒（時計を使わなければ null）, ok: true|false, date: "YYYY-MM-DD"}…]（1回目・2回目…）。「同じ形でもう1問」は数だけ数え、この記録には入れない
- * ・解いた数：localStorage["ruidai.<テーマid>.@cnt"] = {"n": できたを押した数, "t": そのうち1問の目標時間内（基礎ドリルの問題だけ数える）}
+ * ・解いた数：localStorage["ruidai.<テーマid>.@cnt"] = {"n": できたを押した数, "t": そのうち1問の目標時間内（A の問題だけ数える）}
  * ・同じ形でもう1問：localStorage["ruidai.<テーマid>.@seen.<グループ>"] = 出した問題の id の配列（一巡したら空にもどす）
  */
 (function () {
@@ -112,7 +112,7 @@
   // ---------------------------------------------------------------- いつも見える時計
   // ・いまの問題 ＝ 開いている問題（qfold）。別の問題を開くと切りかわり、時計は 0 から。動いていたら、そのまま動かしつづける。
   // ・「自分の答えを書いた」「答え合わせ」を押した時点で時計が止まり、その時間がその回の時間になる。
-  // ・目標（秒）は、問題が入っている節の data-per（基礎ドリルだけ）。
+  // ・目標（秒）は、問題が入っている節の data-per（A の節だけ）。
   var T = { running: false, acc: 0, t0: 0, cur: null, wasRun: false, iv: null };
   function pad2(n) { return ("0" + n).slice(-2); }
   function fmt(sec) { return typeof sec === "number" ? Math.floor(sec / 60) + ":" + pad2(sec % 60) : "－"; }
@@ -441,7 +441,7 @@
       if (!li._fix) fixTime(li);
       li.classList.add("is-checked"); li.classList.remove("is-locked");
       msg.textContent = ok === cells.length ? "全部合っています（" + ok + "/" + cells.length + "）。解説を開けます。"
-        : ok + "/" + cells.length + " の空欄が合っています" + (filled < cells.length ? "（空欄が" + (cells.length - filled) + "つ、入っていません）" : "") + "。解説で確かめよう。";
+        : ok + "/" + cells.length + " の空欄が合っています" + (filled < cells.length ? "（空欄が" + (cells.length - filled) + "つ、入っていません）" : "") + "。解説で確かめてください。";
       paintP(res);
       judge(li, ok === cells.length);
     });
@@ -507,6 +507,26 @@
     }
     drawSolved();
   }
+  // 段送りの図（電気透析の解説など。2026-11-24）：「次へ」で段を1つ進め、その段までの絵を本来の濃さに。「はじめから」で段0（全体を薄く）。
+  // 束の問い（あとから差しこむ HTML）にも効くように、document で受ける。
+  function stepTo(box, k) {
+    var n = +box.getAttribute("data-n") || 0;
+    k = Math.max(0, Math.min(n, k));
+    box.setAttribute("data-step", k);
+    [].forEach.call(box.querySelectorAll("g.st"), function (g) { g.style.opacity = (+g.getAttribute("data-s") <= k) ? "1" : ".18"; });
+    var t = box.querySelector('template.stepcap-t[data-s="' + k + '"]'), cap = box.querySelector(".stepcap");
+    if (t && cap) cap.innerHTML = t.innerHTML;
+    var no = box.querySelector(".stepno"); if (no) no.textContent = k + "/" + n;
+    var nx = box.querySelector(".stepnext"), rs = box.querySelector(".stepreset");
+    if (nx) nx.disabled = k >= n;
+    if (rs) rs.disabled = k === 0;
+  }
+  document.addEventListener("click", function (ev) {
+    var b = ev.target.closest && ev.target.closest(".stepfig .stepnext, .stepfig .stepreset");
+    if (!b) return;
+    var box = b.closest(".stepfig");
+    stepTo(box, b.classList.contains("stepreset") ? 0 : (+box.getAttribute("data-step") || 0) + 1);
+  });
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
   window.addEventListener("storage", function () { unlock(); summarize(); drawSolved(); });
 })();
