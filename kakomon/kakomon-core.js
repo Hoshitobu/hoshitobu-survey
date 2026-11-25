@@ -325,9 +325,11 @@
         const a = q(sel); a.hidden = !u; if (u) a.href = pdfUrl(u);
       });
       const ARC = !!(PDF && PDF.host === "archive");   // センターのサイトから消えた国語・英語は、Internet Archive に残る当時のファイル
-      [["#kk-pdf-au", PDF && PDF.audio], ["#kk-pdf-sc", PDF && PDF.script]].forEach(([sel, u]) => {
-        const a = q(sel); a.hidden = !(ARC && u); if (ARC && u) a.href = pdfUrl(u);
+      const DNC = !!(PDF && PDF.host === "dnc");       // 2024〜 の英語リスニングの音声は、センターのサイトの mp3 へ直接
+      [["#kk-pdf-au", PDF && PDF.audio, ARC || DNC], ["#kk-pdf-sc", PDF && PDF.script, ARC]].forEach(([sel, u, ok]) => {
+        const a = q(sel); a.hidden = !(ok && u); if (ok && u) a.href = pdfUrl(u);
       });
+      q("#kk-pdf-au").textContent = DNC ? "音声（センター）↗" : "音声（Internet Archive）";
       q("#kk-pdf-q").textContent = PDF && PDF.host === "dnc" ? "問題（PDF・センター）↗" : ARC ? "問題PDF（Internet Archive）" : "問題（PDF）";
       q("#kk-pdf-a").textContent = PDF && PDF.host === "dnc" ? "正解（PDF・センター）↗" : ARC ? "正解PDF（Internet Archive）" : "正解（PDF）";
       q("#kk-dnc").hidden = WB || !!(PDF && PDF.mondai);   // 予想問題集は手元の問題集で解く。PDF があればそちらを出す
@@ -348,7 +350,7 @@
         : ARC
         ? "Internet Archive に保存された、大学入試センターの当時のファイルが開きます" + (PDF.audio || PDF.script ? "（問題・正解・リスニングの音声とスクリプト）。" : "（問題・正解）。")
         : PDF && PDF.mondai
-        ? "問題と正解のボタンは、大学入試センターのサイトの PDF を開きます。"
+        ? (DNC && PDF.audio ? "問題・正解・音声のボタンは、大学入試センターのサイトのファイルを開きます。" : "問題と正解のボタンは、大学入試センターのサイトの PDF を開きます。")
         : "問題と正解は、大学入試センターの「過去問題」のページから開いてください。";
       q("#kk-oxnote").textContent = SEC
         ? (WB ? (unknownMax ? "大問ごとの点数と配点を入れてください（この科目は、配点が問題集ごとに違います）。"
