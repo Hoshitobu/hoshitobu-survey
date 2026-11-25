@@ -9,10 +9,12 @@
   var SIDS = ["math1a", "math2bc", "phys", "phys_basic", "chem", "chem_basic", "bio", "bio_basic", "earth", "earth_basic"];
   var YEARS = [2024, 2025, 2026];
   var ALL = '<p class="bk-all"><a href="../../books.html">全科目そろえるなら（パック・出版社ごと）→ 予想問題集の選び方</a></p>';
+  // 出版社の目安は過去問の点数で決める（本人 2026-11-26「過去問で，ね。」）。予想問題集どうしでは比べない
+  var MEYASU = "どの出版社にするかの目安：2025年の過去問を基準として、7〜8割取れたら駿台（青本）、8割に乗ったらZ会（緑本）。";
   var PUB = {
     sundai: { name: "駿台（青本）", why: "本番に近い難しさで、解説が丁寧です。落とした所を直すのに使いやすい本です。" },
-    zkai: { name: "Z会（緑本）", why: "難しめに作られていて、時間内に解ききる練習に向いています。駿台で8割に乗ってから使う順がおすすめです。" },
-    kawai: { name: "河合塾（黒本）", why: "黒本で7〜8割取れているなら、次は駿台に進むのがおすすめです。" }
+    zkai: { name: "Z会（緑本）", why: "難しめに作られていて、時間内に解ききる練習に向いています。" },
+    kawai: { name: "河合塾（黒本）", why: "河合塾の第1回などは比較的簡単なため、共通テストってこんな感じなのか～とつかむために使えます。一方で、範囲が夏模試用になっていたりするため、その点で若干直前期の演習には利用しにくいです。" }
   };
 
   var css = ""
@@ -54,8 +56,9 @@
     var st = document.createElement("style"); st.id = "bk-css"; st.textContent = css; document.head.appendChild(st);
   }
 
-  // 案A：点数の帯ごとの中身（偏差値で分ける。年度ごとの難しさの差をならすため）
-  function nextHtml(dev, set) {
+  // 案A：点数ごとの中身。平均点に届かない（偏差値50未満）なら過去問。届いたら得点率で分ける：
+  // 8割に乗ったら Z会、それより下は駿台（本人 2026-11-26「2025年の過去問で7〜8割なら駿台、8割に乗ったらZ会」）
+  function nextHtml(dev, rate, set) {
     if (dev < 50) {
       var chips = document.querySelector("#related .chips");
       var other = chips ? [].slice.call(chips.querySelectorAll("a:not([aria-current])")).map(function (a) { return a.outerHTML; }).join(" ") : "";
@@ -63,15 +66,16 @@
         + "<p>平均点に届かないうちは、予想問題集より先に、ほかの年度の本試験・追試験を解いて、落とした所を直すほうが点につながります。</p>"
         + (other ? '<p class="chips">' + other + "</p>" : "");
     }
-    if (dev < 60 || !set.zkai) {   // Z会の本がない科目（物理基礎・地学基礎）は、上の帯も駿台
+    if (rate < 0.8 || !set.zkai) {   // Z会の本がない科目（物理基礎・地学基礎）は、上の帯も駿台
       if (!set.sundai) return "";
       return '<p class="bk-h">次に解くなら：' + PUB.sundai.name + "</p><p>" + PUB.sundai.why + "</p><p>" + link(set.sundai) + "</p>"
-        + ALL + '<p class="bk-notice">' + NOTICE + "</p>";
+        + '<p class="note">' + MEYASU + "</p>" + ALL + '<p class="bk-notice">' + NOTICE + "</p>";
     }
     if (!set.zkai) return "";
     return '<p class="bk-h">次に解くなら：' + PUB.zkai.name + "</p>"
-      + "<p>難しめに作られていて、時間内に解ききる練習に向いています。</p><p>" + link(set.zkai) + "</p>"
-      + (set.sundai ? "<p>駿台の実戦問題集をまだ解いていないなら、先に駿台で8割に乗せてから使うと、点につながりやすくなります。</p><p>" + link(set.sundai) + "</p>" : "")
+      + "<p>" + PUB.zkai.why + "</p><p>" + link(set.zkai) + "</p>"
+      + '<p class="note">' + MEYASU + "</p>"
+      + (set.sundai ? "<p>7〜8割の科目は、" + PUB.sundai.name + "から：" + link(set.sundai) + "</p>" : "")
       + ALL + '<p class="bk-notice">' + NOTICE + "</p>";
   }
 
@@ -84,14 +88,14 @@
     function show() {
       var v = input.value.trim(), x = Number(v);
       if (v === "" || !/^\d+$/.test(v) || x > full) { out.hidden = true; out.innerHTML = ""; return; }
-      var h = nextHtml(50 + 10 * (x - mean) / sd, set);
+      var h = nextHtml(50 + 10 * (x - mean) / sd, x / full, set);
       out.innerHTML = h; out.hidden = !h;
     }
     input.addEventListener("input", show); show();
     return out;
   }
 
-  var ORDER = ["kawai", "sundai", "zkai"];   // 黒本で7〜8割 → 駿台 → 駿台で8割に乗ったら Z会
+  var ORDER = ["kawai", "sundai", "zkai"];   // 河合（つかむ）→ 過去問で7〜8割なら駿台 → 8割に乗ったら Z会
   var LEAD = "過去問を解き終えたあと、初見の通しの練習に使えます。平均点に届かないうちは、先に過去問を解き直すほうが点につながります。";
   var OFF = "2027年用の本の紹介は、本番が終わったので外しました。2028年用の本が出たら差しかえます。";
 
@@ -101,7 +105,7 @@
     }).join("") + "</ul>";
   }
   function bodyHtml(set) {
-    return "<h2>予想問題集</h2>" + '<p class="note">' + LEAD + "</p>" + listHtml(set, true) + ALL + '<p class="bk-notice">' + NOTICE + "</p>";
+    return "<h2>予想問題集</h2>" + '<p class="note">' + LEAD + "</p>" + '<p class="note">' + MEYASU + "</p>" + listHtml(set, true) + ALL + '<p class="bk-notice">' + NOTICE + "</p>";
   }
 
   // 5つめのタブ「問題集」：タブと空の欄はページ（build_pages.py）が書き、中身はここで入れる。
