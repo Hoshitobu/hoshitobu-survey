@@ -53,7 +53,7 @@
   <ul class="facts"><li>全国の平均点<b>54.82</b>点</li><li>受験者<b>56,596</b>人</li><li>制限時間<b>60</b>分</li></ul>
   <p class="note">2024年の大学入試共通テスト「生物」の平均点、大問ごとの平均点、設問ごとの正答率をまとめています。点数を入れると全国での偏差値と順位が出て、送るとこのサイトの平均点とも比べられます。</p>
 </div>
-<nav class="tabs4" role="tablist" aria-label="この試験でできること"><a href="#p-solve" role="tab" id="t-solve" aria-controls="p-solve" aria-selected="true">解く</a><a href="#p-score" role="tab" id="t-score" aria-controls="p-score" aria-selected="false">点数を入れる</a><a href="#p-mean" role="tab" id="t-mean" aria-controls="p-mean" aria-selected="false">平均点・正答率</a><a href="#p-video" role="tab" id="t-video" aria-controls="p-video" aria-selected="false">解説動画</a></nav>
+<nav class="tabs4 has5" role="tablist" aria-label="この試験でできること"><a href="#p-solve" role="tab" id="t-solve" aria-controls="p-solve" aria-selected="true">解く</a><a href="#p-score" role="tab" id="t-score" aria-controls="p-score" aria-selected="false">点数を入れる</a><a href="#p-mean" role="tab" id="t-mean" aria-controls="p-mean" aria-selected="false">平均点・正答率</a><a href="#p-video" role="tab" id="t-video" aria-controls="p-video" aria-selected="false">解説動画</a><a href="#p-books" role="tab" id="t-books" aria-controls="p-books" aria-selected="false">問題集</a></nav>
 <div class="tabp" id="p-solve" role="tabpanel" aria-labelledby="t-solve">
 <section class="card" id="s-solve">
 <h2>時間を計って解く</h2>
@@ -160,6 +160,9 @@
 </ul>
 </section>
 </div>
+<div class="tabp" id="p-books" role="tabpanel" aria-labelledby="t-books">
+<section class="card" id="s-books" data-books-tab><h2>予想問題集</h2><p class="note">本の一覧の表示にはJavaScriptが必要です。</p></section>
+</div>
 <section class="card" id="related">
 <h2>他の年度・科目</h2>
 <h3>生物の他の年度</h3>
@@ -172,7 +175,7 @@
 </main>
 <script>
 (function () {
-  var tabs = [].slice.call(document.querySelectorAll(".tabs4 a")), JP = {"解く": "solve", "点数を入れる": "score", "平均点・正答率": "mean", "解説動画": "video"};
+  var tabs = [].slice.call(document.querySelectorAll(".tabs4 a")), JP = {"解く": "solve", "点数を入れる": "score", "平均点・正答率": "mean", "解説動画": "video", "問題集": "books"};
   function pane(k) { return document.getElementById("p-" + k); }
   // #鍵（solve・score・mean・video、日本語の名前、#p-鍵）ならそのタブだけを選ぶ（ページの上の題とタブが見えたまま）。
   // それ以外の #id（#dev・#seitou など）は、その節のあるタブを選んで、節まで送る。
@@ -203,5 +206,8 @@
 <script src="../../kakomon/kakomon-adjust.js?v=20261123a"></script>
 <script src="../../score-grid.js?v=20261125c"></script>
 <script src="../../kyotsu/dev.js?v=20261123a"></script>
+<script src="../../books-data.js?v=c9a08b72"></script>
+<script src="../../books.js?v=c9a08b72"></script>
+<script>HoshitobuBooks.mount("AT");</script>
 </body>
 </html>

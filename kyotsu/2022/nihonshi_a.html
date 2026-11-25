@@ -103,7 +103,7 @@
 </main>
 <script>
 (function () {
-  var tabs = [].slice.call(document.querySelectorAll(".tabs4 a")), JP = {"解く": "solve", "点数を入れる": "score", "平均点・正答率": "mean", "解説動画": "video"};
+  var tabs = [].slice.call(document.querySelectorAll(".tabs4 a")), JP = {"解く": "solve", "点数を入れる": "score", "平均点・正答率": "mean", "解説動画": "video", "問題集": "books"};
   function pane(k) { return document.getElementById("p-" + k); }
   // #鍵（solve・score・mean・video、日本語の名前、#p-鍵）ならそのタブだけを選ぶ（ページの上の題とタブが見えたまま）。
   // それ以外の #id（#dev・#seitou など）は、その節のあるタブを選んで、節まで送る。
