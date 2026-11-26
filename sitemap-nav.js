@@ -192,8 +192,31 @@
         '<p class="ft-src">' + esc(N.src) + '（<a href="https://www.dnc.ac.jp/" rel="noopener">大学入試センター</a>）。名前やメールアドレスは聞きません。<a href="' + base + 'kakomon.html?view=quick">送る内容について</a></p></div>';
       document.body.appendChild(f);
     }
+    mountMinna();
     mountOfuse();
     mountFind();
+  }
+
+  // 「みんなで解こう」の告知：全ページの一番上（ヘッダーの上）。UNTIL を過ぎたら出さない。
+  // 解いている最中（html.kk-running）は style.css で隠す。回が変わったら MINNA を書きかえる。
+  var MINNA = {
+    until: "2026-11-29T21:30:00+09:00",
+    title: "今週末、過去問をみんなで解こう！",
+    items: [
+      { tag: "二次試験", when: "11/28（土）8:45〜", what: "東大・京大・科学大", url: "https://youtu.be/VuhEJvX7pUI", img: "img/minna-1128.webp" },
+      { tag: "共通テスト", when: "11/29（日）8:15〜", what: "2026 本試（2日目の科目は 15:10〜）", url: "https://youtu.be/Gcr4PpO0fs4", img: "img/minna-1129.webp" }
+    ]
+  };
+  function mountMinna() {
+    if ($(".minna") || Date.now() > Date.parse(MINNA.until)) return;
+    var d = document.createElement("aside"); d.className = "minna"; d.setAttribute("aria-label", "みんなで解こう");
+    d.innerHTML = '<div class="minna-in"><p class="minna-h">' + esc(MINNA.title) + '</p><ul class="minna-list">' +
+      MINNA.items.map(function (it) {
+        return '<li><a class="minna-card" href="' + esc(it.url) + '" target="_blank" rel="noopener">' +
+          '<img src="' + base + esc(it.img) + '" alt="" width="160" height="90" loading="lazy">' +
+          '<span class="minna-t"><b>' + esc(it.tag) + '</b><span>' + esc(it.when) + '</span><span class="minna-w">' + esc(it.what) + '</span></span></a></li>';
+      }).join("") + "</ul></div>";
+    document.body.insertBefore(d, document.body.firstChild);
   }
 
   // 応援（OFUSE）の欄：全ページのフッター（地図）の下に、小さく。外のスクリプト（OFUSE の widget.js）は読まず、ふつうのリンクにする。

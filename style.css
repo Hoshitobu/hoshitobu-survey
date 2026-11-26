@@ -357,6 +357,18 @@ body > header.hd :focus-visible { outline-color: #fff; }
   font-size: 13px; font-weight: 700; color: var(--ink); text-decoration: none; background: var(--bg); }
 .ft-ofuse-go:hover { border-color: var(--ink); }
 html.kk-running .ft-ofuse { display: none; }
+/* 「みんなで解こう」の告知（sitemap-nav.js の mountMinna、全ページの一番上） */
+.minna { background: var(--surface-2); border-bottom: 1px solid var(--line); }
+.minna-in { max-width: calc(var(--page) + 32px); margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; gap: 12px 24px; flex-wrap: wrap; }
+.minna-h { margin: 0; font-weight: 700; font-size: 15px; color: var(--ink); }
+.minna-list { list-style: none; margin: 0; padding: 0; display: flex; gap: 12px 20px; flex-wrap: wrap; }
+.minna-card { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); }
+.minna-card img { width: 128px; height: 72px; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--line); flex: none; }
+.minna-t { display: flex; flex-direction: column; font-size: 13px; line-height: 1.5; color: var(--sub); }
+.minna-t b { color: var(--accent-ink); font-size: 14px; }
+.minna-card:hover b { text-decoration: underline; }
+@media (max-width: 600px) { .minna-in { padding: 10px 16px; gap: 8px; } .minna-card img { width: 96px; height: 54px; } .minna-list { gap: 8px; } }
+html.kk-running .minna { display: none; }
 main { padding-bottom: 64px; }
 
 /* ================= 年度と科目を選ぶ所 ================= */
